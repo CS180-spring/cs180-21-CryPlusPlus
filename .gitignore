@@ -1,0 +1,26 @@
+# Ignore Visual Studio temporary files, build results, and .vs directory
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.ide
+*.VC.db
+*.VC.opendb
+*.VC.VC.opendb
+
+# Ignore build output directories
+Debug/
+Release/
+x64/
+x86/
+build/
+dist/
+
+# Ignore other temporary files and directories
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
