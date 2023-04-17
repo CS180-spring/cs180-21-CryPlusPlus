@@ -1,18 +1,2 @@
-# Ignore Visual Studio temporary files, build results, and .vs directory
-.make
-.txt
-# Ignore build output directories
-Debug/
-Release/
-x64/
-x86/
 build/
-dist/
 
-# Ignore other temporary files and directories
-*.tmp
-*.bak
-*.swp
-*~
-.DS_Store
-Thumbs.db
