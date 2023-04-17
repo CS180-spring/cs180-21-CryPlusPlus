@@ -26,6 +26,6 @@ protected:
     }
 
 public:
-    virtual ~readData() {};
+    virtual ~ReadData() {};
     virtual bool read(const std::string& filename) = 0;
 };

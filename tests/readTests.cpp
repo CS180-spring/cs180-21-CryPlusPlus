@@ -1,4 +1,4 @@
-#include "ReadCsvData.h"
+#include "../src/ReadCsvData.h"
 #include <gtest/gtest.h>
 
 TEST(ReadCsvData, ReadValidCsvFile) {

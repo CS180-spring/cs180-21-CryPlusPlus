@@ -1,14 +1,6 @@
 # Ignore Visual Studio temporary files, build results, and .vs directory
-.vs/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-*.sln.ide
-*.VC.db
-*.VC.opendb
-*.VC.VC.opendb
-
+.make
+.txt
 # Ignore build output directories
 Debug/
 Release/
