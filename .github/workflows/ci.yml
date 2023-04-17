@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libboost-all-dev
+        sudo apt-get install -y libboost-all-dev cmake
 
     - name: Configure CMake
       run: |
@@ -35,4 +35,4 @@ jobs:
     - name: Test
       run: |
         cd build
-        ctest --output-on-failure
+        ctest --build --output-on-failure
