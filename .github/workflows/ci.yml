@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - master
+      - Ethan-ReadFiles
   pull_request:
     branches:
       - main
       - master
+      - Ethan-ReadFiles
 
 jobs:
   build:
@@ -26,7 +28,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake -S . -B build
+        cmake -S ${{ github.workspace }} -B build
 
     - name: Build
       run: |
