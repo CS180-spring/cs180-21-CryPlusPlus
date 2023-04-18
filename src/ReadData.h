@@ -12,6 +12,7 @@ class ReadData
 {
 protected:
     std::string filename;
+    std::vector<std::string> headers;
 
     //helper function to get fields
     std::vector<std::string> split(const std::string& s, char delimiter) {
@@ -27,5 +28,5 @@ protected:
 
 public:
     virtual ~ReadData() {};
-    virtual bool read(const std::string& filename) = 0;
+    virtual bool read(const std::string &filename, bool fill = false, std::string fillVal = "NA") = 0;
 };

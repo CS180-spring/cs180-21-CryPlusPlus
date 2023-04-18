@@ -34,6 +34,10 @@ add_executable(runTests ${TEST_SOURCES})
 # Link Google Test libraries
 target_link_libraries(runTests gtest gtest_main)
 
+# Enable CTest and add the tests
+enable_testing()
+add_test(NAME MyTests COMMAND runTests)
+
 # Find and link the xlnt library (if needed)
 # find_package(xlnt REQUIRED)
 # target_link_libraries(${TARGET_NAME} xlnt::xlnt)
