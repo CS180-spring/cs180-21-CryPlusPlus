@@ -28,7 +28,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake -S /home/runner/work/cs180-21-CryPlusPlus/ -B build
+        cmake -S . -B build
 
     - name: Build
       run: |
