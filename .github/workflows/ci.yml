@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - master
+      - Ethan-ReadFiles
   pull_request:
     branches:
       - main
       - master
+      - Ethan-ReadFiles
 
 jobs:
   build:
