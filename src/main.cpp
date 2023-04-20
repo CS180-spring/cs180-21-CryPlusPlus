@@ -7,6 +7,6 @@ using namespace std;
 int main()
 {
     ReadCsvData test;
-    test.read("../tests/test_data/test_invalid.csv", true, "0");
+    test.read("../src/test_valid.csv");
     return 0;
 }
