@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Set the name of the project and the target executable
+# Set the name of the project and the target executables
 project(DocumentDatabase)
 set(TARGET_NAME document_database)
 
