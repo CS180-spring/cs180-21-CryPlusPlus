@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set the name of the project and the target executable
-project(ExcelReaderServer)
-set(TARGET_NAME excel_reader_server)
+project(DocumentDatabase)
+set(TARGET_NAME document_database)
 
 # Set the C++ standard to C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -38,14 +38,4 @@ target_link_libraries(runTests gtest gtest_main)
 enable_testing()
 add_test(NAME MyTests COMMAND runTests)
 
-# Find and link the xlnt library (if needed)
-# find_package(xlnt REQUIRED)
-# target_link_libraries(${TARGET_NAME} xlnt::xlnt)
 
-# Add the Crow library (assuming it's in the 'lib/crow' folder, if needed)
-# add_subdirectory(lib/crow)
-# target_link_libraries(${TARGET_NAME} crow)
-
-# Add the nlohmann/json library (assuming it's in the 'lib/json' folder, if needed)
-# add_subdirectory(lib/json)
-# target_link_libraries(${TARGET_NAME} nlohmann_json::nlohmann_json)
