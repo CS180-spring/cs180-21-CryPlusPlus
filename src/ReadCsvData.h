@@ -1,47 +1,66 @@
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <nlohmann/json.hpp>
 #include "ReadData.h"
 
-class ReadCsvData : public ReadData {
+// using namespace std;
+using json = nlohmann::json;
+
+class ReadCsvData : public ReadData
+{
+private:
+    json jsonData;
+
+    void processCsvFile(bool fill, const std::string &fillVal) {
+        std::ifstream inputFile(filename);
+        if (!inputFile.is_open()) {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return;
+        }
+
+        std::string line;
+        std::vector<std::string> fields;
+        bool headerProcessed = false;
+
+        while (std::getline(inputFile, line)) {
+            fields = split(line, ',');
+
+            if (!headerProcessed) {
+                headers = fields;
+                headerProcessed = true;
+            } else {
+                json row;
+                for (size_t i = 0; i < fields.size(); ++i) {
+                    if (fill && fields[i].empty()) {
+                        row[headers[i]] = fillVal;
+                    } else {
+                        row[headers[i]] = fields[i];
+                    }
+                }
+                jsonData.push_back(row);
+            }
+        }
+        inputFile.close();
+    }
+
 public:
-    bool read(const std::string &filename, bool fill = false, std::string fillVal = "NA") {
-    std::ifstream inputFile(filename);
+    ReadCsvData() {}
+    virtual ~ReadCsvData() {}
 
-    if (!inputFile.is_open()) {
-        std::cerr << "Failed to open file: " << filename << std::endl;
-        return false;
+    virtual bool read(const std::string &filename, bool fill = false, std::string fillVal = "NA") override {
+        this->filename = filename;
+        processCsvFile(fill, fillVal);
+        return !jsonData.empty();
     }
 
-    std::string line;
-    bool isHeader = true;
-    while (std::getline(inputFile, line)) {
-        std::vector<std::string> fields = split(line, ',');
-        //fill in empty values
-        if(fill){
-            while (fields.size() < headers.size()) {
-            fields.push_back(fillVal);
-        }
-    }
-        // On the first line, we collect the headers
-        if (isHeader) {
-            headers.assign(fields.begin(), fields.end());
-            isHeader = false;
-        } else {
-            // If fill is false and there are different numbers of fields than what is in the header,
-            // the CSV is unbalanced and invalid
-            if (!fill && fields.size() != headers.size()) {
-                std::cerr << "Invalid CSV format"<< std::endl;
-                inputFile.close();
-                return false;
-            }
-
-            // Process the fields as needed
-            for (const std::string &field : fields) {
-                std::cout << field << " ";
-            }
-            std::cout << std::endl;
-        }
+    const json& getJsonData() const {
+        return jsonData;
     }
 
-    inputFile.close();
-    return true;
-}
+    const std::vector<std::string>& getHeaders() const {
+        return headers;
+    }
 };
