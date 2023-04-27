@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <nlohmann/json.hpp>
+#include "../lib/json.hpp"
 #include "ReadData.h"
 
 // using namespace std;
