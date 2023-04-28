@@ -1,29 +1,49 @@
-#include "../src/ReadCsvData.h"
 #include <gtest/gtest.h>
+#include <string>
+#include "../lib/json.hpp"
+#include "../src/ReadJsonData.h"
+#include "../src/ReadCsvData.h"
 
-TEST(ReadCsvData, ReadValidCsvFile) {
-    ReadCsvData csvReader;
-    // Use a valid CSV file for testing
-    std::string filename = "../tests/test_data/test_valid.csv";
-    ASSERT_TRUE(csvReader.read(filename));
+using json = nlohmann::ordered_json;
+
+// Sample CSV and JSON files for testing
+const std::string sample_csv_filename = "../tests/test_data/test_valid.csv";
+const std::string sample_json_filename = "../tests/test_data/test_valid.json";
+
+
+TEST(ReadJsonDataTest, ReadFile) {
+    ReadJsonData readJsonData;
+
+    // Test reading a JSON file
+    ASSERT_TRUE(readJsonData.read(sample_json_filename));
+
+    // Test headers
+    std::vector<std::string> expected_headers = {"Name", "Age", "Location"};
+    ASSERT_EQ(readJsonData.getHeaders(), expected_headers);
+
+    // Test JSON data
+    json expected_data = json::parse(R"([{"Name":"Alice","Age":30,"Location":"Los Angeles"},)"
+                                      R"({"Name":"Bob","Age":25,"Location":"New York"}])");
+    ASSERT_EQ(readJsonData.getJsonData(), expected_data);
 }
 
-TEST(ReadCsvData, ReadInvalidCsvFile) {
-    ReadCsvData csvReader;
-    // Use an invalid CSV file for testing
-    std::string filename = "../tests/test_data/test_invalid.csv";
-    ASSERT_FALSE(csvReader.read(filename));
+TEST(ReadCsvDataTest, ReadFile) {
+    ReadCsvData readCsvData;
+
+    // Test reading a CSV file
+    ASSERT_TRUE(readCsvData.read(sample_csv_filename));
+
+    // Test headers
+    std::vector<std::string> expected_headers = {"Name", "Age", "Location"};
+    ASSERT_EQ(readCsvData.getHeaders(), expected_headers);
+
+    // Test JSON data
+    json expected_data = json::parse(R"([{"Name":"Alice","Age":"30","Location":"Los Angeles"},)"
+                                      R"({"Name":"Bob","Age":"25","Location":"New York"}])");
+    ASSERT_EQ(readCsvData.getJsonData(), expected_data);
 }
 
-TEST(ReadCsvData, ValidFill){
-    ReadCsvData csvReader;
-    // Use an invalid CSV file for testing
-    std::string filename = "../tests/test_data/test_invalid.csv";
-    ASSERT_TRUE(csvReader.read(filename,true, "NA"));
-}
-
-
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

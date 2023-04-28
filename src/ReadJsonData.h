@@ -7,7 +7,7 @@
 #include "ReadData.h"
 
 // using namespace std;
-using json = nlohmann::json;
+using json = nlohmann::ordered_json;
 
 class ReadJsonData : public ReadData
 {
