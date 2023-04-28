@@ -6,11 +6,13 @@ on:
       - main
       - master
       - Ethan-DocumentClass
+      - Ethan-ReadFiles
   pull_request:
     branches:
       - main
       - master
       - Ethan-DocumentClass
+      - Ethan-ReadFiles
 
 jobs:
   build:

@@ -37,5 +37,3 @@ target_link_libraries(runTests gtest gtest_main)
 # Enable CTest and add the tests
 enable_testing()
 add_test(NAME MyTests COMMAND runTests)
-
-

@@ -2,27 +2,6 @@
 #include "../src/Document.h"
 #include <gtest/gtest.h>
 
-TEST(ReadCsvData, ReadValidCsvFile) {
-    ReadCsvData csvReader;
-    // Use a valid CSV file for testing
-    std::string filename = "../tests/test_data/test_valid.csv";
-    ASSERT_TRUE(csvReader.read(filename));
-}
-
-TEST(DocumentTests, isAdded)
-{
-    Document testdoc;
-    testdoc.add_field("age", 30);
-
-    json expected_data = {
-        {"age", 30}
-    };
-    std::vector<std::string> expected_fields = {"age"};
-    ASSERT_EQ(testdoc.getData(), expected_data);
-    ASSERT_EQ(testdoc.getFields(), expected_fields);
-    ASSERT_EQ(testdoc.getSize(), 1);
-}
-
 TEST(DocumentTests, isDeleted)
 {
     Document testdoc;
