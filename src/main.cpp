@@ -6,6 +6,8 @@ using namespace std;
 
 int main()
 {
-    ReadCsvData test;
+    ReadJsonData test;
+    test.read("../src/test_nested.json");
+    cout << test.getJsonData() << endl;
     return 0;
 }

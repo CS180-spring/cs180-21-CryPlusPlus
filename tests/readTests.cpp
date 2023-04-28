@@ -10,8 +10,17 @@ using json = nlohmann::ordered_json;
 const std::string sample_csv_filename = "../tests/test_data/test_valid.csv";
 const std::string sample_json_filename = "../tests/test_data/test_valid.json";
 
+class ReadJsonDataTest : public ::testing::Test {
+protected:
+    ReadJsonData readJsonData;
+};
 
-TEST(ReadJsonDataTest, ReadFile) {
+class ReadCsvDataTest : public ::testing::Test {
+protected:
+    ReadCsvData readCsvData;
+};
+
+TEST_F(ReadJsonDataTest, ReadFile) {
     ReadJsonData readJsonData;
 
     // Test reading a JSON file
@@ -27,7 +36,7 @@ TEST(ReadJsonDataTest, ReadFile) {
     ASSERT_EQ(readJsonData.getJsonData(), expected_data);
 }
 
-TEST(ReadCsvDataTest, ReadFile) {
+TEST_F(ReadCsvDataTest, ReadFile) {
     ReadCsvData readCsvData;
 
     // Test reading a CSV file
@@ -41,9 +50,4 @@ TEST(ReadCsvDataTest, ReadFile) {
     json expected_data = json::parse(R"([{"Name":"Alice","Age":"30","Location":"Los Angeles"},)"
                                       R"({"Name":"Bob","Age":"25","Location":"New York"}])");
     ASSERT_EQ(readCsvData.getJsonData(), expected_data);
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
