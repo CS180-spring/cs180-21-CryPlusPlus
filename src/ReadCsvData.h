@@ -13,6 +13,17 @@ class ReadCsvData : public ReadData
 {
 private:
     json jsonData;
+        //helper function to get fields
+    std::vector<std::string> split(const std::string& s, char delimiter) {
+        std::vector<std::string> fields;
+        std::istringstream ss(s);
+        std::string field;
+
+        while (std::getline(ss, field, delimiter)) {
+            fields.push_back(field);
+        }
+        return fields;
+    }
 
     void processCsvFile(bool fill, const std::string &fillVal) {
         std::ifstream inputFile(filename);

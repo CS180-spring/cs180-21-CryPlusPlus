@@ -13,19 +13,6 @@ class ReadData
 protected:
     std::string filename;
     std::vector<std::string> headers;
-
-    //helper function to get fields
-    std::vector<std::string> split(const std::string& s, char delimiter) {
-        std::vector<std::string> fields;
-        std::istringstream ss(s);
-        std::string field;
-
-        while (std::getline(ss, field, delimiter)) {
-            fields.push_back(field);
-        }
-        return fields;
-    }
-
 public:
     virtual ~ReadData() {};
     virtual bool read(const std::string &filename, bool fill = false, std::string fillVal = "NA") = 0;
