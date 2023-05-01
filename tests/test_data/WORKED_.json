@@ -1,0 +1,26 @@
+{
+    "name": "John Doe",
+    "age": 30,
+    "city": "New York"
+}
+
+
+{
+    "name": "John Doe",
+    "age": 35,
+    "isMarried": true,
+    "hobbies": ["reading", "running", "cooking"]
+}
+
+[
+    {
+        "Name": "Alice",
+        "Age": 30,
+        "Location": "Los Angeles"
+    },
+    {
+        "Name": "Bob",
+        "Age": 25,
+        "Location": "New York"
+    }
+]
