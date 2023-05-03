@@ -12,7 +12,6 @@ using json = nlohmann::ordered_json;
 class ReadCsvData : public ReadData
 {
 private:
-    json jsonData;
         //helper function to get fields
     std::vector<std::string> split(const std::string& s, char delimiter) {
         std::vector<std::string> fields;
@@ -65,13 +64,5 @@ public:
         this->filename = filename;
         processCsvFile(fill, fillVal);
         return !jsonData.empty();
-    }
-
-    const json& getJsonData() const {
-        return jsonData;
-    }
-
-    const std::vector<std::string>& getHeaders() const {
-        return headers;
     }
 };

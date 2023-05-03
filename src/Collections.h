@@ -5,6 +5,7 @@
 #include "../lib/json.hpp"
 #include "../src/ReadData.h"
 #include "../src/Document.h"
+#include <filesystem>
 
 using json = nlohmann::ordered_json;
 
@@ -15,18 +16,22 @@ public:
 
     Collections() {int size = 0;}
 
-    Collections(ReadData *reader, std::string filename) {
-        reader->read(filename);
-        json data = reader->getJsonData();
-
-        for (const auto& doc_data : data) {
-            std::string uuid = UUID::generate_uuid();
-            ValueType doc = ValueType(doc_data); // Create a Document object from the JSON data
-            insert(uuid, doc);
+    Collections(ReadData *reader, std::string folder_path) {
+        try {
+            for (const auto &entry : std::filesystem::directory_iterator(folder_path)) {
+                std::cout << entry.path() << std::endl;
+                std::string uuid = UUID::generate_uuid();
+                ValueType doc = ValueType(reader, entry.path().string()); // Create a Document object from the JSON data
+                insert(uuid, doc);
+            }
+        } catch (std::filesystem::filesystem_error &e) {
+            std::cerr << "Error: " << e.what() << std::endl;
         }
     }
 
+    
 
+     
     void insert(const KeyType& key, const ValueType& value) {
         btree_map_.insert(std::make_pair(key, value));
     }

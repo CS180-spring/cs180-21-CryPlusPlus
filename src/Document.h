@@ -1,11 +1,13 @@
 #pragma once
 #include <unordered_map>
 #include "../lib/json.hpp"
+#include "../src/ReadData.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
 using json = nlohmann::ordered_json;
+
 
 class Document
 {
@@ -17,7 +19,14 @@ class Document
     public:
     //Default constructor
     Document() : Size(0) {}
+
     //constructor when being read in from file
+    Document(ReadData *reader, std::string filename)
+    {
+        reader->read(filename);
+        Data = reader->getJsonData();
+    }
+
     Document(std::vector<std::string> keys, std::vector<json> vals)
     {
         outside_Fields = {};
@@ -32,6 +41,8 @@ class Document
             add_field(keys[i], vals[i]);
         }
     }
+
+    friend inline std::ostream& operator<<(std::ostream& os, const Document& doc);
 
     Document(json data)
     {
@@ -105,3 +116,4 @@ class Document
         Size = 0;
     }
 };
+
