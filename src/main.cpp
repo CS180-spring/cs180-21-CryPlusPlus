@@ -1,13 +1,15 @@
 #include <iostream>
 #include "../src/ReadCsvData.h"
 #include "../src/ReadJsonData.h"
+#include "../src/Collections.h"
+#include "../src/Document.h"
+#include "../src/Document.cpp"
 using namespace std;
 
 
-int main()
-{
-    ReadJsonData test;
-    test.read("../src/test_nested.json");
-    cout << test.getJsonData() << endl;
+int main() {
+    Collections<string, Document> test(new ReadJsonData, "../src/docs");
+    test.iterate();
+
     return 0;
 }

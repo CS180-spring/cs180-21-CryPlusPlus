@@ -7,12 +7,14 @@ on:
       - master
       - Ethan-DocumentClass
       - Ethan-ReadFiles
+      - Ethan-Collections
   pull_request:
     branches:
       - main
       - master
       - Ethan-DocumentClass
       - Ethan-ReadFiles
+      - Ethan-Collections
 
 jobs:
   build:

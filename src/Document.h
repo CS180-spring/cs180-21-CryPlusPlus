@@ -1,27 +1,36 @@
 #pragma once
 #include <unordered_map>
 #include "../lib/json.hpp"
+#include "../src/ReadData.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
 using json = nlohmann::ordered_json;
 
+
 class Document
 {
     private:
-    json data;
-    int size;
-    std::vector<std::string> fields;
+    json Data;
+    int Size;
+    std::vector<std::string> outside_Fields;
 
     public:
     //Default constructor
-    Document() : size(0) {}
+    Document() : Size(0) {}
+
     //constructor when being read in from file
+    Document(ReadData *reader, std::string filename)
+    {
+        reader->read(filename);
+        Data = reader->getJsonData();
+    }
+
     Document(std::vector<std::string> keys, std::vector<json> vals)
     {
-        fields = {};
-        size = 0;
+        outside_Fields = {};
+        Size = 0;
         //gpt
         if (keys.size() != vals.size()) {
             throw std::invalid_argument("keys and vals vectors must have the same size.");
@@ -33,31 +42,38 @@ class Document
         }
     }
 
+    friend inline std::ostream& operator<<(std::ostream& os, const Document& doc);
+
+    Document(json data)
+    {
+        Data = data;
+    }
+
     //constructor takes in fields vector and json vector to fill in the document
     void add_field(const std::string& key, const json& value)
     {
-        data[key] = value;
-        fields.push_back(key);
-        size++;
+        Data[key] = value;
+        outside_Fields.push_back(key);
+        Size++;
     }
 
     void delete_field(const std::string& key)
     {
         // Remove the field from the JSON data
-        data.erase(key);
+        Data.erase(key);
 
         // Remove the field from the fields vector
-        auto iter = std::find(fields.begin(), fields.end(), key);
-        if (iter != fields.end()) {
-            fields.erase(iter);
+        auto iter = std::find(outside_Fields.begin(), outside_Fields.end(), key);
+        if (iter != outside_Fields.end()) {
+            outside_Fields.erase(iter);
         }
-        size--;
+        Size--;
     }
 
     void update_field(const std::string& key, const json& new_value)
     {
-    if (data.find(key) != data.end()) {
-        data[key] = new_value;
+    if (Data.find(key) != Data.end()) {
+        Data[key] = new_value;
     } else {
         throw std::invalid_argument("Key not found in the document.");
     }
@@ -65,13 +81,13 @@ class Document
 
     bool has_field(const std::string& key) const
     {
-        return data.find(key) != data.end();
+        return Data.find(key) != Data.end();
     }
 
     json get_field_value(const std::string& key) const
     {
-        auto it = data.find(key);
-        if (it != data.end()) {
+        auto it = Data.find(key);
+        if (it != Data.end()) {
             return it.value();
         } else {
             throw std::invalid_argument("Key not found in the document.");
@@ -80,23 +96,24 @@ class Document
 
     json getData() const
     {   
-        return data;
+        return Data;
     }
 
     std::vector<std::string> getFields() const
     {
-        return fields;
+        return outside_Fields;
     }
 
     int getSize() const
     {
-        return size;
+        return Size;
     }
     
     void clear()
     {
-        data.clear();
-        fields.clear();
-        size = 0;
+        Data.clear();
+        outside_Fields.clear();
+        Size = 0;
     }
 };
+
