@@ -6,7 +6,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {
+    extend: { 
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
       },
@@ -14,6 +14,15 @@ module.exports = {
         figma: {
           purple: "#B4A6FF",
           lightpurple: "#CFC1FA",
+          black: {
+            grey300: "#F1F1F1",
+            grey400: "#D3D3D4",
+            grey500: "#B6B6B7",
+            grey600: "#919193",
+            grey700: "#6C6C6E",
+            grey800: "#48484A",
+            grey900: "#232326",
+          },
         }
       }
     },
