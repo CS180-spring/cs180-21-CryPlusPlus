@@ -8,8 +8,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
+        inter: ['Inter', 'sans-serif'],
       },
       colors: {
+        figma: {
+          purple: "#B4A6FF",
+          lightpurple: "#CFC1FA",
+        }
       }
     },
   },
