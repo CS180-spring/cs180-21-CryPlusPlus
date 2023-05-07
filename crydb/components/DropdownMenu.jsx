@@ -14,7 +14,7 @@ const DropdownMenu = ({ options }) => {
   }
 
   return (
-    <div className="font-inter font-light flex flex-col w-64 m-8 text-black">
+    <div className="font-inter font-light flex flex-col w-64 text-black">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         className="flex w-full gap-2 justify-between bg-white py-1.5 px-4 items-center border-2 rounded drop-shadow-md"
