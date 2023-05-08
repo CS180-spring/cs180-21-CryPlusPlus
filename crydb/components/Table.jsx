@@ -15,12 +15,12 @@ const Table = ({ columns, data }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({columns, data});
 
   return (
-    <table {...getTableProps()}>
+    <table className='w-full' {...getTableProps()}>
       <thead>
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()} className='font-inter px-4 py-3.5'>{column.render("Header")}</th>
+              <th {...column.getHeaderProps()} className='font-inter px-4 py-3.5 border-b-2 border'>{column.render("Header")}</th>
             ))}
           </tr>
         ))}
@@ -31,7 +31,7 @@ const Table = ({ columns, data }) => {
           return (
             <tr {...row.getRowProps()} className='hover:bg-figma-lightpink'>
               {row.cells.map(cell => (
-                <td {...cell.getCellProps()} className='font-inter px-4 py-3.5'>{cell.render("Cell")}</td>
+                <td {...cell.getCellProps()} className='font-inter px-4 py-3.5 border'>{cell.render("Cell")}</td>
               ))}
             </tr>
           );
