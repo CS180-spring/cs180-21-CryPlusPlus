@@ -1,16 +1,16 @@
-import React from 'react'
 import DropdownMenu from '@components/DropdownMenu';
 import TextInput from '@components/TextInput';
 
 const Query = ({ columns }) => {
   return (
-    <div className="flex flex-col gap-2 text-sm font-inter">
-        <strong>Field</strong>
+    <div className="flex flex-col gap-2 text-sm font-inter font-bold">
+        Field
         <DropdownMenu options={columns.map(obj => obj.Header)} />
-        <strong>Condition</strong>
+        Condition
         <DropdownMenu options={['Greater Than', `Less Than`, `Equal To`]} />
-        <strong>Value</strong>
+        Value
         <TextInput placeholder="Enter value"/>
+        <hr className='border-b border-figma-black-grey500 my-4' />
     </div>
   )
 }
