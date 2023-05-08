@@ -93,6 +93,7 @@ class Document
             throw std::invalid_argument("Key not found in the document.");
         }
     }
+    
     //would it be possible to return a search like this
     //return item.contains("key") && item["key"] == "Whatever searched";    
     //would we store that into a string or array and in the end output that string/array?
