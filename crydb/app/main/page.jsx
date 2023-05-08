@@ -75,8 +75,16 @@ const cols = [
 
 const Main = () => {
   const [queries, setQueries] = useState([]);
-  const handleQueries = () => {
-    setQueries([...queries, []])
+  const addQuery = () => {
+    const prevQueries = [...queries, <Query columns={cols} />];
+    setQueries(prevQueries);
+    console.log(prevQueries);
+  }
+  const deleteQuery = (i) => {
+    console.log(`Deleting ${i}`);
+    const prevQueries = [...queries];
+    prevQueries.splice(i, 1);
+    setQueries(prevQueries);
   }
   return (
     <div>
@@ -91,12 +99,15 @@ const Main = () => {
           </div>
           {queries.map((data, i) => {
             return (
-              <Query columns={cols} />
+              <div className='flex flex-row items-center'>
+                <button key={i} className='py-2 px-4 m-2 font-inter font-light border-2 hover:bg-figma-black-grey400' onClick={() => deleteQuery(i)}>x</button>
+                {data}
+              </div>
             )
           })}
           <div className='flex flex-row'>
-            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full' onClick={handleQueries}>
-                Add New
+            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full' onClick={() => addQuery()}>
+                Add New Query
             </button>
             <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full'>
                 Query!
