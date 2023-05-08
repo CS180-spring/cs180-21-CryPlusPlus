@@ -15,32 +15,25 @@ const data = [
     major: "Computer Science",
   },
   {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
+    firstName: "Bowen",
+    lastName: "Tang",
+    major: "Computer Science",
+  },
+  {
+    firstName: "Ethan",
+    lastName: "Ortega",
     year: 3,
     major: "Computer Science",
   },
   {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
+    firstName: "Zinal",
+    lastName: "Patel",
+    major: "Bioengineering",
   },
   {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
+    firstName: "Eddie",
+    lastName: "Vargas",
+    major: "Psychology",
   },
   {
     firstName: "Daniel",
@@ -90,7 +83,7 @@ const Main = () => {
     <div>
       <div className='bg-figma-purple w-full h-40' />
       <div className='flex flex-row'>
-        <div className='flex flex-col p-8 gap-4 w-full'>
+        <div className='flex flex-col p-8 gap-4 w-80'>
           <Menu />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
@@ -114,7 +107,7 @@ const Main = () => {
             </button>
           </div>
         </div>
-        <div className='flex flex-col items-center p-8 w-full'>
+        <div className='flex flex-col items-center p-8'>
           <Table columns={cols} data={data} />
         </div>
       </div>

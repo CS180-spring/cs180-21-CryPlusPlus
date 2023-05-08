@@ -3,7 +3,7 @@ import TextInput from '@components/TextInput';
 
 const Query = ({ columns }) => {
   return (
-    <div className="flex flex-col gap-2 text-sm font-inter font-bold">
+    <div className="flex flex-col gap-2 text-sm font-inter font-bold w-full">
         Field
         <DropdownMenu options={columns.map(obj => obj.Header)} />
         Condition
