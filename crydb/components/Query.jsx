@@ -10,7 +10,7 @@ const Query = ({ columns }) => {
         <DropdownMenu options={['Greater Than', `Less Than`, `Equal To`]} />
         Value
         <TextInput placeholder="Enter value"/>
-        <hr className='border-b border-figma-black-grey500 my-4' />
+        <hr className='border-b border-figma-black-grey500 my-2' />
     </div>
   )
 }
