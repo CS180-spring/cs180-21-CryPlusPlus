@@ -42,6 +42,62 @@ const data = [
     year: 3,
     major: "Computer Science",
   },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
+  {
+    firstName: "Daniel",
+    lastName: "Castaneda",
+    age: 20,
+    year: 3,
+    major: "Computer Science",
+  },
 ];
 const cols = [
   {
@@ -82,9 +138,10 @@ const Main = () => {
   return (
     <div>
       <div className='bg-figma-purple w-full h-40' />
-      <div className='flex flex-row'>
-        <div className='flex flex-col p-8 gap-4 w-80'>
+      <div className='flex flex-row h-screen'>
+        <div className='flex flex-col p-8 gap-4 w-96 h-full'>
           <Menu />
+          <hr className='border-b border-black' />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
           <div className='font-bold text-xl'>
@@ -98,7 +155,7 @@ const Main = () => {
               </div>
             )
           })}
-          <div className='flex flex-row'>
+          <div className='flex flex-row pb-20'>
             <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full' onClick={() => addQuery()}>
                 Add New Query
             </button>
@@ -107,7 +164,7 @@ const Main = () => {
             </button>
           </div>
         </div>
-        <div className='flex flex-col items-center p-8'>
+        <div className='flex-1 w-full justify-center p-8'>
           <Table columns={cols} data={data} />
         </div>
       </div>
