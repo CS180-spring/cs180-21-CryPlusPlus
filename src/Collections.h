@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "../lib/btree/btree.h"
 #include "../lib/btree/map.h"
@@ -79,6 +80,11 @@ public:
     //
     void clear() {
         btree_map_.clear();
+    }
+
+    BTreeMap getMap()
+    {
+        return btree_map_;
     }
 
     // Add more operations as needed
