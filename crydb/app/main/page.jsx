@@ -1,10 +1,12 @@
+"use client";
+
 import Table from '@components/Table'
 import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
-import DropdownMenu from '@components/DropdownMenu';
-import TextInput from '@components/TextInput';
+import Query from '@components/Query';
+import { useState } from 'react';
 
-const students = [
+const data = [
   {
     firstName: "Daniel",
     lastName: "Castaneda",
@@ -48,8 +50,7 @@ const students = [
     major: "Computer Science",
   },
 ];
-
-const studentCols = [
+const cols = [
   {
     Header: "firstName",
     accessor: "firstName",
@@ -72,30 +73,38 @@ const studentCols = [
   },
 ]
 
-
 const Main = () => {
+  const [queries, setQueries] = useState([]);
+  const handleQueries = () => {
+    setQueries([...queries, []])
+  }
   return (
     <div>
       <div className='bg-figma-purple w-full h-40' />
       <div className='flex flex-row'>
-        <div className='flex flex-col p-8 gap-4 w-64'>
+        <div className='flex flex-col p-8 gap-4 w-full'>
           <Menu />
-          <SortBy fields={studentCols.map(obj => obj.Header)} />
+          <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
           <div className='font-bold text-xl'>
             Queries
           </div>
-          <div className="flex flex-col gap-2 text-sm font-inter">
-            <strong>Field</strong>
-            <DropdownMenu options={studentCols.map(obj => obj.Header)} />
-            <strong>Condition</strong>
-            <DropdownMenu options={['Greater Than', `Less Than`, `Equal To`]} />
-            <strong>Value</strong>
-            <TextInput placeholder="Enter value"/>
+          {queries.map((data, i) => {
+            return (
+              <Query columns={cols} />
+            )
+          })}
+          <div className='flex flex-row'>
+            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full' onClick={handleQueries}>
+                Add New
+            </button>
+            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full'>
+                Query!
+            </button>
           </div>
         </div>
-        <div className='flex flex-col p-8'>
-          <Table columns={studentCols} data={students} />
+        <div className='flex flex-col items-center p-8 w-full'>
+          <Table columns={cols} data={data} />
         </div>
       </div>
     </div>
