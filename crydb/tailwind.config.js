@@ -14,6 +14,7 @@ module.exports = {
         figma: {
           purple: "#B4A6FF",
           lightpurple: "#CFC1FA",
+          lightpink: "#F3F1FB",
           black: {
             grey300: "#F1F1F1",
             grey400: "#D3D3D4",
