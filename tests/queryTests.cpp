@@ -3,6 +3,7 @@
 #include "../src/Document.h"
 #include "../src/Query.h"
 
+
 class QueryTest : public ::testing::Test {
 protected:
     using CollectionsType = Collections<std::string, Document>;
@@ -32,31 +33,31 @@ TEST_F(QueryTest, SingleCondition) {
 
 TEST_F(QueryTest, ChainedConditions) {
     Query<std::string, Document> query(collections_);
-    query.where({"age", GREATER_THAN, 25}).where({"location", EQUAL, "New York"});
-
-    auto results = query.getDocuments();
+    auto results = query.where({"age", GREATER_THAN, 27}).where({"location", EQUAL, "New York"}).getDocuments();
+;
     ASSERT_EQ(results.size(), 1);
     EXPECT_EQ(results[0].get_field_value("name"), "John");
 }
 
 TEST_F(QueryTest, GetKeys) {
     Query<std::string, Document> query(collections_);
-    query.where({"age", GREATER_THAN, 25}).where({"location", EQUAL, "New York"});
+    auto keys = query.where({"age", GREATER_THAN_OR_EQUAL, 27}).where({"location", EQUAL, "New York"}).getKeys();
 
-    auto keys = query.getKeys();
-    ASSERT_EQ(keys.size(), 1);
+    ASSERT_EQ(keys.size(), 2);
     EXPECT_EQ(keys[0], "doc1");
+    EXPECT_EQ(keys[1], "doc3");
+
 }
 
 TEST_F(QueryTest, ClearConditions) {
     Query<std::string, Document> query(collections_);
-    query.where({"age", GREATER_THAN, 25}).where({"location", EQUAL, "New York"});
+    auto results = query.where({"name", EQUAL, "Jane"}).getDocuments();
 
-    auto results = query.getDocuments();
+
     ASSERT_EQ(results.size(), 1);
 
-    query.clear();
+    query.clearDocuments();
 
     results = query.getDocuments();
-    ASSERT_EQ(results.size(), 3);
+    ASSERT_EQ(results.size(), 0);
 }

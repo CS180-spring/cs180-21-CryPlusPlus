@@ -16,7 +16,13 @@ int main() {
     // Get documents with age > 25 and location equals New York
     
 
-    auto result = query.where({"age", GREATER_THAN, 25 }).where({"address.city", EQUAL, "Los Angeles"}).getDocuments();
+    auto result = query.where({"age", GREATER_THAN, 25 }).getDocuments();
+
+    for (const auto &doc : result) {
+        std::cout << doc << std::endl;
+    }
+
+    result = query.where({"address.city", EQUAL, "Los Angeles"}).getDocuments();
 
     for (const auto &doc : result) {
         std::cout << doc << std::endl;

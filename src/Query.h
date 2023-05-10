@@ -39,8 +39,18 @@ public:
         return filterDocuments();
     }
 
-    void clear() {
+    void clearConditions() {
         conditions_.clear();
+    }
+
+    void clearDocuments()
+    {
+        collections_.clear();
+    }
+
+    std::vector<Condition> getConditions()
+    {
+        return conditions_;
     }
 
 private:
