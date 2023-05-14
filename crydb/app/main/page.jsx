@@ -5,6 +5,7 @@ import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
 import Query from '@components/Query';
 import { useState } from 'react';
+import DropdownMenu from '@components/DropdownMenu';
 
 const data = [
   {
@@ -120,7 +121,8 @@ const cols = [
     Header: "major",
     accessor: "major",
   },
-]
+];
+const collections = ["Recipes", "Employees", "Movies"];
 
 const Main = () => {
   const [queries, setQueries] = useState([]);
@@ -165,6 +167,12 @@ const Main = () => {
           </div>
         </div>
         <div className='flex-1 w-full justify-center p-8'>
+          <div className='flex pb-10'>
+            <div className='font-bold text-2xl pr-16'>
+              Collection: 
+            </div>
+            <DropdownMenu options={collections}/>
+          </div>
           <Table columns={cols} data={data} />
         </div>
       </div>
