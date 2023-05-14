@@ -8,6 +8,7 @@ import DropdownMenu from '@components/DropdownMenu';
 import AddDocuments from '@components/AddDocuments';
 import Queries from '@components/Queries';
 import DisplayCollection from '@components/DisplayCollection';
+import CreateCollection from '@components/CreateCollection';
 
 const data = [
   {
@@ -128,6 +129,7 @@ const collections = ["Recipes", "Employees", "Movies"];
 
 const Main = () => {
   const [addDocument, setAddDocument] = useState(false);
+  const [createCollection, setCreateCollection] = useState(false);
   const [selectedCollection, setCollection] = useState('');
 
   return (
@@ -135,7 +137,7 @@ const Main = () => {
       <div className='bg-figma-purple w-full h-40' />
       <div className='flex flex-row h-screen'>
         <div className='flex flex-col p-8 gap-4 w-96 h-full'>
-          <Menu setAddDocument={setAddDocument}/>
+          <Menu setAddDocument={setAddDocument} setCreateCollection={setCreateCollection}/>
           <hr className='border-b border-black' />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
@@ -146,7 +148,8 @@ const Main = () => {
           <Table columns={cols} data={data} />
         </div>
       </div>
-      <AddDocuments setAddDocument={setAddDocument} visible={addDocument} name={selectedCollection} />
+      <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} />
+      <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} />
     </div>
   )
 }
