@@ -3,11 +3,10 @@
 import Table from '@components/Table'
 import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
-import Query from '@components/Query';
 import { useState } from 'react';
-import { useEffect } from 'react';
 import DropdownMenu from '@components/DropdownMenu';
 import AddDocuments from '@components/AddDocuments';
+import Queries from '@components/Queries';
 
 const data = [
   {
@@ -130,18 +129,7 @@ const Main = () => {
   const [addDocument, setAddDocument] = useState(false);
   const [selectedCollection, setCollection] = useState('');
 
-  const [queries, setQueries] = useState([]);
-  const addQuery = () => {
-    const prevQueries = [...queries, <Query columns={cols} />];
-    setQueries(prevQueries);
-    console.log(prevQueries);
-  }
-  const deleteQuery = (i) => {
-    console.log(`Deleting ${i}`);
-    const prevQueries = [...queries];
-    prevQueries.splice(i, 1);
-    setQueries(prevQueries);
-  }
+  
   
   return (
     <div>
@@ -152,25 +140,7 @@ const Main = () => {
           <hr className='border-b border-black' />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
-          <div className='font-bold text-xl'>
-            Queries
-          </div>
-          {queries.map((data, i) => {
-            return (
-              <div className='flex flex-row items-center'>
-                <button key={i} className='py-2 px-4 m-2 font-inter font-light border-2 hover:bg-figma-black-grey400' onClick={() => deleteQuery(i)}>x</button>
-                {data}
-              </div>
-            )
-          })}
-          <div className='flex flex-row pb-20'>
-            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full' onClick={() => addQuery()}>
-                Add New Query
-            </button>
-            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full'>
-                Query!
-            </button>
-          </div>
+          <Queries columns={cols} />
         </div>
         <div className='flex-1 w-full justify-center p-8'>
           <div className='flex pb-10'>
