@@ -17,13 +17,13 @@ const Menu = ({ setCreateCollection, setAddDocument }) => {
         <BsFillCollectionFill />
         Create Collection
       </button>
-      <button className='flex flex-row items-center gap-2 font-inter py-2 hover:bg-figma-black-grey300 w-full'>
-        <ImCross />
-        Delete Collection
-      </button>
       <button className='flex flex-row items-center gap-2 font-inter py-2 hover:bg-figma-black-grey300 w-full' onClick={() => setAddDocument(true)}>
         <AiFillFileText />
         Add Document(s)
+      </button>
+      <button className='flex flex-row items-center gap-2 font-inter py-2 hover:bg-figma-black-grey300 w-full'>
+        <ImCross />
+        Delete Collection
       </button>
       <button className='flex flex-row items-center gap-2 font-inter py-2 hover:bg-figma-black-grey300 w-full'>
         <MdDeleteForever />
