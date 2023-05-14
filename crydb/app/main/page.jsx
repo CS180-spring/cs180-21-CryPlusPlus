@@ -5,7 +5,9 @@ import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
 import Query from '@components/Query';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import DropdownMenu from '@components/DropdownMenu';
+import AddDocuments from '@components/AddDocuments';
 
 const data = [
   {
@@ -125,6 +127,9 @@ const cols = [
 const collections = ["Recipes", "Employees", "Movies"];
 
 const Main = () => {
+  const [addDocument, setAddDocument] = useState(false);
+  const [selectedCollection, setCollection] = useState('');
+
   const [queries, setQueries] = useState([]);
   const addQuery = () => {
     const prevQueries = [...queries, <Query columns={cols} />];
@@ -137,12 +142,13 @@ const Main = () => {
     prevQueries.splice(i, 1);
     setQueries(prevQueries);
   }
+  
   return (
     <div>
       <div className='bg-figma-purple w-full h-40' />
       <div className='flex flex-row h-screen'>
         <div className='flex flex-col p-8 gap-4 w-96 h-full'>
-          <Menu />
+          <Menu setAddDocument={setAddDocument}/>
           <hr className='border-b border-black' />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
@@ -171,11 +177,12 @@ const Main = () => {
             <div className='font-bold text-2xl pr-16'>
               Collection: 
             </div>
-            <DropdownMenu options={collections}/>
+            <DropdownMenu options={collections} onOptionSelect={(option) => setCollection(option)}/>
           </div>
           <Table columns={cols} data={data} />
         </div>
       </div>
+      <AddDocuments setAddDocument={setAddDocument} visible={addDocument} name={selectedCollection} />
     </div>
   )
 }
