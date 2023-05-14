@@ -4,12 +4,20 @@ import { useEffect } from 'react';
 
 const Home = () => {
   useEffect(() => {
+  fetch('/')
+  .then(res => res.text())
+  .then(text => text.replaceAll('\'','"'))
+  .then(JSON.parse)
+  .then(console.log)
+  .catch(console.error);
+/*
   fetch('/users')
   .then(res => res.text())
   .then(text => text.replaceAll('\'','"'))
   .then(JSON.parse)
   .then(console.log)
   .catch(console.error);
+*/
 }, []);
   return (
     <div>
