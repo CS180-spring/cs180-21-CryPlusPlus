@@ -3,9 +3,12 @@
 import Table from '@components/Table'
 import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
-import Query from '@components/Query';
 import { useState } from 'react';
 import DropdownMenu from '@components/DropdownMenu';
+import AddDocuments from '@components/AddDocuments';
+import Queries from '@components/Queries';
+import DisplayCollection from '@components/DisplayCollection';
+import CreateCollection from '@components/CreateCollection';
 
 const data = [
   {
@@ -125,57 +128,28 @@ const cols = [
 const collections = ["Recipes", "Employees", "Movies"];
 
 const Main = () => {
-  const [queries, setQueries] = useState([]);
-  const addQuery = () => {
-    const prevQueries = [...queries, <Query columns={cols} />];
-    setQueries(prevQueries);
-    console.log(prevQueries);
-  }
-  const deleteQuery = (i) => {
-    console.log(`Deleting ${i}`);
-    const prevQueries = [...queries];
-    prevQueries.splice(i, 1);
-    setQueries(prevQueries);
-  }
+  const [addDocument, setAddDocument] = useState(false);
+  const [createCollection, setCreateCollection] = useState(false);
+  const [selectedCollection, setCollection] = useState('');
+
   return (
     <div>
       <div className='bg-figma-purple w-full h-40' />
       <div className='flex flex-row h-screen'>
         <div className='flex flex-col p-8 gap-4 w-96 h-full'>
-          <Menu />
+          <Menu setAddDocument={setAddDocument} setCreateCollection={setCreateCollection}/>
           <hr className='border-b border-black' />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
-          <div className='font-bold text-xl'>
-            Queries
-          </div>
-          {queries.map((data, i) => {
-            return (
-              <div className='flex flex-row items-center'>
-                <button key={i} className='py-2 px-4 m-2 font-inter font-light border-2 hover:bg-figma-black-grey400' onClick={() => deleteQuery(i)}>x</button>
-                {data}
-              </div>
-            )
-          })}
-          <div className='flex flex-row pb-20'>
-            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full' onClick={() => addQuery()}>
-                Add New Query
-            </button>
-            <button className='flex justify-center items-center hover:bg-figma-black-grey400 font-inter font-light border-2 w-full'>
-                Query!
-            </button>
-          </div>
+          <Queries columns={cols} />
         </div>
         <div className='flex-1 w-full justify-center p-8'>
-          <div className='flex pb-10'>
-            <div className='font-bold text-2xl pr-16'>
-              Collection: 
-            </div>
-            <DropdownMenu options={collections}/>
-          </div>
+          <DisplayCollection collections={collections} setCollection={setCollection} />
           <Table columns={cols} data={data} />
         </div>
       </div>
+      <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} />
+      <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} />
     </div>
   )
 }
