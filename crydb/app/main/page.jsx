@@ -7,6 +7,7 @@ import { useState } from 'react';
 import DropdownMenu from '@components/DropdownMenu';
 import AddDocuments from '@components/AddDocuments';
 import Queries from '@components/Queries';
+import DisplayCollection from '@components/DisplayCollection';
 
 const data = [
   {
@@ -129,8 +130,6 @@ const Main = () => {
   const [addDocument, setAddDocument] = useState(false);
   const [selectedCollection, setCollection] = useState('');
 
-  
-  
   return (
     <div>
       <div className='bg-figma-purple w-full h-40' />
@@ -143,12 +142,7 @@ const Main = () => {
           <Queries columns={cols} />
         </div>
         <div className='flex-1 w-full justify-center p-8'>
-          <div className='flex pb-10'>
-            <div className='font-bold text-2xl pr-16'>
-              Collection: 
-            </div>
-            <DropdownMenu options={collections} onOptionSelect={(option) => setCollection(option)}/>
-          </div>
+          <DisplayCollection collections={collections} setCollection={setCollection} />
           <Table columns={cols} data={data} />
         </div>
       </div>
