@@ -2,15 +2,16 @@
 const nextConfig = {
 
 	async rewrites() {
-    return [
-      {
-        source: '/users',
-        destination: 'http://localhost:80/users' // Proxy to Backend
-      }
-    ]
-  }
-
-
+    return {
+      fallback: [
+        // These rewrites are checked after both pages/public files
+        // and dynamic routes are checked
+        {
+          source: '/:path*',
+          destination: `http://localhost:80/:path*`,
+        }
+      ]
+    }
+ }  	
 }
-
 module.exports = nextConfig

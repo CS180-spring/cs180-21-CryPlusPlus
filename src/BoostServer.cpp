@@ -145,22 +145,23 @@ private:
                 <<  "</body>\n"
                 <<  "</html>\n";
         } 
-	else if(request_.target() == "/")
+	else if(request_.target() == "/dog")
         {
 	    ReadCsvData myRead = ReadCsvData();
 	    std::string fillVal = "qqqqqq";
 	    bool ret = myRead.read("../src/test_valid.csv", false, fillVal);
 	    response_.set(http::field::content_type, "text/plain");
             beast::ostream(response_.body())
-                <<  "{'ReadCsvDataRet': "
-		<<  ret
-		<<  "}";
+		<< "{'users': []}";
+        //      <<  "{'ReadCsvDataRet': "
+	//	<<  ret
+	//	<<  "}";
         }
 	else if(request_.target() == "/users")
         {
             response_.set(http::field::content_type, "text/plain");
             beast::ostream(response_.body())
-                << "{'users': []}";
+                << "{'users': [1]}";
         }
 
         else
