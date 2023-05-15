@@ -2,12 +2,13 @@ import React from 'react'
 import TextInput from './TextInput'
 import { useState } from 'react';
 
-const CreateCollection = ({ visible, setCreateCollection }) => {
+const CreateCollection = ({ visible, setCreateCollection, userCollections, setUserCollections }) => {
   if (!visible) return null;
 
   const [value, setValue] = useState('');
 
   const handleUpload = () => {
+    setUserCollections([...userCollections, value]);    
     console.log(`creating collection: ${value}`);
     setCreateCollection(false);
   }

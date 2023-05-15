@@ -131,6 +131,7 @@ const Main = () => {
   const [addDocument, setAddDocument] = useState(false);
   const [createCollection, setCreateCollection] = useState(false);
   const [selectedCollection, setCollection] = useState('');
+  const [userCollections, setUserCollections] = useState([]);
 
   return (
     <div>
@@ -144,12 +145,12 @@ const Main = () => {
           <Queries columns={cols} />
         </div>
         <div className='flex-1 w-full justify-center p-8'>
-          <DisplayCollection collections={collections} setCollection={setCollection} />
+          <DisplayCollection collections={userCollections} setCollection={setCollection} />
           <Table columns={cols} data={data} />
         </div>
       </div>
       <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} />
-      <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} />
+      <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} setUserCollections={setUserCollections} userCollections={userCollections} />
     </div>
   )
 }
