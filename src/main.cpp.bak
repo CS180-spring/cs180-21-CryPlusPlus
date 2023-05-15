@@ -4,6 +4,7 @@
 #include "../src/Collections.h"
 #include "../src/Document.h"
 #include "../src/Document.cpp"
+#include "../src/Query.h"
 using namespace std;
 
 
