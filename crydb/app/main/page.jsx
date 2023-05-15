@@ -132,6 +132,7 @@ const Main = () => {
   const [createCollection, setCreateCollection] = useState(false);
   const [selectedCollection, setCollection] = useState('');
   const [userCollections, setUserCollections] = useState([]);
+  const [userDocuments, setUserDocuments] = useState([]);
 
   return (
     <div>
@@ -149,8 +150,8 @@ const Main = () => {
           <Table columns={cols} data={data} />
         </div>
       </div>
-      <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} />
-      <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} setUserCollections={setUserCollections} userCollections={userCollections} />
+      <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} userDocuments={userDocuments} setUserDocuments={setUserDocuments} />
+      <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} userCollections={userCollections} setUserCollections={setUserCollections} />
     </div>
   )
 }

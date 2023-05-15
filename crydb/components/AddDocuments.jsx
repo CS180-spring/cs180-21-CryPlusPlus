@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const AddDocuments = ({ name, visible, setAddDocument }) => {
+const AddDocuments = ({ name, visible, setAddDocument, userDocuments, setUserDocuments }) => {
     const [files, setFile] = useState();
 
     const handleChange = (event) => {
@@ -10,8 +10,10 @@ const AddDocuments = ({ name, visible, setAddDocument }) => {
 
     const handleUpload = (event) => {
         const formData = new FormData();
+        let newDocuments = [];
         for (let i = 0; i < files.length; i++) {
-            formData.append(`files`, files[i])
+            formData.append(`files`, files[i]);
+            newDocuments = [...newDocuments, files[i].name];
         }
         console.log(formData);
         fetch('http://localhost:3000/main', {
@@ -20,6 +22,7 @@ const AddDocuments = ({ name, visible, setAddDocument }) => {
         })
         .then(response => console.log(response))
         .catch(err => console.log(err));
+        setUserDocuments([...userDocuments, newDocuments]); 
         setAddDocument(false)
     }
     if (!visible) return null;
