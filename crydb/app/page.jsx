@@ -1,6 +1,9 @@
+'use client';
 import Link from 'next/link'
+import { useEffect } from 'react';
 
 const Home = () => {
+
   return (
     <div>
       <div className='bg-figma-purple w-full h-40 mb-44' />
