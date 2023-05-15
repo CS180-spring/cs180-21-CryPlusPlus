@@ -9,6 +9,7 @@ import AddDocuments from '@components/AddDocuments';
 import Queries from '@components/Queries';
 import DisplayCollection from '@components/DisplayCollection';
 import CreateCollection from '@components/CreateCollection';
+import DeleteCollection from '@components/DeleteCollection';
 
 const data = [
   {
@@ -130,6 +131,8 @@ const collections = ["Recipes", "Employees", "Movies"];
 const Main = () => {
   const [addDocument, setAddDocument] = useState(false);
   const [createCollection, setCreateCollection] = useState(false);
+  const [deleteCollection, setDeleteCollection] = useState(false);
+  const [deleteDocument, setDeleteDocument] = useState(false);
   const [selectedCollection, setCollection] = useState('');
   const [userCollections, setUserCollections] = useState([]);
   const [userDocuments, setUserDocuments] = useState([]);
@@ -139,7 +142,7 @@ const Main = () => {
       <div className='bg-figma-purple w-full h-40' />
       <div className='flex flex-row h-screen'>
         <div className='flex flex-col p-8 gap-4 w-96 h-full'>
-          <Menu setAddDocument={setAddDocument} setCreateCollection={setCreateCollection}/>
+          <Menu setAddDocument={setAddDocument} setCreateCollection={setCreateCollection} setDeleteCollection={setDeleteCollection} />
           <hr className='border-b border-black' />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
@@ -152,6 +155,8 @@ const Main = () => {
       </div>
       <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} userDocuments={userDocuments} setUserDocuments={setUserDocuments} />
       <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} userCollections={userCollections} setUserCollections={setUserCollections} />
+      <DeleteCollection visible={deleteCollection} setDeleteCollection={setDeleteCollection} userCollections={userCollections
+      } setUserCollections={setUserCollections} />
     </div>
   )
 }
