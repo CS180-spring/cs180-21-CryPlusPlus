@@ -1,3 +1,4 @@
 build/
 crydb/node_modules
 src/docs
+src/main
