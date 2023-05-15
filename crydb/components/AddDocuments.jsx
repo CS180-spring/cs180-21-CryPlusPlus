@@ -22,7 +22,7 @@ const AddDocuments = ({ name, visible, setAddDocument, userDocuments, setUserDoc
         })
         .then(response => console.log(response))
         .catch(err => console.log(err));
-        setUserDocuments([...userDocuments, newDocuments]); 
+        setUserDocuments([...userDocuments, ...newDocuments]); 
         setAddDocument(false)
     }
     if (!visible) return null;

@@ -25,7 +25,7 @@ const Menu = ({ setCreateCollection, setAddDocument, setDeleteDocument, setDelet
         <ImCross />
         Delete Collection
       </button>
-      <button className='flex flex-row items-center gap-2 font-inter py-2 hover:bg-figma-black-grey300 w-full'>
+      <button className='flex flex-row items-center gap-2 font-inter py-2 hover:bg-figma-black-grey300 w-full' onClick={() => setDeleteDocument(true)}>
         <MdDeleteForever />
         Delete Document
       </button>
