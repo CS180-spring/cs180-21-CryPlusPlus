@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
 
 	async rewrites() {
@@ -12,6 +13,19 @@ const nextConfig = {
         }
       ]
     }
- }  	
+ }
 }
 module.exports = nextConfig
+
+/*
+module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/connect',
+        destination: 'http://localhost:80/connect',
+      },
+    ];
+  },
+};
+*/

@@ -98,6 +98,13 @@ private:
             create_response();
             break;
 
+	case http::verb::post:
+            response_.result(http::status::ok);
+            response_.set(http::field::server, "Beast");
+            process_post_request();
+	    create_response();
+            break;
+
         default:
             // We return responses indicating an error if
             // we do not recognize the request method.
@@ -112,6 +119,20 @@ private:
 
         write_response();
     }
+
+    void
+    process_post_request()
+    {  
+        // Retrieve the content of the POST request
+        std::string post_content = beast::buffers_to_string(request_.body().data());
+
+        // Process the post_content and generate a response
+        std::string response_content = "Processed POST data: " + post_content;
+
+        // Set the response content and content type
+        response_.set(http::field::content_type, "text/plain");
+    	beast::ostream(response_.body()) << response_content;
+    }  
 
     // Construct a response message based on the program state.
     void
@@ -157,13 +178,32 @@ private:
 	//	<<  ret
 	//	<<  "}";
         }
-	else if(request_.target() == "/users")
+	else if(request_.target() == "/collect")
         {
             response_.set(http::field::content_type, "text/plain");
             beast::ostream(response_.body())
                 << "{'users': [1]}";
         }
-
+        else if(request_.target() == "/connect")
+	{
+	    // Handle "/connect" endpoint
+            response_.set(http::field::content_type, "text/plain");
+            response_.set(http::field::access_control_allow_origin, "*");
+            response_.set(http::field::access_control_allow_headers, "Origin, X-Requested-With, Content-Type, Accept");
+            response_.set(http::field::access_control_allow_methods, "POST");
+            beast::ostream(response_.body()) << "connected";
+	    
+	    // Enable CORS preflight by sending 204 No Content response for OPTIONS requests
+            if (request_.method() == http::verb::options)
+            {
+                response_.result(http::status::no_content);
+                response_.set(http::field::content_length, "0");
+            }
+            else
+            {
+                beast::ostream(response_.body()) << " 204";
+            }
+	}
         else
         {
             response_.result(http::status::not_found);
