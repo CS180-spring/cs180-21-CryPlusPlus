@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 const AddDocuments = ({ name, visible, setAddDocument, userDocuments, setUserDocuments }) => {
     const [files, setFile] = useState();
@@ -10,21 +11,34 @@ const AddDocuments = ({ name, visible, setAddDocument, userDocuments, setUserDoc
 
     const handleUpload = (event) => {
         const formData = new FormData();
-        let newDocuments = [];
+        //const files = event.target.files
+	console.log(files)
+	let newDocuments = [];
         for (let i = 0; i < files.length; i++) {
             formData.append(`files`, files[i]);
             newDocuments = [...newDocuments, files[i].name];
         }
         console.log(formData);
-        fetch('http://localhost:3000/main', {
+        fetch('http://localhost:80/connect', {
             method: 'POST',
             body: formData
         })
-        .then(response => console.log(response))
+	.then(response => {
+        if (response.ok) {
+            return response.text(); // Read the response as text
+        } else {
+            throw new Error('Error uploading documents');
+            }
+        })
+        .then(text => {
+        console.log(text); // Display the response text in the console
+        })
+        //.then(response => console.log(response))
         .catch(err => console.log(err));
         setUserDocuments([...userDocuments, ...newDocuments]); 
         setAddDocument(false)
     }
+    
     if (!visible) return null;
 
     return (

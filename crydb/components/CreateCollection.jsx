@@ -7,10 +7,18 @@ const CreateCollection = ({ visible, setCreateCollection, userCollections, setUs
 
   const [value, setValue] = useState('');
 
-  const handleUpload = () => {
+  const handleUpload = async() => {
     setUserCollections([...userCollections, value]);    
     console.log(`creating collection: ${value}`);
     setCreateCollection(false);
+  
+  try {
+      const response = await fetch('/collect');
+      const data = await response.text();
+      console.log('Response from localhost:', data);
+    } catch (error) {
+      console.error('Error fetching from localhost:', error);
+    }
   }
 
   return (
