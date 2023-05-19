@@ -14,6 +14,18 @@ public:
     // Destructor.
     ~Database() = default;
 
+
+    static Database& getInstance() {
+        static Database instance; // Guaranteed to be destroyed.
+                                  // Instantiated on first use.
+        return instance;
+    }
+
+    Database(Database const&) = delete;
+    void operator=(Database const&) = delete;
+
+
+
     // Create a new collection.
     void createCollection(const std::string& name) {
         if (collections_.count(name) > 0) {

@@ -11,11 +11,16 @@
 #include "ReadJsonData.h"
 #include "Database.h"
 #include "Document.cpp"
+#include "../lib/json.hpp"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
+
+
+
+
 
 namespace my_program_state
 {
@@ -39,6 +44,9 @@ public:
     http_connection(tcp::socket socket)
         : socket_(std::move(socket))
     {
+        // Access the Database singleton instance
+        Database& db = Database::getInstance();
+        // Now you can perform operations on the db
     }
 
     // Initiate the asynchronous operations associated with the connection.
@@ -128,12 +136,18 @@ private:
         // Retrieve the content of the POST request
         std::string post_content = beast::buffers_to_string(request_.body().data());
 
-        // Process the post_content and generate a response
-        std::string response_content = "Processed POST data: " + post_content;
+        // Parse the request body as JSON
+        auto json = nlohmann::json::parse(post_content);
 
-        // Set the response content and content type
-        response_.set(http::field::content_type, "text/plain");
-    	beast::ostream(response_.body()) << response_content;
+        // Check if the request is for "/createCollection" and the body contains "name"
+        if(request_.target() == "/createCollection" && json.contains("name"))
+        {
+            Database& db = Database::getInstance();
+            db.createCollection(json["name"].get<std::string>());
+
+            // Print a confirmation message to the console
+            std::cout << "Created collection: " << json["name"].get<std::string>() << std::endl;
+        }
     }  
 
     // Construct a response message based on the program state.
@@ -168,13 +182,10 @@ private:
                 <<  "</body>\n"
                 <<  "</html>\n";
         } 
-	else if(request_.target() == "/dog")
+	else if(request_.target() == "/createCollection")
         {
-            Document test(new ReadJsonData, "../tests/test_data/test_valid.json");
-            response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body())
-            << test.getData();
-
+            Database& db = Database::getInstance();
+            db.createCollection("users");
         }
 	else if(request_.target() == "/collect")
         {

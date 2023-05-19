@@ -12,14 +12,25 @@ const CreateCollection = ({ visible, setCreateCollection, userCollections, setUs
     console.log(`creating collection: ${value}`);
     setCreateCollection(false);
   
-  try {
-      const response = await fetch('/collect');
+    try {
+      // Send POST request to create the collection
+      const response = await fetch('/createCollection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({name: value}),
+      });
+  
+      // Log the response from the server
       const data = await response.text();
       console.log('Response from localhost:', data);
+  
     } catch (error) {
       console.error('Error fetching from localhost:', error);
     }
   }
+  
 
   return (
     <div id='container' className='flex justify-center items-center fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm' onClick={(e) => e.target.id === 'container' ? setCreateCollection(false) : null}>
