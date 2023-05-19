@@ -8,7 +8,9 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include "ReadCsvData.h"
+#include "ReadJsonData.h"
+#include "Database.h"
+#include "Document.cpp"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -168,15 +170,11 @@ private:
         } 
 	else if(request_.target() == "/dog")
         {
-	    ReadCsvData myRead = ReadCsvData();
-	    std::string fillVal = "qqqqqq";
-	    bool ret = myRead.read("../src/test_valid.csv", false, fillVal);
-	    response_.set(http::field::content_type, "text/plain");
+            Document test(new ReadJsonData, "../tests/test_data/test_valid.json");
+            response_.set(http::field::content_type, "text/plain");
             beast::ostream(response_.body())
-		<< "{'users': []}";
-        //      <<  "{'ReadCsvDataRet': "
-	//	<<  ret
-	//	<<  "}";
+            << test.getData();
+
         }
 	else if(request_.target() == "/collect")
         {
