@@ -21,18 +21,18 @@ public:
         try {
             for (const auto &entry : std::filesystem::directory_iterator(folder_path)) {
                 std::cout << entry.path() << std::endl;
-                std::string uuid = UUID::generate_uuid();
+
+                // Extract filename without extension as key
+                std::string filename = entry.path().stem().string();
+                
                 ValueType doc = ValueType(reader, entry.path().string()); // Create a Document object from the JSON data
-                insert(uuid, doc);
+                insert(filename, doc);
             }
         } catch (std::filesystem::filesystem_error &e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }
     }
 
-    
-
-     
     void insert(const KeyType& key, const ValueType& value) {
         btree_map_.insert(std::make_pair(key, value));
     }
