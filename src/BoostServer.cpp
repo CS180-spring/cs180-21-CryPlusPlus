@@ -44,13 +44,17 @@ namespace my_program_state
 class http_connection : public std::enable_shared_from_this<http_connection>
 {
 public:
+    string current_collection;
+
     http_connection(tcp::socket socket)
         : socket_(std::move(socket))
     {
         // Access the Database singleton instance
         Database& db = Database::getInstance();
         // Now you can perform operations on the db
+        current_collection = "";
     }
+    
 
     // Initiate the asynchronous operations associated with the connection.
     void
@@ -165,6 +169,9 @@ private:
             // You can use it as a regular nlohmann::json object
             cout << fileJson.dump(4) << endl;
             // ... and so on for the rest of the fields
+
+
+            
         }
         else if(request_.target() == "/createCollection")
         {
@@ -180,7 +187,14 @@ private:
 
             // Print a confirmation message to the console
             std::cout << "Created collection: " << json["name"].get<std::string>() << std::endl;
-            }
+        }
+        else if(request_.target() == "/changeCollection")
+        {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            current_collection = json["selectedCollection"].get<std::string>();
+            cout << current_collection << endl;
+        }
     }  
 
 
@@ -216,11 +230,9 @@ private:
                 <<  "</body>\n"
                 <<  "</html>\n";
         } 
-	else if(request_.target() == "/collect")
+	else if(request_.target() == "/currentCollection")
         {
-            response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body())
-                << "{'users': [1]}";
+            
         }
         else if(request_.target() == "/connect")
 	{
