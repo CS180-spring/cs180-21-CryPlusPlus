@@ -9,35 +9,46 @@ const AddDocuments = ({ name, visible, setAddDocument, userDocuments, setUserDoc
         setFile(event.target.files);
     }
 
-    const handleUpload = (event) => {
-        const formData = new FormData();
-        //const files = event.target.files
-	console.log(files)
-	let newDocuments = [];
-        for (let i = 0; i < files.length; i++) {
-            formData.append(`files`, files[i]);
-            newDocuments = [...newDocuments, files[i].name];
-        }
-        console.log(formData);
-        fetch('http://localhost:80/connect', {
-            method: 'POST',
-            body: formData
-        })
-	.then(response => {
-        if (response.ok) {
-            return response.text(); // Read the response as text
-        } else {
-            throw new Error('Error uploading documents');
+    const handleUpload = async() => {
+        if (!files || files.length === 0) return;
+        
+        // Convert the first file to a base64 string
+        const file = files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = async () => {
+            const base64 = reader.result;
+            
+            // Create a JSON object
+            const json = {
+                filename: file.name,
+                data: base64
+            };
+            
+            // Convert the JSON object to a string
+            const jsonString = JSON.stringify(json);
+            console.log(jsonString);
+            
+            // Send the JSON string to the backend
+            try {
+                const response = await fetch('/uploadFile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonString
+                });
+                
+                // Log the response from the server
+                const data = await response.text();
+                console.log('Response from localhost:', data);
+            } catch (error) {
+                console.error('Error fetching from localhost:', error);
             }
-        })
-        .then(text => {
-        console.log(text); // Display the response text in the console
-        })
-        //.then(response => console.log(response))
-        .catch(err => console.log(err));
-        setUserDocuments([...userDocuments, ...newDocuments]); 
-        setAddDocument(false)
+        }
     }
+    
+      
     
     if (!visible) return null;
 

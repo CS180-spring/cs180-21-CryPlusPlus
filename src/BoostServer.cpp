@@ -1,11 +1,14 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
 #include <boost/asio.hpp>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <string>
 #include "ReadJsonData.h"
@@ -17,7 +20,7 @@ namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
-
+using namespace std;
 
 
 
@@ -132,23 +135,54 @@ private:
 
     void
     process_post_request()
-    {  
-        // Retrieve the content of the POST request
-        std::string post_content = beast::buffers_to_string(request_.body().data());
-
-        // Parse the request body as JSON
-        auto json = nlohmann::json::parse(post_content);
-
-        // Check if the request is for "/createCollection" and the body contains "name"
-        if(request_.target() == "/createCollection" && json.contains("name"))
+    {
+        if(request_.target() == "/uploadFile")
         {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+
+            // Parse the request body as JSON
+            auto json = nlohmann::json::parse(post_content);
+
+            // Extract the filename and data from the JSON object
+            std::string filename = json["filename"];
+            std::string base64Data = json["data"];
+
+            // The base64 string has a prefix that we need to remove
+            std::string prefix = "data:application/json;base64,";
+            if (base64Data.substr(0, prefix.size()) == prefix) {
+                base64Data = base64Data.substr(prefix.size());
+            }
+
+            // Decode the base64 string into binary data
+            using namespace boost::archive::iterators;
+            typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
+            std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
+
+            // Parse the decoded data into a JSON object
+            auto fileJson = nlohmann::json::parse(fileData);
+
+            // Now `fileJson` contains the JSON data from the uploaded file
+            // You can use it as a regular nlohmann::json object
+            cout << fileJson.dump(4) << endl;
+            // ... and so on for the rest of the fields
+        }
+        else if(request_.target() == "/createCollection")
+        {
+            // Retrieve the content of the POST request
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+
+            // Parse the request body as JSON
+            auto json = nlohmann::json::parse(post_content);
+
+
             Database& db = Database::getInstance();
             db.createCollection(json["name"].get<std::string>());
 
             // Print a confirmation message to the console
             std::cout << "Created collection: " << json["name"].get<std::string>() << std::endl;
-        }
+            }
     }  
+
 
     // Construct a response message based on the program state.
     void
@@ -182,11 +216,6 @@ private:
                 <<  "</body>\n"
                 <<  "</html>\n";
         } 
-	else if(request_.target() == "/createCollection")
-        {
-            Database& db = Database::getInstance();
-            db.createCollection("users");
-        }
 	else if(request_.target() == "/collect")
         {
             response_.set(http::field::content_type, "text/plain");
