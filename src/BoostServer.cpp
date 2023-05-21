@@ -22,6 +22,31 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 using namespace std;
 
+class CurrentCollection {
+public:
+    static CurrentCollection& getInstance() {
+        static CurrentCollection instance; // Guaranteed to be destroyed. Instantiated on first use.
+        return instance;
+    }
+
+    // Delete copy constructor and assignment operator
+    CurrentCollection(CurrentCollection const&) = delete;
+    void operator=(CurrentCollection const&) = delete;
+
+    void setCollection(std::string const& collection) {
+        current_collection = collection;
+    }
+
+    std::string getCollection() const {
+        return current_collection;
+    }
+
+private:
+    CurrentCollection() {} // Private constructor
+
+    std::string current_collection = "";
+};
+
 
 
 
@@ -51,8 +76,8 @@ public:
     {
         // Access the Database singleton instance
         Database& db = Database::getInstance();
+        
         // Now you can perform operations on the db
-        current_collection = "";
     }
     
 
@@ -142,6 +167,8 @@ private:
     {
         if(request_.target() == "/uploadFile")
         {
+            Database& db = Database::getInstance();
+
             std::string post_content = beast::buffers_to_string(request_.body().data());
 
             // Parse the request body as JSON
@@ -164,10 +191,14 @@ private:
 
             // Parse the decoded data into a JSON object
             auto fileJson = nlohmann::json::parse(fileData);
+            Document newDoc(fileJson);
 
             // Now `fileJson` contains the JSON data from the uploaded file
-            // You can use it as a regular nlohmann::json object
-            cout << fileJson.dump(4) << endl;
+            db.getCollection(CurrentCollection::getInstance().getCollection()).insert(filename, newDoc);
+            db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+
+
+            
             // ... and so on for the rest of the fields
 
 
@@ -192,8 +223,19 @@ private:
         {
             std::string post_content = beast::buffers_to_string(request_.body().data());
             auto json = nlohmann::json::parse(post_content);
-            current_collection = json["selectedCollection"].get<std::string>();
-            cout << current_collection << endl;
+            CurrentCollection::getInstance().setCollection(json["selectedCollection"].get<std::string>());
+            cout << CurrentCollection::getInstance().getCollection() << endl;
+
+        }
+        else if(request_.target() == "/deleteCollection")
+        {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            string deleted = json["name"].get<std::string>();
+            Database& db = Database::getInstance();
+            db.deleteCollection(deleted);
+            cout << "Deleted Collection: " << deleted << endl;
+
         }
     }  
 
@@ -230,10 +272,6 @@ private:
                 <<  "</body>\n"
                 <<  "</html>\n";
         } 
-	else if(request_.target() == "/currentCollection")
-        {
-            
-        }
         else if(request_.target() == "/connect")
 	{
 	    // Handle "/connect" endpoint
