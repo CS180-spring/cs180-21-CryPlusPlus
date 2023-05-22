@@ -4,7 +4,6 @@ import Table from '@components/Table'
 import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
 import { useState } from 'react';
-import DropdownMenu from '@components/DropdownMenu';
 import AddDocuments from '@components/AddDocuments';
 import Queries from '@components/Queries';
 import DisplayCollection from '@components/DisplayCollection';
@@ -14,97 +13,95 @@ import DeleteDocument from '@components/DeleteDocument';
 
 const data = [
   {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
+    "Name": "Nevaeh Sanchez",
+    "Address": {
+      "StreetNumber": 277,
+      "StreetName": "Third Street",
+      "City": "Memphis",
+      "State": "TN",
+      "ZIPCode": "38101"
+    },
+    "Friends": [
+      "Santiago Barrett",
+      "Ellie Stone",
+      "Victoria Turner",
+      "Ella Gonzalez"
+    ],
+    "Active": false,
+    "DOB": "Mon Feb 17 1992 19:59:11 GMT+0000 (UTC)",
+    "Age": 31
   },
   {
-    firstName: "Bowen",
-    lastName: "Tang",
-    major: "Computer Science",
+    "Name": "Mariana Meyer",
+    "Address": {
+      "StreetNumber": 283,
+      "StreetName": "Second Street",
+      "City": "Jacksonville",
+      "State": "FL",
+      "ZIPCode": "32201"
+    },
+    "Friends": [
+      "Isabella Phillips",
+      "Annabelle Wilson"
+    ],
+    "Active": true,
+    "DOB": "Thu Feb 17 1983 13:59:11 GMT+0000 (UTC)",
+    "Age": 40
   },
   {
-    firstName: "Ethan",
-    lastName: "Ortega",
-    year: 3,
-    major: "Computer Science",
+    "Name": "Hikari Chopra",
+    "Address": {
+      "StreetNumber": 208,
+      "StreetName": "Third Street",
+      "City": "Baltimore",
+      "State": "MD",
+      "ZIPCode": "21201"
+    },
+    "Friends": [
+      "Sakura Alvarez"
+    ],
+    "Active": true,
+    "DOB": "Mon Feb 17 1975 13:59:11 GMT+0000 (UTC)",
+    "Age": 48
   },
   {
-    firstName: "Zinal",
-    lastName: "Patel",
-    major: "Bioengineering",
+    "Name": "Aubrey Martin",
+    "Address": {
+      "StreetNumber": 409,
+      "StreetName": "Madison Avenue",
+      "City": "Boston",
+      "State": "MA",
+      "ZIPCode": "02101"
+    },
+    "Friends": [
+      "Emma Peterson",
+      "Emi Roberts",
+      "Sophia Patel"
+    ],
+    "Active": true,
+    "DOB": "Sun Feb 17 1991 13:59:11 GMT+0000 (UTC)",
+    "Age": 32
   },
   {
-    firstName: "Eddie",
-    lastName: "Vargas",
-    major: "Psychology",
+    "Name": "Lillian Almasi",
+    "Address": {
+      "StreetNumber": 494,
+      "StreetName": "Oak Street",
+      "City": "Dallas",
+      "State": "TX",
+      "ZIPCode": "75201"
+    },
+    "Friends": [
+      "Melanie Nair",
+      "Sakura Hakim",
+      "Lily Fuentes",
+      "Koharu Flores"
+    ],
+    "Active": true,
+    "DOB": "Thu Feb 17 1966 07:59:11 GMT+0000 (UTC)",
+    "Age": 57
   },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-  {
-    firstName: "Daniel",
-    lastName: "Castaneda",
-    age: 20,
-    year: 3,
-    major: "Computer Science",
-  },
-];
+]
 const cols = [
   {
     Header: "firstName",
@@ -127,7 +124,6 @@ const cols = [
     accessor: "major",
   },
 ];
-const collections = ["Recipes", "Employees", "Movies"];
 
 const Main = () => {
   const [addDocument, setAddDocument] = useState(false);
@@ -151,7 +147,7 @@ const Main = () => {
         </div>
         <div className='flex-1 w-full justify-center p-8'>
           <DisplayCollection collections={userCollections} setCollection={setCollection} />
-          <Table columns={cols} data={data} />
+          <Table data={data} collections={userCollections} />
         </div>
       </div>
       <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} userDocuments={userDocuments} setUserDocuments={setUserDocuments} />
