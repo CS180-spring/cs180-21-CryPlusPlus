@@ -145,9 +145,9 @@ const Main = () => {
           <hr className='border-b border-black' />
           <Queries columns={cols} />
         </div>
-        <div className='flex-1 w-full justify-center p-8'>
+        <div className='flex-1 w-full justify-center p-8 mb-8'>
           <DisplayCollection collections={userCollections} setCollection={setCollection} />
-          <Table data={data} collections={userCollections} />
+          <Table data={data} collection={selectedCollection} />
         </div>
       </div>
       <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} userDocuments={userDocuments} setUserDocuments={setUserDocuments} />
