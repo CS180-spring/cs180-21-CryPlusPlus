@@ -1,23 +1,19 @@
 import Link from 'next/link'
 import './page.css'
+import { FacebookShareButton } from 'react-share';
 
 const Home = () => {
-
-  // const scrollToSection = (secID) => {
-  //   const area = document.getElementById(secID);
-  //   area.scrollIntoView();
-  // };
 
   return (
     <div className='page_container'>
       <div id='spinning_cat_intro'></div>
       <nav>
         <li>LOGO</li>
-        <li>Features</li>
-        <li>Updates</li>
-        <li>Pricing</li>
-        <li>Resources</li>
-        <li>Try Now</li>
+        <li><a href='#feats_sec'>Features</a></li>
+        <li><a href='#ups_sec'>Updates</a></li>
+        <li><a href='#prices'>Pricing</a></li>
+        <li><a href='#res_sec'>Resources</a></li>
+        <li id="try_now_button"><Link href='main'> Try Now</Link></li>
       </nav>
 
       <div className='overview_section'>
@@ -31,7 +27,7 @@ const Home = () => {
         </div>
       </div>
       <h2>FEATURES</h2>
-      <div className='features_section'>
+      <div id="feats_sec" className='features_section'>
         <div className='feature'>
           <div className='feature_left'><h1>CRUD</h1><p>Ability to: Create, Read, Update, and Delete files from database
 </p></div>
@@ -51,12 +47,12 @@ const Home = () => {
         </div>
       </div>
       <h2>LATEST UPDATE</h2>
-      <div className='updates_section'>
+      <div id="ups_sec" className='updates_section'>
         <h1 id="update_version">Update 1.0.0</h1>
         <p id="update_info">Initial Release</p>
       </div>
-      <h2>PRICING</h2>
-      <div className='pricing_section'>
+      {/* <h2>PRICING</h2>
+      <div id="prices" className='pricing_section'>
         <table>
           <tr>
             <th>Plan</th>
@@ -91,25 +87,28 @@ const Home = () => {
             <td>$199.99 / month</td>
           </tr>
         </table>
-      </div>
+      </div> */}
       <h2>RESOURCES</h2>
-      <div className='resource_labels_container'>
+      <div id="res_sec" className='resource_labels_container'>
         <h3 className='resource_label'>CONTACT US</h3>
         <h3 className='resource_label'>SHARE</h3>
       </div>
       <div className='resources_section'>
         <div className='contact_us_section'>
           <ul>
-            <li>Email</li>
-            <li>Phone</li>
-            <li>Our Location:</li>
+            <li className="contact_li" >Email: ____@ucr.edu</li>
+            <li className="contact_li" >Phone: 012-345-6789</li>
+            <li className="contact_li" >Our Location: 900 University Ave, Riverside, CA 92521</li>
+            <li className="contact_li" ><a href={'https://github.com/CS180-spring/cs180-21-CryPlusPlus'}>GitHub</a></li>
           </ul>
         </div>
         <div className='share_section'>
           <ul>
-            <li>Facebook</li>
-            <li>Twitter</li>
-            <li>Instagram</li>
+            {typeof window !== 'undefined' && (<li className="share_li" > <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer">
+                Share on Facebook</a></li>)}
+                {typeof window !== 'undefined' && (<li className="share_li" ><a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Check out this website!')}`} target="_blank" rel="noopener noreferrer">
+                Share on Twitter
+              </a></li>)}
           </ul>
         </div>
       </div>
