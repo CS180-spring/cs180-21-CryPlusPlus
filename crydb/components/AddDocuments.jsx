@@ -10,7 +10,9 @@ const AddDocuments = ({ name, visible, setAddDocument, userDocuments, setUserDoc
     }
 
     const handleUpload = async() => {
-        if (!files || files.length === 0) return;
+        if (!files || files.length === 0) {
+            setAddDocument(false);
+        }
         
         // Convert the first file to a base64 string
         const file = files[0];
@@ -46,6 +48,8 @@ const AddDocuments = ({ name, visible, setAddDocument, userDocuments, setUserDoc
                 console.error('Error fetching from localhost:', error);
             }
         }
+        setUserDocuments([...userDocuments, file.name]);
+        setAddDocument(false);
     }
     
       
