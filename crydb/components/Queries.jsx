@@ -14,6 +14,27 @@ const Queries = ({ columns }) => {
         prevQueries.splice(i, 1);
         setQueries(prevQueries);
     }
+    const handleQueries = async() => {
+        let queryJSON = {
+            "field": "Name",
+            "condition": 1,
+            "value": "Daniel"
+        }
+        const jsonString = JSON.stringify(queryJSON);
+        try {
+            const response = await fetch('/uploadQueries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonString
+            });
+            const data = await response.text();
+            console.log('Response from the server:', data);
+        } catch (error) {
+            console.error('Error fetching from the server:', error);
+        }
+    }
     return (
         <div className='flex flex-col gap-4'>
             <div className='font-bold text-xl'>

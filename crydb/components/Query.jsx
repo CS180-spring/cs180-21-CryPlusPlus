@@ -7,7 +7,7 @@ const Query = ({ columns }) => {
         Field
         <DropdownMenu options={columns.map(obj => obj.Header)} />
         Condition
-        <DropdownMenu options={['Greater Than', `Less Than`, `Equal To`]} />
+        <DropdownMenu options={['Equal', 'Not Equal', 'Greater Than', 'Less Than', 'Greater than or Equal to', 'Less Than or Equal To']} />
         Value
         <TextInput />
         <hr className='border-b border-figma-black-grey500 my-2' />
