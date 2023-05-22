@@ -1,19 +1,39 @@
-import { useState } from "react";
-import DropdownMenu from "./DropdownMenu";
+import React from 'react'
+import DropdownMenu from './DropdownMenu'
+import { useState } from 'react';
 
 const DeleteCollection = ({ visible, setDeleteCollection, userCollections, setUserCollections }) => {
   if (!visible) return null;
   if (!userCollections.length) {
     setDeleteCollection(false);
     return null;
-}
+  }
+
   const [selectedOption, setSelectedOption] = useState('');
-  
-  const handleUpload = () => {
+
+  const handleUpload = async() => {
     console.log(`deleting collection: ${selectedOption}`);
     const updatedCollections = userCollections.filter((collection) => collection !== selectedOption);
     setUserCollections(updatedCollections);
     setDeleteCollection(false);
+  
+    try {
+      // Send DELETE request to delete the collection
+      const response = await fetch('/deleteCollection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({name: selectedOption}),
+      });
+  
+      // Log the response from the server
+      const data = await response.text();
+      console.log('Response from localhost:', data);
+  
+    } catch (error) {
+      console.error('Error fetching from localhost:', error);
+    }
   }
 
   return (

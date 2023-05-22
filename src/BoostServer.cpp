@@ -1,19 +1,54 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
 #include <boost/asio.hpp>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <string>
-#include "ReadCsvData.h"
+#include "ReadJsonData.h"
+#include "Database.h"
+#include "Document.cpp"
+#include "../lib/json.hpp"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
+using namespace std;
+
+class CurrentCollection {
+public:
+    static CurrentCollection& getInstance() {
+        static CurrentCollection instance; // Guaranteed to be destroyed. Instantiated on first use.
+        return instance;
+    }
+
+    // Delete copy constructor and assignment operator
+    CurrentCollection(CurrentCollection const&) = delete;
+    void operator=(CurrentCollection const&) = delete;
+
+    void setCollection(std::string const& collection) {
+        current_collection = collection;
+    }
+
+    std::string getCollection() const {
+        return current_collection;
+    }
+
+private:
+    CurrentCollection() {} // Private constructor
+
+    std::string current_collection = "";
+};
+
+
+
 
 namespace my_program_state
 {
@@ -34,10 +69,17 @@ namespace my_program_state
 class http_connection : public std::enable_shared_from_this<http_connection>
 {
 public:
+    string current_collection;
+
     http_connection(tcp::socket socket)
         : socket_(std::move(socket))
     {
+        // Access the Database singleton instance
+        Database& db = Database::getInstance();
+        
+        // Now you can perform operations on the db
     }
+    
 
     // Initiate the asynchronous operations associated with the connection.
     void
@@ -122,17 +164,81 @@ private:
 
     void
     process_post_request()
-    {  
-        // Retrieve the content of the POST request
-        std::string post_content = beast::buffers_to_string(request_.body().data());
+    {
+        if(request_.target() == "/uploadFile")
+        {
+            Database& db = Database::getInstance();
 
-        // Process the post_content and generate a response
-        std::string response_content = "Processed POST data: " + post_content;
+            std::string post_content = beast::buffers_to_string(request_.body().data());
 
-        // Set the response content and content type
-        response_.set(http::field::content_type, "text/plain");
-    	beast::ostream(response_.body()) << response_content;
+            // Parse the request body as JSON
+            auto json = nlohmann::json::parse(post_content);
+
+            // Extract the filename and data from the JSON object
+            std::string filename = json["filename"];
+            std::string base64Data = json["data"];
+
+            // The base64 string has a prefix that we need to remove
+            std::string prefix = "data:application/json;base64,";
+            if (base64Data.substr(0, prefix.size()) == prefix) {
+                base64Data = base64Data.substr(prefix.size());
+            }
+
+            // Decode the base64 string into binary data
+            using namespace boost::archive::iterators;
+            typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
+            std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
+
+            // Parse the decoded data into a JSON object
+            auto fileJson = nlohmann::json::parse(fileData);
+            Document newDoc(fileJson);
+
+            // Now `fileJson` contains the JSON data from the uploaded file
+            db.getCollection(CurrentCollection::getInstance().getCollection()).insert(filename, newDoc);
+            db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+
+
+            
+            // ... and so on for the rest of the fields
+
+
+            
+        }
+        else if(request_.target() == "/createCollection")
+        {
+            // Retrieve the content of the POST request
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+
+            // Parse the request body as JSON
+            auto json = nlohmann::json::parse(post_content);
+
+
+            Database& db = Database::getInstance();
+            db.createCollection(json["name"].get<std::string>());
+
+            // Print a confirmation message to the console
+            std::cout << "Created collection: " << json["name"].get<std::string>() << std::endl;
+        }
+        else if(request_.target() == "/changeCollection")
+        {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            CurrentCollection::getInstance().setCollection(json["selectedCollection"].get<std::string>());
+            cout << CurrentCollection::getInstance().getCollection() << endl;
+
+        }
+        else if(request_.target() == "/deleteCollection")
+        {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            string deleted = json["name"].get<std::string>();
+            Database& db = Database::getInstance();
+            db.deleteCollection(deleted);
+            cout << "Deleted Collection: " << deleted << endl;
+
+        }
     }  
+
 
     // Construct a response message based on the program state.
     void
@@ -166,24 +272,6 @@ private:
                 <<  "</body>\n"
                 <<  "</html>\n";
         } 
-	else if(request_.target() == "/dog")
-        {
-	    ReadCsvData myRead = ReadCsvData();
-	    std::string fillVal = "qqqqqq";
-	    bool ret = myRead.read("../src/test_valid.csv", false, fillVal);
-	    response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body())
-		<< "{'users': []}";
-        //      <<  "{'ReadCsvDataRet': "
-	//	<<  ret
-	//	<<  "}";
-        }
-	else if(request_.target() == "/collect")
-        {
-            response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body())
-                << "{'users': [1]}";
-        }
         else if(request_.target() == "/connect")
 	{
 	    // Handle "/connect" endpoint
