@@ -4,12 +4,14 @@ import React from "react"
 import { useState } from "react"
 import { RxCaretDown, RxCaretUp, RxCube } from "react-icons/rx"
 
-const DropdownMenu = ({ options }) => {
+const DropdownMenu = ({ options, onOptionSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Select');
 
   const handleSelection = (option) => {
     setSelectedOption(option);
+    if (onOptionSelect)
+      onOptionSelect(option);
     setIsOpen(false);
   }
 

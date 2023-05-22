@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link'
 import './page.css'
 import { FacebookShareButton } from 'react-share';

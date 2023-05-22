@@ -8,6 +8,7 @@ on:
       - Ethan-DocumentClass
       - Ethan-ReadFiles
       - Ethan-Collections
+      - Ethan-Query
   pull_request:
     branches:
       - main
@@ -15,6 +16,7 @@ on:
       - Ethan-DocumentClass
       - Ethan-ReadFiles
       - Ethan-Collections
+      - Ethan-Query
 
 jobs:
   build:
