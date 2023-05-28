@@ -1,13 +1,11 @@
 import React from 'react'
 import TextInput from './TextInput'
-import { useState } from 'react';
 import { useUserContext } from '@app/context/UserContext';
+import { useState } from 'react';
 
 const CreateCollection = () => {
   const { createCollection, setCreateCollection, userCollections, setUserCollections } = useUserContext();
-
-  if (!createCollection) return null;
-
+  
   const [value, setValue] = useState('');
 
   const handleUpload = async() => {
@@ -34,6 +32,7 @@ const CreateCollection = () => {
     }
   }
   
+  if (!createCollection) return null;
 
   return (
     <div id='container' className='flex justify-center items-center fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm' onClick={(e) => e.target.id === 'container' ? setCreateCollection(false) : null}>

@@ -55,8 +55,6 @@ const AddDocuments = () => {
         setAddDocument(false);
     }
     
-      
-    
     if (!addDocument) return null;
 
     return (

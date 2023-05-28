@@ -6,12 +6,6 @@ import { useUserContext } from '@app/context/UserContext';
 const DeleteCollection = () => {
   const { deleteCollection, setDeleteCollection, userCollections, setUserCollections } = useUserContext();
   
-  if (!deleteCollection) return null;
-  if (!userCollections.length) {
-    setDeleteCollection(false);
-    return null;
-  }
-
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleUpload = async() => {
@@ -37,6 +31,12 @@ const DeleteCollection = () => {
     } catch (error) {
       console.error('Error fetching from localhost:', error);
     }
+  }
+
+  if (!deleteCollection) return null;
+  if (!userCollections.length) {
+    setDeleteCollection(false);
+    return null;
   }
 
   return (
