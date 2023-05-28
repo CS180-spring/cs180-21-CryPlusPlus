@@ -1,11 +1,13 @@
 import React from "react";
 import { useState } from "react";
 import DocumentModal from "./DocumentModal";
+import { useUserContext } from "@app/context/UserContext";
 
-const Table = ({ data, collection }) => {
+const Table = ({ data }) => {
+  const { selectedCollection } = useUserContext();
+  
   const [showDocument, setShowDocument] = useState(false);
   const [documentData, setDocumentData] = useState("");
-  console.log("test");
   const handleClick = (e) => {
     setShowDocument(true);
     setDocumentData(e);
@@ -13,7 +15,7 @@ const Table = ({ data, collection }) => {
   return (
     <div className="flex flex-col h-full border-2 border-figma-purple p-8 gap-5">
       <div className="flex justify-center font-bold text-3xl">
-        {collection}
+        {selectedCollection}
       </div>
       <div className="flex flex-col gap-2">
         {data.map((element, i) => {

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import DropdownMenu from "./DropdownMenu";
+import { useUserContext } from "@app/context/UserContext";
 
-const DeleteDocument = ({ visible, setDeleteDocument, userDocuments, setUserDocuments }) => {
-    if (!visible) return null;
+const DeleteDocument = () => {
+    const { deleteDocument, setDeleteDocument, userDocuments, setUserDocuments } = useUserContext();
+    
+    if (!deleteDocument) return null;
     if (!userDocuments.length) {
         setDeleteDocument(false);
         return null;

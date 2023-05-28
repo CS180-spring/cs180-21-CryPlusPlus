@@ -1,9 +1,12 @@
 import React from 'react'
 import DropdownMenu from './DropdownMenu'
 import { useState } from 'react';
+import { useUserContext } from '@app/context/UserContext';
 
-const DeleteCollection = ({ visible, setDeleteCollection, userCollections, setUserCollections }) => {
-  if (!visible) return null;
+const DeleteCollection = () => {
+  const { deleteCollection, setDeleteCollection, userCollections, setUserCollections } = useUserContext();
+  
+  if (!deleteCollection) return null;
   if (!userCollections.length) {
     setDeleteCollection(false);
     return null;

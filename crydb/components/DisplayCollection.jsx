@@ -1,6 +1,8 @@
 import DropdownMenu from "./DropdownMenu"
+import { useUserContext } from "@app/context/UserContext";
 
-const DisplayCollection = ({ collections, setCollection }) => {
+const DisplayCollection = () => {
+  const { userCollections, setCollection } = useUserContext();
 
   const handleOptionSelect = async (option) => {
     // Set the current collection
@@ -25,7 +27,7 @@ const DisplayCollection = ({ collections, setCollection }) => {
       <div className='font-bold text-2xl pr-16'>
         Collection: 
       </div>
-      <DropdownMenu options={collections} onOptionSelect={handleOptionSelect}/>
+      <DropdownMenu options={userCollections} onOptionSelect={handleOptionSelect}/>
     </div>
   )
 }

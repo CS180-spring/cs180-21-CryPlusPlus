@@ -1,9 +1,12 @@
 import React from 'react'
 import TextInput from './TextInput'
 import { useState } from 'react';
+import { useUserContext } from '@app/context/UserContext';
 
-const CreateCollection = ({ visible, setCreateCollection, userCollections, setUserCollections }) => {
-  if (!visible) return null;
+const CreateCollection = () => {
+  const { createCollection, setCreateCollection, userCollections, setUserCollections } = useUserContext();
+
+  if (!createCollection) return null;
 
   const [value, setValue] = useState('');
 
