@@ -5,8 +5,10 @@ import { MdDeleteForever } from 'react-icons/Md';
 import { BiExport, BiSave } from 'react-icons/Bi';
 import { BsFillCollectionFill } from 'react-icons/Bs'
 import { ImCross } from 'react-icons/Im'
+import { useUserContext } from '@app/context/UserContext';
 
-const Menu = ({ setCreateCollection, setAddDocument, setDeleteDocument, setDeleteCollection }) => {
+const Menu = () => {
+  const { setCreateCollection, setAddDocument, setDeleteDocument, setDeleteCollection } = useUserContext();
   return (
     <div className='m-0 p-0 w-full'>
       <Link className='flex flex-row items-center gap-2 font-inter py-2 hover:bg-figma-black-grey300 w-full' href=''>

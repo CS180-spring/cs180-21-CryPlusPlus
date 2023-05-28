@@ -1,14 +1,11 @@
 import React from 'react'
 import DropdownMenu from './DropdownMenu'
 import { useState } from 'react';
+import { useUserContext } from '@app/context/UserContext';
 
-const DeleteCollection = ({ visible, setDeleteCollection, userCollections, setUserCollections }) => {
-  if (!visible) return null;
-  if (!userCollections.length) {
-    setDeleteCollection(false);
-    return null;
-  }
-
+const DeleteCollection = () => {
+  const { deleteCollection, setDeleteCollection, userCollections, setUserCollections } = useUserContext();
+  
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleUpload = async() => {
@@ -34,6 +31,12 @@ const DeleteCollection = ({ visible, setDeleteCollection, userCollections, setUs
     } catch (error) {
       console.error('Error fetching from localhost:', error);
     }
+  }
+
+  if (!deleteCollection) return null;
+  if (!userCollections.length) {
+    setDeleteCollection(false);
+    return null;
   }
 
   return (

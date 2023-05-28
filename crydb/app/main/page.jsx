@@ -3,7 +3,7 @@
 import Table from '@components/Table'
 import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
-import { useState } from 'react';
+import { useState, createContext } from 'react';
 import AddDocuments from '@components/AddDocuments';
 import Queries from '@components/Queries';
 import DisplayCollection from '@components/DisplayCollection';
@@ -126,34 +126,26 @@ const cols = [
 ];
 
 const Main = () => {
-  const [addDocument, setAddDocument] = useState(false);
-  const [createCollection, setCreateCollection] = useState(false);
-  const [deleteCollection, setDeleteCollection] = useState(false);
-  const [deleteDocument, setDeleteDocument] = useState(false);
-  const [selectedCollection, setCollection] = useState('');
-  const [userCollections, setUserCollections] = useState([]);
-  const [userDocuments, setUserDocuments] = useState([]);
-
   return (
     <div>
       <div className='bg-figma-purple w-full h-40' />
       <div className='flex flex-row h-screen'>
         <div className='flex flex-col p-8 gap-4 w-96 h-full'>
-          <Menu setAddDocument={setAddDocument} setCreateCollection={setCreateCollection} setDeleteCollection={setDeleteCollection} setDeleteDocument={setDeleteDocument} />
+          <Menu />
           <hr className='border-b border-black' />
           <SortBy fields={cols.map(obj => obj.Header)} />
           <hr className='border-b border-black' />
           <Queries columns={cols} />
         </div>
         <div className='flex-1 w-full justify-center p-8 mb-8'>
-          <DisplayCollection collections={userCollections} setCollection={setCollection} />
-          <Table data={data} collection={selectedCollection} />
+          <DisplayCollection />
+          <Table data={data} />
         </div>
       </div>
-      <AddDocuments visible={addDocument} setAddDocument={setAddDocument} name={selectedCollection} userDocuments={userDocuments} setUserDocuments={setUserDocuments} />
-      <CreateCollection visible={createCollection} setCreateCollection={setCreateCollection} userCollections={userCollections} setUserCollections={setUserCollections} />
-      <DeleteCollection visible={deleteCollection} setDeleteCollection={setDeleteCollection} userCollections={userCollections} setUserCollections={setUserCollections} />
-      <DeleteDocument visible={deleteDocument} setDeleteDocument={setDeleteDocument} userDocuments={userDocuments} setUserDocuments={setUserDocuments} />
+      <CreateCollection />
+      <AddDocuments />
+      <DeleteCollection />
+      <DeleteDocument />
     </div>
   )
 }

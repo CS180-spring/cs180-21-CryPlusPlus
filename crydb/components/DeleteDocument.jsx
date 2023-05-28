@@ -1,13 +1,10 @@
 import { useState } from "react";
 import DropdownMenu from "./DropdownMenu";
+import { useUserContext } from "@app/context/UserContext";
 
-const DeleteDocument = ({ visible, setDeleteDocument, userDocuments, setUserDocuments }) => {
-    if (!visible) return null;
-    if (!userDocuments.length) {
-        setDeleteDocument(false);
-        return null;
-    }
-    console.log(userDocuments);
+const DeleteDocument = () => {
+    const { deleteDocument, setDeleteDocument, userDocuments, setUserDocuments } = useUserContext();
+    
     const [selectedOption, setSelectedOption] = useState('');
 
     const handleUpload = () => {
@@ -16,6 +13,16 @@ const DeleteDocument = ({ visible, setDeleteDocument, userDocuments, setUserDocu
         setUserDocuments(updatedDocuments);
         setDeleteDocument(false);
     }
+
+    if (!deleteDocument) return null;
+    
+    if (!userDocuments.length) {
+        setDeleteDocument(false);
+        return null;
+    }
+    
+    console.log(userDocuments);
+
   return (
     <div id='container' className='flex justify-center items-center fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm' onClick={(e) => e.target.id === 'container' ? setDeleteDocument(false) : null}>
         <div className='border-4 border-figma-purple flex flex-col gap-4 w-1/2 items-center px-4 bg-white py-16'>

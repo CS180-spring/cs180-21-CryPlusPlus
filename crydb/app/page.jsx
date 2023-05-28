@@ -1,19 +1,17 @@
 'use client';
 import Link from 'next/link'
 import './page.css'
-import { FacebookShareButton } from 'react-share';
 
 const Home = () => {
-
   return (
     <div className='page_container'>
       <div id='spinning_cat_intro'></div>
-      <nav>
-        <li>LOGO</li>
+      <nav className='px-16'>
+        {/* <li>LOGO</li> */}
         <li><a href='#feats_sec'>Features</a></li>
         <li><a href='#ups_sec'>Updates</a></li>
-        <li><a href='#prices'>Pricing</a></li>
-        <li><a href='#res_sec'>Resources</a></li>
+        {/* <li><a href='#prices'>Pricing</a></li> */}
+        {/* <li><a href='#res_sec'>Resources</a></li> */}
         <li id="try_now_button"><Link href='main'> Try Now</Link></li>
       </nav>
 
@@ -24,7 +22,7 @@ const Home = () => {
         </div>
         <div id="overview_right">
           <Link className='overview_links' href="../README.md">Documentation</Link>
-          <Link className='overview_links' href='main'> Use Cry++ </Link>
+          <Link className='overview_links' href='main'> Use CryDB </Link>
         </div>
       </div>
       <h2>FEATURES</h2>
@@ -89,7 +87,7 @@ const Home = () => {
           </tr>
         </table>
       </div> */}
-      <h2>RESOURCES</h2>
+      {/* <h2>RESOURCES</h2>
       <div id="res_sec" className='resource_labels_container'>
         <h3 className='resource_label'>CONTACT US</h3>
         <h3 className='resource_label'>SHARE</h3>
@@ -112,7 +110,7 @@ const Home = () => {
               </a></li>)}
           </ul>
         </div>
-      </div>
+      </div> */}
 
     </div>
   )

@@ -1,4 +1,5 @@
 import '@styles/globals.css'
+import { UserContextProvider } from "./context/UserContext"
 
 export const metadata = {
   title: "CryDB",
@@ -9,9 +10,9 @@ const RootLayout = ({ children }) => {
   return (
     <html lang='en'>
       <body>
-        <main className='app'>
+        <UserContextProvider>
           {children}
-        </main>
+        </UserContextProvider>
       </body>
     </html>
   )
