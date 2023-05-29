@@ -1,9 +1,10 @@
 import Query from '@components/Query';
 import { useState } from 'react';
 import { useUserContext } from '@app/context/UserContext';
+import { addToLog } from '@utils/helpers';
 
 const Queries = () => {
-    const { setTableData } = useUserContext();
+    const { setTableData, setConsoleLogs } = useUserContext();
 
     const [queries, setQueries] = useState([]);
     const addQuery = () => {
@@ -34,10 +35,11 @@ const Queries = () => {
                 body: jsonString
             });
             const data = JSON.parse(await response.text());
-            console.log('Response from the server:', data);
             const queryResults = JSON.parse(data.data);
-            console.log(queryResults)
+            
+            console.log('Response from the server:', data);
             setTableData(queryResults);
+            addToLog(data, setConsoleLogs);
         } catch (error) {
             console.error('Error fetching from the server:', error);
         }
