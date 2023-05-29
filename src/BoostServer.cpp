@@ -216,26 +216,24 @@ private:
             cout << "Deleted Collection: " << deleted << endl;
             deletedCollection = deleted;
         }
+        else if(request_.target() == "/query") {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            
+            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where ..." << endl;
+        }
     }  
 
 
     // Construct a response message based on the program state.
     void create_response() {
         if(request_.target() == "/uploadFile") {
-            response_.set(http::field::content_type, "text/plain");
-
-            std::string currCollection = CurrentCollection::getInstance().getCollection();
-            auto collectionReference = Database::getInstance().getCollection(currCollection);
-
-            Query<std::string, Document> query(collectionReference);
-            query.where({"age", GREATER_THAN_OR_EQUAL, 30});
-            auto results = query.getDocuments();
-
-            json jsonResults;
-            for (auto document : results)
-                jsonResults.push_back(document.getData());
-
-            beast::ostream(response_.body()) << std::string(jsonResults.dump());
+            response_.set(http::field::content_type, "text/html");
+            json resp = {
+                {"time_uploaded: ", my_program_state::now()},
+            };
+            beast::ostream(response_.body())
+                << std::string(resp.dump());
         }
         else if(request_.target() == "/createCollection") {
             response_.set(http::field::content_type, "text/html");
@@ -261,6 +259,60 @@ private:
             json resp = {
                 {"collection_deleted", deletedCollection}, 
                 {"time_deleted: ", my_program_state::now()},
+            };
+            beast::ostream(response_.body())
+                << std::string(resp.dump());
+        }
+        else if(request_.target() == "/query") {
+            response_.set(http::field::content_type, "text/plain");
+
+
+            json tableData, document;
+            document = {
+                {"name", "Charlie"},
+                {"age", 30},
+                {"location", "New York"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Delta"},
+                {"age", 25},
+                {"location", "San Francisco"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Beta"},
+                {"age", 35},
+                {"location", "Dallas"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Bob"},
+                {"age", 27},
+                {"location", "Riverside"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Alpha"},
+                {"age", 31},
+                {"location", "Seattle"},
+            };
+            tableData.push_back(document);
+
+            // std::string currCollection = CurrentCollection::getInstance().getCollection();
+            // auto collectionReference = Database::getInstance().getCollection(currCollection);
+            
+            // Query<std::string, Document> query(collectionReference);
+            // auto results = query.getDocuments();
+
+            // json jsonResults;
+            // for (auto document : results)
+            //     jsonResults.push_back(document.getData());
+
+            json resp = {
+                // {"collection_deleted", deletedCollection}, 
+                {"time_queried: ", my_program_state::now()},
+                {"data", std::string(tableData.dump())},
             };
             beast::ostream(response_.body())
                 << std::string(resp.dump());
