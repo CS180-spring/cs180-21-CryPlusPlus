@@ -1,5 +1,3 @@
-import { useUserContext } from "@app/context/UserContext";
-
 const convertTimeToString = (timeT) => {
     const date = new Date(timeT * 1000); // Convert time_t to milliseconds
   
@@ -27,4 +25,9 @@ const addToLog = (response, setConsoleLogs) => {
     setConsoleLogs(prevConsoleLogs => [...prevConsoleLogs, newLog]);
 }
 
-export { convertTimeToString, addToLog };
+const updateTable = (data, setTableData) => {
+    console.log("Updating table");
+    setTableData(data);
+}
+
+export { convertTimeToString, addToLog, updateTable };
