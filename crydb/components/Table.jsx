@@ -13,7 +13,7 @@ const Table = () => {
     setDocumentData(e);
   }
   return (
-    <div className="flex flex-col h-full border-2 border-figma-purple p-8 gap-5">
+    <div className="flex flex-col h-full p-8 gap-5">
       <div className="flex justify-center font-bold text-3xl">
         {selectedCollection}
       </div>
