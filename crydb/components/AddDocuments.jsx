@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useUserContext } from '@app/context/UserContext';
+import { addToLog } from '@utils/helpers';
 
 const AddDocuments = () => {
-    const { addDocument, setAddDocument, selectedCollection, userDocuments, setUserDocuments } = useUserContext();
+    const { addDocument, setAddDocument, selectedCollection, userDocuments, setUserDocuments, setConsoleLogs } = useUserContext();
     
     const [files, setFile] = useState();
 
@@ -44,8 +45,9 @@ const AddDocuments = () => {
                 });
                 
                 // Log the response from the server
-                const data = await response.text();
+                const data = JSON.parse(await response.text());
                 console.log('Response from localhost:', data);
+                addToLog(data, setConsoleLogs);
             } catch (error) {
                 console.error('Error fetching from localhost:', error);
             }

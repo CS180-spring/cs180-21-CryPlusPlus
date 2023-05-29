@@ -27,6 +27,7 @@ using json = nlohmann::ordered_json;
 
 std::string deletedCollection = "";
 std::string previousCollection = "";
+std::string createdCollection = "";
 
 class CurrentCollection {
 public:
@@ -197,6 +198,7 @@ private:
             db.createCollection(json["name"].get<std::string>());
 
             // Print a confirmation message to the console
+            createdCollection = json["name"].get<std::string>();
             std::cout << "Created collection: " << json["name"].get<std::string>() << std::endl;
         }
         else if(request_.target() == "/changeCollection") {
@@ -230,7 +232,8 @@ private:
         if(request_.target() == "/uploadFile") {
             response_.set(http::field::content_type, "text/html");
             json resp = {
-                {"time_uploaded: ", my_program_state::now()},
+                {"message", "Uploaded file [FILE_NAME] with [DOCUMENT_NUMBER] documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
+                {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
                 << std::string(resp.dump());
@@ -238,8 +241,8 @@ private:
         else if(request_.target() == "/createCollection") {
             response_.set(http::field::content_type, "text/html");
             json resp = {
-                {"collection_created", CurrentCollection::getInstance().getCollection()}, 
-                {"time_created", my_program_state::now()},
+                {"message", "Created collection '" + createdCollection + "'"}, 
+                {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
                 << std::string(resp.dump());
@@ -247,9 +250,8 @@ private:
         else if(request_.target() == "/changeCollection") {
             response_.set(http::field::content_type, "text/html");
             json resp = {
-                {"collection_changed_from", previousCollection}, 
-                {"collection_changed_to", CurrentCollection::getInstance().getCollection()}, 
-                {"time_changed: ", my_program_state::now()},
+                {"message", "Changed collection from '" + previousCollection + "' to '" + CurrentCollection::getInstance().getCollection() + "'"}, 
+                {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
                 << std::string(resp.dump());
@@ -257,8 +259,8 @@ private:
         else if(request_.target() == "/deleteCollection") {
             response_.set(http::field::content_type, "text/html");
             json resp = {
-                {"collection_deleted", deletedCollection}, 
-                {"time_deleted: ", my_program_state::now()},
+                {"message", "Deleted collection '" + deletedCollection + "'"}, 
+                {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
                 << std::string(resp.dump());
@@ -310,8 +312,8 @@ private:
             //     jsonResults.push_back(document.getData());
 
             json resp = {
-                // {"collection_deleted", deletedCollection}, 
-                {"time_queried: ", my_program_state::now()},
+                {"message", "Query on [Collection] where [field] [condition] [value]"}, 
+                {"time", my_program_state::now()},
                 {"data", std::string(tableData.dump())},
             };
             beast::ostream(response_.body())

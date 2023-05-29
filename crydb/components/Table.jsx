@@ -13,7 +13,7 @@ const Table = () => {
     setDocumentData(e);
   }
   return (
-    <div className="flex flex-col h-full border-2 border-figma-purple p-8 gap-5">
+    <div className="flex flex-col h-full p-8 gap-5">
       <div className="flex justify-center font-bold text-3xl">
         {selectedCollection}
       </div>
@@ -21,15 +21,17 @@ const Table = () => {
         {tableData.map((element, i) => {
           let document = JSON.stringify(element);
           return (
-            <div className="hover:bg-figma-lightpink cursor-pointer" key={i} onClick={() => {
+            <div className="hover:bg-figma-lightpink cursor-pointer text-2xl" key={i} onClick={() => {
               handleClick(document)
             }}>
-                Entry: {document} 
+                {document} 
             </div>
           )
         })}
       </div>
-      <DocumentModal visible={showDocument} setVisible={setShowDocument} jsonString={documentData} />
+      <div className="z-10 absolute">
+        <DocumentModal visible={showDocument} setVisible={setShowDocument} jsonString={documentData} />
+      </div>
     </div>
   )
 };
