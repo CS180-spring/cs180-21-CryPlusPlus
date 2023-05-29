@@ -1,15 +1,14 @@
 "use client";
 
-import Table from '@components/Table'
 import SortBy from '@components/SortBy';
 import Menu from '@components/Menu';
-import { useState, createContext } from 'react';
 import AddDocuments from '@components/AddDocuments';
 import Queries from '@components/Queries';
 import DisplayCollection from '@components/DisplayCollection';
 import CreateCollection from '@components/CreateCollection';
 import DeleteCollection from '@components/DeleteCollection';
 import DeleteDocument from '@components/DeleteDocument';
+import DisplayToggleSwitch from '@components/DisplayToggleSwitch';
 
 const Main = () => {
   return (
@@ -23,15 +22,17 @@ const Main = () => {
           <hr className='border-b border-black' />
           <Queries />
         </div>
-        <div className='flex-1 w-full justify-center p-8 mb-8'>
+        <div className='flex-1 w-full h-full justify-center p-8 mb-8'>
           <DisplayCollection />
-          <Table />
+          <DisplayToggleSwitch />
         </div>
       </div>
-      <CreateCollection />
-      <AddDocuments />
-      <DeleteCollection />
-      <DeleteDocument />
+      <div className='z-50 absolute'>
+        <CreateCollection />
+        <AddDocuments />
+        <DeleteCollection />
+        <DeleteDocument />
+      </div>
     </div>
   )
 }
