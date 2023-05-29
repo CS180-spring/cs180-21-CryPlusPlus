@@ -1,8 +1,9 @@
 import DropdownMenu from "./DropdownMenu"
 import { useUserContext } from "@app/context/UserContext";
+import { addToLog } from '@utils/helpers';
 
 const DisplayCollection = () => {
-  const { userCollections, setCollection } = useUserContext();
+  const { userCollections, setCollection, setConsoleLogs } = useUserContext();
 
   const handleOptionSelect = async (option) => {
     // Set the current collection
@@ -17,8 +18,9 @@ const DisplayCollection = () => {
       body: JSON.stringify({ selectedCollection: option })
     });
 
-    const data = await response.json();
+    const data = JSON.parse(await response.text());
     console.log('Response from localhost:', data);
+    addToLog(data, setConsoleLogs);
   };
 
   return (

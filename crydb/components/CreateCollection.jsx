@@ -2,9 +2,10 @@ import React from 'react'
 import TextInput from './TextInput'
 import { useUserContext } from '@app/context/UserContext';
 import { useState } from 'react';
+import { addToLog } from '@utils/helpers';
 
 const CreateCollection = () => {
-  const { createCollection, setCreateCollection, userCollections, setUserCollections } = useUserContext();
+  const { createCollection, setCreateCollection, userCollections, setUserCollections, setConsoleLogs } = useUserContext();
   
   const [value, setValue] = useState('');
 
@@ -24,8 +25,9 @@ const CreateCollection = () => {
       });
   
       // Log the response from the server
-      const data = await response.text();
+      const data = JSON.parse(await response.text());
       console.log('Response from localhost:', data);
+      addToLog(data, setConsoleLogs);
   
     } catch (error) {
       console.error('Error fetching from localhost:', error);
