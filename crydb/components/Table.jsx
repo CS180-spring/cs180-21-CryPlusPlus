@@ -29,7 +29,9 @@ const Table = () => {
           )
         })}
       </div>
-      <DocumentModal visible={showDocument} setVisible={setShowDocument} jsonString={documentData} />
+      <div className="z-10 absolute">
+        <DocumentModal visible={showDocument} setVisible={setShowDocument} jsonString={documentData} />
+      </div>
     </div>
   )
 };
