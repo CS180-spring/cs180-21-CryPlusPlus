@@ -21,10 +21,10 @@ const Table = () => {
         {tableData.map((element, i) => {
           let document = JSON.stringify(element);
           return (
-            <div className="hover:bg-figma-lightpink cursor-pointer" key={i} onClick={() => {
+            <div className="hover:bg-figma-lightpink cursor-pointer text-2xl" key={i} onClick={() => {
               handleClick(document)
             }}>
-                Entry: {document} 
+                {document} 
             </div>
           )
         })}
