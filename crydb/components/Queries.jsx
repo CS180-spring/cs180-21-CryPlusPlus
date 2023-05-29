@@ -1,10 +1,10 @@
 import Query from '@components/Query';
 import { useState } from 'react';
 
-const Queries = ({ columns }) => {
+const Queries = () => {
     const [queries, setQueries] = useState([]);
     const addQuery = () => {
-        const prevQueries = [...queries, <Query columns={columns} />];
+        const prevQueries = [...queries, <Query />];
         setQueries(prevQueries);
         console.log("adding query");
     }
