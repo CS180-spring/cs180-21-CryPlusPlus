@@ -12,6 +12,8 @@ export const UserContextProvider = ({ children }) => {
     const [selectedCollection, setCollection] = useState('');
     const [userCollections, setUserCollections] = useState([]);
     const [userDocuments, setUserDocuments] = useState([]);
+    const [tableData, setTableData] = useState([]);
+    const [dataColumns, setDataColumns] = useState([]);
 
     return (
         <UserContext.Provider value={{ 
@@ -22,6 +24,8 @@ export const UserContextProvider = ({ children }) => {
             selectedCollection, setCollection,
             userCollections, setUserCollections,
             userDocuments, setUserDocuments,
+            tableData, setTableData,
+            dataColumns, setDataColumns,
         }}>
             {children}
         </UserContext.Provider>

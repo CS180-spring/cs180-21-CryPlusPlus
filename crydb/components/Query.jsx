@@ -1,11 +1,14 @@
 import DropdownMenu from '@components/DropdownMenu';
 import TextInput from '@components/TextInput';
+import { useUserContext } from "@app/context/UserContext";
 
 const Query = ({ columns }) => {
+  const { dataColumns } = useUserContext();
+
   return (
     <div className="flex flex-col gap-2 text-sm font-inter font-bold w-full">
         Field
-        <DropdownMenu options={columns.map(obj => obj.Header)} />
+        <DropdownMenu options={dataColumns} />
         Condition
         <DropdownMenu options={['Equal', 'Not Equal', 'Greater Than', 'Less Than', 'Greater than or Equal to', 'Less Than or Equal To']} />
         Value

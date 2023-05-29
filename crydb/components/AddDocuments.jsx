@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useEffect } from 'react';
 import { useUserContext } from '@app/context/UserContext';
 
 const AddDocuments = () => {
@@ -36,7 +35,7 @@ const AddDocuments = () => {
             
             // Send the JSON string to the backend
             try {
-                const response = await fetch('/uploadFile', {
+                const response = await fetch('http://localhost/uploadFile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

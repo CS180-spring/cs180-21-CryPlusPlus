@@ -5,7 +5,6 @@
 class Database {
 public:
     using UUID = std::string;
-    using Document = Document;
     using Collection = Collections<UUID, Document>;
 
     // Create an empty database.

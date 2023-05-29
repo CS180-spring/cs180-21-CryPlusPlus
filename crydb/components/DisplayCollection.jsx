@@ -9,7 +9,7 @@ const DisplayCollection = () => {
     setCollection(option);
 
     // Send the selected collection to your server
-    const response = await fetch('/changeCollection', {
+    const response = await fetch('http://localhost/changeCollection', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -18,8 +18,7 @@ const DisplayCollection = () => {
     });
 
     const data = await response.json();
-
-    // Do something with the response data
+    console.log('Response from localhost:', data);
   };
 
   return (

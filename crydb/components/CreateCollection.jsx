@@ -15,7 +15,7 @@ const CreateCollection = () => {
   
     try {
       // Send POST request to create the collection
-      const response = await fetch('/createCollection', {
+      const response = await fetch('http://localhost/createCollection', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

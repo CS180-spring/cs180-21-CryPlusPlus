@@ -16,7 +16,7 @@ const DeleteCollection = () => {
   
     try {
       // Send DELETE request to delete the collection
-      const response = await fetch('/deleteCollection', {
+      const response = await fetch('http://localhost/deleteCollection', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -14,6 +14,7 @@
 #include "ReadJsonData.h"
 #include "Database.h"
 #include "Document.cpp"
+#include "Query.h"
 #include "../lib/json.hpp"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
@@ -21,6 +22,11 @@ namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 using namespace std;
+
+using json = nlohmann::ordered_json;
+
+std::string deletedCollection = "";
+std::string previousCollection = "";
 
 class CurrentCollection {
 public:
@@ -53,15 +59,12 @@ private:
 namespace my_program_state
 {
     std::size_t
-    request_count()
-    {
+    request_count() {
         static std::size_t count = 0;
         return ++count;
     }
 
-    std::time_t
-    now()
-    {
+    std::time_t now() {
         return std::time(0);
     }
 }
@@ -71,20 +74,18 @@ class http_connection : public std::enable_shared_from_this<http_connection>
 public:
     string current_collection;
 
-    http_connection(tcp::socket socket)
-        : socket_(std::move(socket))
-    {
+    http_connection(tcp::socket socket) : socket_(std::move(socket)) {
         // Access the Database singleton instance
         Database& db = Database::getInstance();
-        
+        response_.set(http::field::access_control_allow_origin, "http://localhost:3000");
+        response_.set(http::field::access_control_allow_methods, "GET, POST, PUT, DELETE, OPTIONS");
+        response_.set(http::field::access_control_allow_headers, "Content-Type");
         // Now you can perform operations on the db
     }
     
 
     // Initiate the asynchronous operations associated with the connection.
-    void
-    start()
-    {
+    void start() {
         read_request();
         check_deadline();
     }
@@ -107,66 +108,53 @@ private:
         socket_.get_executor(), std::chrono::seconds(60)};
 
     // Asynchronously receive a complete request message.
-    void
-    read_request()
-    {
+    void read_request() {
         auto self = shared_from_this();
 
-        http::async_read(
-            socket_,
-            buffer_,
-            request_,
-            [self](beast::error_code ec,
-                std::size_t bytes_transferred)
-            {
-                boost::ignore_unused(bytes_transferred);
-                if(!ec)
-                    self->process_request();
-            });
+        http::async_read(socket_, buffer_, request_, [self](beast::error_code ec, std::size_t bytes_transferred) {
+            boost::ignore_unused(bytes_transferred);
+            if(!ec)
+                self->process_request();
+        });
     }
 
-    // Determine what needs to be done with the request message.
-    void
-    process_request()
-    {
+    void process_request() {
         response_.version(request_.version());
         response_.keep_alive(false);
 
-        switch(request_.method())
-        {
-        case http::verb::get:
-            response_.result(http::status::ok);
-            response_.set(http::field::server, "Beast");
-            create_response();
-            break;
+        switch(request_.method()) {
+            case http::verb::get:
+                response_.result(http::status::ok);
+                response_.set(http::field::server, "Beast");
+                create_response();
+                break;
+            case http::verb::post:
+                response_.result(http::status::ok);
+                response_.set(http::field::server, "Beast");
+                process_post_request();
+                create_response();
+                break;
+            case http::verb::options:
+                response_.result(http::status::ok);
+                response_.set(http::field::access_control_allow_origin, "http://localhost:3000");
+                response_.set(http::field::access_control_allow_methods, "GET, POST, PUT, DELETE, OPTIONS");
+                response_.set(http::field::access_control_allow_headers, "Content-Type");
+                break;
+            default:
+                response_.result(http::status::bad_request);
+                response_.set(http::field::content_type, "text/plain");
+                beast::ostream(response_.body())
+                    << "Invalid request-method '"
+                    << std::string(request_.method_string())
+                    << "'";
+                break;
+            }
 
-	case http::verb::post:
-            response_.result(http::status::ok);
-            response_.set(http::field::server, "Beast");
-            process_post_request();
-	    create_response();
-            break;
-
-        default:
-            // We return responses indicating an error if
-            // we do not recognize the request method.
-            response_.result(http::status::bad_request);
-            response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body())
-                << "Invalid request-method '"
-                << std::string(request_.method_string())
-                << "'";
-            break;
-        }
-
-        write_response();
+            write_response();
     }
 
-    void
-    process_post_request()
-    {
-        if(request_.target() == "/uploadFile")
-        {
+    void process_post_request() {
+        if(request_.target() == "/uploadFile") {
             Database& db = Database::getInstance();
 
             std::string post_content = beast::buffers_to_string(request_.body().data());
@@ -196,16 +184,8 @@ private:
             // Now `fileJson` contains the JSON data from the uploaded file
             db.getCollection(CurrentCollection::getInstance().getCollection()).insert(filename, newDoc);
             db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
-
-
-            
-            // ... and so on for the rest of the fields
-
-
-            
         }
-        else if(request_.target() == "/createCollection")
-        {
+        else if(request_.target() == "/createCollection") {
             // Retrieve the content of the POST request
             std::string post_content = beast::buffers_to_string(request_.body().data());
 
@@ -219,81 +199,132 @@ private:
             // Print a confirmation message to the console
             std::cout << "Created collection: " << json["name"].get<std::string>() << std::endl;
         }
-        else if(request_.target() == "/changeCollection")
-        {
+        else if(request_.target() == "/changeCollection") {
+            previousCollection = CurrentCollection::getInstance().getCollection();
             std::string post_content = beast::buffers_to_string(request_.body().data());
             auto json = nlohmann::json::parse(post_content);
             CurrentCollection::getInstance().setCollection(json["selectedCollection"].get<std::string>());
-            cout << CurrentCollection::getInstance().getCollection() << endl;
+            cout << "Changed collection from " << previousCollection << " to " << CurrentCollection::getInstance().getCollection() << endl;
 
         }
-        else if(request_.target() == "/deleteCollection")
-        {
+        else if(request_.target() == "/deleteCollection") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
             auto json = nlohmann::json::parse(post_content);
             string deleted = json["name"].get<std::string>();
             Database& db = Database::getInstance();
             db.deleteCollection(deleted);
             cout << "Deleted Collection: " << deleted << endl;
-
+            deletedCollection = deleted;
+        }
+        else if(request_.target() == "/query") {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            
+            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where ..." << endl;
         }
     }  
 
 
     // Construct a response message based on the program state.
-    void
-    create_response()
-    {
-        if(request_.target() == "/count")
-        {
+    void create_response() {
+        if(request_.target() == "/uploadFile") {
             response_.set(http::field::content_type, "text/html");
+            json resp = {
+                {"time_uploaded: ", my_program_state::now()},
+            };
             beast::ostream(response_.body())
-                << "<html>\n"
-                <<  "<head><title>Request count</title></head>\n"
-                <<  "<body>\n"
-                <<  "<h1>Request count</h1>\n"
-                <<  "<p>There have been "
-                <<  my_program_state::request_count()
-                <<  " requests so far.</p>\n"
-                <<  "</body>\n"
-                <<  "</html>\n";
+                << std::string(resp.dump());
         }
-        else if(request_.target() == "/time")
-        {
+        else if(request_.target() == "/createCollection") {
             response_.set(http::field::content_type, "text/html");
+            json resp = {
+                {"collection_created", CurrentCollection::getInstance().getCollection()}, 
+                {"time_created", my_program_state::now()},
+            };
             beast::ostream(response_.body())
-                <<  "<html>\n"
-                <<  "<head><title>Current time</title></head>\n"
-                <<  "<body>\n"
-                <<  "<h1>Current time</h1>\n"
-                <<  "<p>The current time is "
-                <<  my_program_state::now()
-                <<  " seconds since the epoch.</p>\n"
-                <<  "</body>\n"
-                <<  "</html>\n";
-        } 
-        else if(request_.target() == "/connect")
-	{
-	    // Handle "/connect" endpoint
+                << std::string(resp.dump());
+        }
+        else if(request_.target() == "/changeCollection") {
+            response_.set(http::field::content_type, "text/html");
+            json resp = {
+                {"collection_changed_from", previousCollection}, 
+                {"collection_changed_to", CurrentCollection::getInstance().getCollection()}, 
+                {"time_changed: ", my_program_state::now()},
+            };
+            beast::ostream(response_.body())
+                << std::string(resp.dump());
+        }
+        else if(request_.target() == "/deleteCollection") {
+            response_.set(http::field::content_type, "text/html");
+            json resp = {
+                {"collection_deleted", deletedCollection}, 
+                {"time_deleted: ", my_program_state::now()},
+            };
+            beast::ostream(response_.body())
+                << std::string(resp.dump());
+        }
+        else if(request_.target() == "/query") {
             response_.set(http::field::content_type, "text/plain");
-            response_.set(http::field::access_control_allow_origin, "*");
-            response_.set(http::field::access_control_allow_headers, "Origin, X-Requested-With, Content-Type, Accept");
-            response_.set(http::field::access_control_allow_methods, "POST");
-            beast::ostream(response_.body()) << "connected";
-	    
-	    // Enable CORS preflight by sending 204 No Content response for OPTIONS requests
-            if (request_.method() == http::verb::options)
-            {
-                response_.result(http::status::no_content);
-                response_.set(http::field::content_length, "0");
-            }
-            else
-            {
-                beast::ostream(response_.body()) << " 204";
-            }
-	}
-        else
-        {
+
+
+            json tableData, document;
+            document = {
+                {"name", "Charlie"},
+                {"age", 30},
+                {"location", "New York"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Delta"},
+                {"age", 25},
+                {"location", "San Francisco"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Beta"},
+                {"age", 35},
+                {"location", "Dallas"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Bob"},
+                {"age", 27},
+                {"location", "Riverside"},
+            };
+            tableData.push_back(document);
+            document = {
+                {"name", "Alpha"},
+                {"age", 31},
+                {"location", "Seattle"},
+            };
+            tableData.push_back(document);
+
+            // std::string currCollection = CurrentCollection::getInstance().getCollection();
+            // auto collectionReference = Database::getInstance().getCollection(currCollection);
+            
+            // Query<std::string, Document> query(collectionReference);
+            // auto results = query.getDocuments();
+
+            // json jsonResults;
+            // for (auto document : results)
+            //     jsonResults.push_back(document.getData());
+
+            json resp = {
+                // {"collection_deleted", deletedCollection}, 
+                {"time_queried: ", my_program_state::now()},
+                {"data", std::string(tableData.dump())},
+            };
+            beast::ostream(response_.body())
+                << std::string(resp.dump());
+        }
+        else if(request_.target() == "/time") {
+            std::cout << "in time" << std::endl;
+            response_.set(http::field::content_type, "text/html");
+            json resp = {{"time", my_program_state::now()}};
+            beast::ostream(response_.body())
+                << std::string(resp.dump());
+        }
+        else {
             response_.result(http::status::not_found);
             response_.set(http::field::content_type, "text/plain");
             beast::ostream(response_.body()) << "Test\r\n";
@@ -301,9 +332,7 @@ private:
     }
 
     // Asynchronously transmit the response message.
-    void
-    write_response()
-    {
+    void write_response() {
         auto self = shared_from_this();
 
         response_.content_length(response_.body().size());
@@ -319,9 +348,7 @@ private:
     }
 
     // Check whether we have spent enough time on this connection.
-    void
-    check_deadline()
-    {
+    void check_deadline() {
         auto self = shared_from_this();
 
         deadline_.async_wait(
@@ -337,9 +364,7 @@ private:
 };
 
 // "Loop" forever accepting new connections.
-void
-http_server(tcp::acceptor& acceptor, tcp::socket& socket)
-{
+void http_server(tcp::acceptor& acceptor, tcp::socket& socket) {
   acceptor.async_accept(socket,
       [&](beast::error_code ec)
       {
@@ -349,14 +374,11 @@ http_server(tcp::acceptor& acceptor, tcp::socket& socket)
       });
 }
 
-int
-main(int argc, char* argv[])
-{
-    try
-    {
+int main(int argc, char* argv[]) {
+    std::cout << "Starting" << std::endl;
+    try {
         // Check command line arguments.
-        if(argc != 3)
-        {
+        if(argc != 3) {
             std::cerr << "Usage: " << argv[0] << " <address> <port>\n";
             std::cerr << "  For IPv4, try:\n";
             std::cerr << "    receiver 0.0.0.0 80\n";
@@ -376,8 +398,7 @@ main(int argc, char* argv[])
 
         ioc.run();
     }
-    catch(std::exception const& e)
-    {
+    catch(std::exception const& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }

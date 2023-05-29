@@ -1,14 +1,17 @@
 import DropdownMenu from "./DropdownMenu";
 import TextInput from "./TextInput";
+import { useUserContext } from "@app/context/UserContext";
 
-const SortBy = ({ fields }) => {
+const SortBy = () => {
+  const { dataColumns } = useUserContext();
+  
   const ordering = ['ascending order', `descending order`];
   return (
     <div className="flex flex-col gap-2 text-sm font-inter">
       <div className="font-bold">
         Sort By
       </div>
-      <DropdownMenu options={fields} />
+      <DropdownMenu options={dataColumns} />
       in
       <DropdownMenu options={ordering} />
     </div>
