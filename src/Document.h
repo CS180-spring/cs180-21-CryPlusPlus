@@ -17,6 +17,8 @@ class Document
     std::vector<std::string> outside_Fields;
 
     public:
+    std::string key;
+    std::string file;
     //Default constructor
     Document() : Size(0) {}
 
@@ -48,6 +50,13 @@ class Document
     {
         Data = data;
     }
+
+    Document(json data, std::string filename)
+    {
+        file = filename;
+        Data = data;
+    }
+
 
     //constructor takes in fields vector and json vector to fill in the document
     void add_field(const std::string& key, const json& value)

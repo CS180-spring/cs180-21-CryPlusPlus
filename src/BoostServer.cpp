@@ -180,10 +180,14 @@ private:
 
             // Parse the decoded data into a JSON object
             auto fileJson = nlohmann::json::parse(fileData);
-            Document newDoc(fileJson);
+            for (auto x : fileJson)
+            {
+                Document newDoc(x, filename);
+                db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+            }
+            
 
             // Now `fileJson` contains the JSON data from the uploaded file
-            db.getCollection(CurrentCollection::getInstance().getCollection()).insert(filename, newDoc);
             db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
         }
         else if(request_.target() == "/createCollection") {
