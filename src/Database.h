@@ -1,11 +1,10 @@
 #pragma once
 #include <unordered_map>
-#include "Collections.h"
+#include "Collection.h"
 
 class Database {
 public:
     using UUID = std::string;
-    using Collection = Collections<UUID, Document>;
 
     // Create an empty database.
     Database() = default;
@@ -30,7 +29,10 @@ public:
         if (collections_.count(name) > 0) {
             throw std::runtime_error("Collection already exists.");
         }
-        collections_.insert({name, Collection()});
+        Collection newCollection;
+        newCollection.setName(name);
+
+        collections_.insert({name, newCollection});
     }
 
     // Remove an existing collection.

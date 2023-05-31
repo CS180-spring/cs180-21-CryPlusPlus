@@ -6,8 +6,7 @@
 #include <string>
 #include <vector>
 
-using json = nlohmann::ordered_json;
-
+using json = nlohmann::json;
 
 class Document
 {
