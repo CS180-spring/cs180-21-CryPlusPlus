@@ -6,6 +6,7 @@
 #include "../src/ReadData.h"
 #include "../src/Document.h"
 #include <filesystem>
+#include "../lib/UUID.hpp"
 
 using json = nlohmann::ordered_json;
 
@@ -32,8 +33,10 @@ public:
         }
     }
 
-    void insert(const KeyType& key, const ValueType& value) {
+    void insert(const ValueType& value) {
+        std::string key = UUID::generate_uuid();
         btree_map_.insert(std::make_pair(key, value));
+        value.key = key;
     }
 
     void erase(const KeyType& key) {
@@ -65,6 +68,16 @@ public:
             std::cout << "Key: " << kv.first << "\n";
             std::cout << "Value: " << kv.second << "\n";
         }
+    }
+
+    std::vector<Document> getVector()
+    {
+        vector<Document> docs;
+        for (const auto& kv : btree_map_)
+        {
+            docs.push_back(kv.second);
+        }
+        return docs;
     }
 
 
