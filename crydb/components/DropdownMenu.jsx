@@ -1,27 +1,32 @@
 "use client";
 
-import React from "react"
-import { useState } from "react"
-import { RxCaretDown, RxCaretUp, RxCube } from "react-icons/rx"
+import React from "react";
+import { useState } from "react";
+import { RxCaretDown, RxCaretUp, RxCube } from "react-icons/rx";
 
 const DropdownMenu = ({ options, onOptionSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('Select');
+  const [selectedOption, setSelectedOption] = useState("Select");
 
   const handleSelection = (option) => {
     setSelectedOption(option);
-    if (onOptionSelect)
-      onOptionSelect(option);
+    if (onOptionSelect) onOptionSelect(option);
     setIsOpen(false);
-  }
+  };
 
   return (
-    <div className="font-inter font-light flex flex-col w-full text-black">
+    <div className="flex w-full flex-col font-inter font-light text-black">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full gap-2 justify-between bg-white py-1.5 px-4 items-center border-2 rounded drop-shadow-md"
+        className="flex w-full items-center justify-between gap-2 rounded border-2 bg-white px-4 py-1.5 drop-shadow-md"
       >
-        <div className={`${selectedOption == 'Select' ? 'text-figma-black-grey600' : 'text-black'}`}>
+        <div
+          className={`${
+            selectedOption == "Select"
+              ? "text-figma-black-grey600"
+              : "text-black"
+          }`}
+        >
           {selectedOption}
         </div>
         {!isOpen ? (
@@ -33,23 +38,23 @@ const DropdownMenu = ({ options, onOptionSelect }) => {
       {isOpen && (
         <div className="bg-figma-black-grey300">
           {options.map((option, index) => {
-              if (option != selectedOption) {
-                return (
-                  <button
-                    key={index}
-                    className="flex flex-row gap-2 py-1.5 px-4 hover:bg-figma-black-grey400 w-full text-left items-center text-sm text-figma-black-grey900"
-                    onClick={() => handleSelection(option)}
-                  >
-                    <RxCube className="text-lg"/>
-                    {option}
-                  </button>
-                );
-              }
-            })}
-          </div>
-        )}
-      </div>
-  )
-}
+            if (option != selectedOption) {
+              return (
+                <button
+                  key={index}
+                  className="flex w-full flex-row items-center gap-2 px-4 py-1.5 text-left text-sm text-figma-black-grey900 hover:bg-figma-black-grey400"
+                  onClick={() => handleSelection(option)}
+                >
+                  <RxCube className="text-lg" />
+                  {option}
+                </button>
+              );
+            }
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
-export default DropdownMenu
+export default DropdownMenu;
