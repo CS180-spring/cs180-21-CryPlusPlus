@@ -20,5 +20,15 @@
     "react-json-view": "^1.21.3",
     "react-table": "^7.8.0",
     "tailwindcss": "3.3.2"
+  },
+  "overrides": {
+    "react-json-view": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.3.0"
   }
 }

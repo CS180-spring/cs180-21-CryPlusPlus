@@ -1,52 +1,81 @@
-'use client';
-import Link from 'next/link'
-import './page.css'
+"use client";
+import Link from "next/link";
+import "./page.css";
 
 const Home = () => {
   return (
-    <div className='page_container'>
-      <div id='spinning_cat_intro'></div>
-      <nav className='px-16'>
+    <div className="page_container">
+      <div id="spinning_cat_intro"></div>
+      <nav className="px-16">
         {/* <li>LOGO</li> */}
-        <li><a href='#feats_sec'>Features</a></li>
-        <li><a href='#ups_sec'>Updates</a></li>
+        <li>
+          <a href="#feats_sec">Features</a>
+        </li>
+        <li>
+          <a href="#ups_sec">Updates</a>
+        </li>
         {/* <li><a href='#prices'>Pricing</a></li> */}
         {/* <li><a href='#res_sec'>Resources</a></li> */}
-        <li id="try_now_button"><Link href='main'> Try Now</Link></li>
+        <li id="try_now_button">
+          <Link href="main"> Try Now</Link>
+        </li>
       </nav>
 
-      <div className='overview_section'>
+      <div className="overview_section">
         <div id="overview_left">
           <h1>Work Smarter</h1>
-          <p>Cry++ is a database for developers and users alike that prioritizes efficiency and having quick and secure access to your data. With a multitude of features it is the leading service in data management services</p>
+          <p>
+            Cry++ is a database for developers and users alike that prioritizes
+            efficiency and having quick and secure access to your data. With a
+            multitude of features it is the leading service in data management
+            services
+          </p>
         </div>
         <div id="overview_right">
-          <Link className='overview_links' href="../README.md">Documentation</Link>
-          <Link className='overview_links' href='main'> Use CryDB </Link>
+          <Link className="overview_links" href="../README.md">
+            Documentation
+          </Link>
+          <Link className="overview_links" href="main">
+            {" "}
+            Use CryDB{" "}
+          </Link>
         </div>
       </div>
       <h2>FEATURES</h2>
-      <div id="feats_sec" className='features_section'>
-        <div className='feature'>
-          <div className='feature_left'><h1>CRUD</h1><p>Ability to: Create, Read, Update, and Delete files from database
-</p></div>
-          <div className='feature_right'>IMAGE OF FEATURE</div>
+      <div id="feats_sec" className="features_section">
+        <div className="feature">
+          <div className="feature_left">
+            <h1>CRUD</h1>
+            <p>
+              Ability to: Create, Read, Update, and Delete files from database
+            </p>
+          </div>
+          <div className="feature_right">IMAGE OF FEATURE</div>
         </div>
-        <div className='feature'>
-          <div className='feature_left'><h1>EXPORT</h1><p>Ability to export files to numerous formats</p></div>
-          <div className='feature_right'>IMAGE OF FEATURE</div>
+        <div className="feature">
+          <div className="feature_left">
+            <h1>EXPORT</h1>
+            <p>Ability to export files to numerous formats</p>
+          </div>
+          <div className="feature_right">IMAGE OF FEATURE</div>
         </div>
-        <div className='feature'>
-          <div className='feature_left'><h1>QUERY</h1><p>Retrieval of data in an organized and efficient manner</p></div>
-          <div className='feature_right'>IMAGE OF FEATURE</div>
+        <div className="feature">
+          <div className="feature_left">
+            <h1>QUERY</h1>
+            <p>Retrieval of data in an organized and efficient manner</p>
+          </div>
+          <div className="feature_right">IMAGE OF FEATURE</div>
         </div>
-        <div className='feature'>
-          <div className='feature_left'><h1>SORT</h1><p>Organize and manage data by a number of variables</p></div>
-          <div className='feature_right'>IMAGE OF FEATURE</div>
+        <div className="feature">
+          <div className="feature_left">
+            <h1>SORT</h1>
+            <p>Organize and manage data by a number of variables</p>
+          </div>
+          <div className="feature_right">IMAGE OF FEATURE</div>
         </div>
       </div>
       <h2>LATEST UPDATE</h2>
-      <div id="ups_sec" className='updates_section'>
+      <div id="ups_sec" className="updates_section">
         <h1 id="update_version">Update 1.0.0</h1>
         <p id="update_info">Initial Release</p>
       </div>
@@ -111,9 +140,8 @@ const Home = () => {
           </ul>
         </div>
       </div> */}
-
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

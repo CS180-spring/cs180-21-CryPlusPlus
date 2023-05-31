@@ -1,21 +1,20 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-
-	async rewrites() {
+  async rewrites() {
     return {
       fallback: [
         // These rewrites are checked after both pages/public files
         // and dynamic routes are checked
         {
-          source: '/:path*',
+          source: "/:path*",
           destination: `http://localhost:80/:path*`,
-        }
-      ]
-    }
- }
-}
-module.exports = nextConfig
+        },
+      ],
+    };
+  },
+};
+module.exports = nextConfig;
 
 /*
 module.exports = {
