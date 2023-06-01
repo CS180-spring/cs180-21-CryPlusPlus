@@ -156,46 +156,56 @@ private:
 
     void process_post_request() {
         if(request_.target() == "/uploadFile") {
-        Database& db = Database::getInstance();
+            Database& db = Database::getInstance();
 
-        std::string post_content = beast::buffers_to_string(request_.body().data());
+            std::string post_content = beast::buffers_to_string(request_.body().data());
 
-        // Parse the request body as JSON
-        auto json = nlohmann::json::parse(post_content);
+            // Parse the request body as JSON
+            auto json = nlohmann::json::parse(post_content);
 
-        // Extract the filename and data from the JSON object
-        std::string filename = json["filename"];
-        std::string base64Data = json["data"];
+            // Extract the filename and data from the JSON object
+            std::string filename = json["filename"];
+            std::string base64Data = json["data"];
 
-        // The base64 string has a prefix that we need to remove
-        std::string prefix = "data:application/json;base64,";
-        if (base64Data.substr(0, prefix.size()) == prefix) {
-            base64Data = base64Data.substr(prefix.size());
-        }
-
-        // Decode the base64 string into binary data
-        using namespace boost::archive::iterators;
-        typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
-        std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
-
-        // Parse the decoded data into a JSON object
-        auto fileJson = nlohmann::json::parse(fileData);
-
-        // Check if the parsed JSON is an array or a single object
-        if (fileJson.is_array()) {
-            // This is an array of documents
-            for (auto x : fileJson) {
-                Document newDoc(x, filename);
-                db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+            // The base64 string has a prefix that we need to remove
+            std::string prefix = "data:application/json;base64,";
+            if (base64Data.substr(0, prefix.size()) == prefix) {
+                base64Data = base64Data.substr(prefix.size());
             }
-        } else if (fileJson.is_object()) {
-            // This is a single document
-            Document newDoc(fileJson, filename);
-            db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
-        }
 
-        db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
-    }
+            // Decode the base64 string into binary data
+            using namespace boost::archive::iterators;
+            typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
+            std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
+
+            // Parse the decoded data into a JSON object
+            auto fileJson = nlohmann::json::parse(fileData);
+            bool collection_exists = true;
+            // Check if the parsed JSON is an array or a single object
+            if (fileJson.is_array()) {
+                // This is an array of documents
+                for (auto x : fileJson) {
+                    Document newDoc(x, filename);
+                    try {
+                        db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+                    } catch (const std::runtime_error& e) {
+                        std::cout << "Caught a runtime error: " << e.what() << std::endl;
+                        collection_exists = false;
+                    }
+                }
+            } else if (fileJson.is_object()) {
+                // This is a single document
+                Document newDoc(fileJson, filename);
+                try {
+                    db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+                } catch (const std::runtime_error& e) {
+                    std::cout << "Caught a runtime error: " << e.what() << std::endl;
+                    collection_exists = false;
+                }
+            }
+            if(collection_exists)
+                db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+        }
         else if(request_.target() == "/createCollection") {
             // Retrieve the content of the POST request
             std::string post_content = beast::buffers_to_string(request_.body().data());
