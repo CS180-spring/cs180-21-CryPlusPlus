@@ -4,7 +4,6 @@
 
 class Database {
 public:
-    using UUID = std::string;
 
     // Create an empty database.
     Database() = default;
