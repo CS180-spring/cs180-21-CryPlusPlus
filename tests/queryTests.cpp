@@ -1,12 +1,11 @@
 #include <gtest/gtest.h>
-#include "../src/Collections.h"
+#include "../src/Collection.h"
 #include "../src/Document.h"
 #include "../src/Query.h"
 
 
 class QueryTest : public ::testing::Test {
 protected:
-    using CollectionsType = Collections<std::string, Document>;
 
     void SetUp() override {
         // Create a few documents
@@ -15,16 +14,16 @@ protected:
         Document doc3({{"name", "Bob"}, {"age", 27}, {"location", "New York"}});
 
         // Insert the documents into the collection
-        collections_.insert("doc1", doc1);
-        collections_.insert("doc2", doc2);
-        collections_.insert("doc3", doc3);
+        collections_.insert(doc1);
+        collections_.insert(doc2);
+        collections_.insert(doc3);
     }
 
-    CollectionsType collections_;
+    Collection collections_;
 };
 
 TEST_F(QueryTest, SingleCondition) {
-    Query<std::string, Document> query(collections_);
+    Query query(collections_);
     query.where({"age", GREATER_THAN, 25});
 
     auto results = query.getDocuments();
@@ -32,7 +31,7 @@ TEST_F(QueryTest, SingleCondition) {
 }
 
 TEST_F(QueryTest, ChainedConditions) {
-    Query<std::string, Document> query(collections_);
+    Query query(collections_);
     auto results = query.where({"age", GREATER_THAN, 27}).where({"location", EQUAL, "New York"}).getDocuments();
 ;
     ASSERT_EQ(results.size(), 1);
@@ -40,7 +39,7 @@ TEST_F(QueryTest, ChainedConditions) {
 }
 
 TEST_F(QueryTest, GetKeys) {
-    Query<std::string, Document> query(collections_);
+    Query query(collections_);
     auto keys = query.where({"age", GREATER_THAN_OR_EQUAL, 27}).where({"location", EQUAL, "New York"}).getKeys();
 
     ASSERT_EQ(keys.size(), 2);
@@ -50,7 +49,7 @@ TEST_F(QueryTest, GetKeys) {
 }
 
 TEST_F(QueryTest, ClearConditions) {
-    Query<std::string, Document> query(collections_);
+    Query query(collections_);
     auto results = query.where({"name", EQUAL, "Jane"}).getDocuments();
 
 
