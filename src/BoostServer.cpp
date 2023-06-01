@@ -177,7 +177,6 @@ private:
             using namespace boost::archive::iterators;
             typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
             std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
-
             // Parse the decoded data into a JSON object
             auto fileJson = nlohmann::json::parse(fileData);
             bool collection_exists = true;
