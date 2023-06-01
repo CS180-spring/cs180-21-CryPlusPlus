@@ -1,12 +1,17 @@
 #include <iostream>
 #include "Collection.h"
+#include "document.cpp"
 
 int main() {
     Collection collection;
 
     // Create a few documents
     json data1 = { {"name", "Alice"}, {"age", 25}, {"email", "alice@example.com"} };
-    Document doc1(data1, "file1.json");
+    Document doc(data1, "file1.json");
+    doc.add_field("location/state", "California");
+    doc.add_field("location/zip", 92507);
+    doc.add_field("company/department/HR", true);
+    std::cout << doc << std::endl;
 
     // json data2 = { {"name", "Bob"}, {"age", 30}, {"email", "bob@example.com"} };
     // Document doc2(data2, "file2.json");
@@ -25,7 +30,7 @@ int main() {
     // // Print out the sorted documents
     // for (const Document& doc : sorted_documents) {
     //     std::cout << doc.getData() << std::endl;
-    }
+    // }
 
     return 0;
 }
