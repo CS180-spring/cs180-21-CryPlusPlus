@@ -5,7 +5,7 @@
 #include "../src/ReadCsvData.h"
 
 
-using json = nlohmann::ordered_json;
+using json = nlohmann::json;
 
 // Sample CSV and JSON files for testing
 const std::string sample_csv_filename = "../tests/test_data/test_valid.csv";

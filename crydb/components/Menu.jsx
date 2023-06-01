@@ -40,6 +40,8 @@ const Menu = () => {
     setConsoleLogs,
     tableData,
     selectedCollection,
+    userCollections,
+    userDocuments,
   } = useUserContext();
   return (
     <div className="m-0 w-full p-0">
@@ -59,21 +61,27 @@ const Menu = () => {
       </button>
       <button
         className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300"
-        onClick={() => setAddDocument(true)}
+        onClick={() => {
+          if (selectedCollection != "") setAddDocument(true);
+        }}
       >
         <AiFillFileText />
         Add Document(s)
       </button>
       <button
         className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300"
-        onClick={() => setDeleteCollection(true)}
+        onClick={() => {
+          if (userCollections.length > 0) setDeleteCollection(true);
+        }}
       >
         <ImCross />
         Delete Collection
       </button>
       <button
         className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300"
-        onClick={() => setDeleteDocument(true)}
+        onClick={() => {
+          if (userDocuments.length > 0) setDeleteDocument(true);
+        }}
       >
         <MdDeleteForever />
         Delete Document

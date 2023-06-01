@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 #include <vector>
-#include "../src/Collections.h"
+#include "../src/Collection.h"
 
 enum ComparisonType {
     EQUAL,
@@ -18,12 +18,12 @@ struct Condition {
     json value;
 };
 
-template <typename KeyType, typename ValueType>
+
 class Query {
 public:
-    using CollectionsType = Collections<KeyType, ValueType>;
 
-    Query(CollectionsType &collections) : collections_(collections) {}
+
+    Query(Collection &collections) : collections_(collections) {}
 
 
     Query &where(const Condition &condition) {
@@ -33,11 +33,11 @@ public:
 
 
 
-    std::vector<KeyType> getKeys() {
+    std::vector<std::string> getKeys() {
         return filterKeys();
     }
 
-    std::vector<ValueType> getDocuments() {
+    std::vector<Document> getDocuments() {
         return filterDocuments();
     }
 
@@ -56,11 +56,11 @@ public:
     }
 
 private:
-    CollectionsType &collections_;
+    Collection &collections_;
     std::vector<Condition> conditions_;
     //chatgpt
-    std::vector<KeyType> filterKeys() {
-        std::vector<KeyType> result;
+    std::vector<std::string> filterKeys() {
+        std::vector<std::string> result;
         for (const auto &kv : collections_.getMap()) {
             bool match = true;
             for (const auto &condition : conditions_) {
@@ -77,8 +77,8 @@ private:
         return result;
     }
 
-    std::vector<ValueType> filterDocuments() {
-        std::vector<ValueType> result;
+    std::vector<Document> filterDocuments() {
+        std::vector<Document> result;
         for (const auto &kv : collections_.getMap()) {
             bool match = true;
             for (const auto &condition : conditions_) {
@@ -96,7 +96,7 @@ private:
     }
     //
 
-bool checkCondition(const ValueType &doc, const Condition &condition) {
+bool checkCondition(const Document &doc, const Condition &condition) {
     // Split the key string by '.'
     std::istringstream key_stream(condition.field);
     std::string segment;
