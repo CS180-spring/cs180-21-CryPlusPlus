@@ -15,8 +15,17 @@ const AddDocuments = () => {
   const [files, setFile] = useState();
 
   const handleChange = (event) => {
+    const uploadedFiles = event.target.files;
+    const allowedExtensions = ["csv", "json"];
+  
+    const filteredFiles = Array.from(uploadedFiles).filter((file) => {
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    return allowedExtensions.includes(fileExtension);
+    });
+    
     console.log(files);
-    setFile(event.target.files);
+    setFile(filteredFiles);
+    //setFile(event.target.files);
   };
 
   const handleUpload = async () => {
