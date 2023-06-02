@@ -21,19 +21,13 @@ const Queries = () => {
   };
 
   const handleQueries = async () => {
-    let queryJSON = {
-      field: "Name",
-      condition: 1,
-      value: "Daniel",
-    };
-    const jsonString = JSON.stringify(queryJSON);
     try {
       const response = await fetch("http://localhost/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: jsonString,
+        body: JSON.stringify(queries),
       });
       const data = JSON.parse(await response.text());
 

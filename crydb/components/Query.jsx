@@ -6,7 +6,6 @@ const Query = ({ index, data }) => {
   const { dataColumns, queries, setQueries } = useUserContext();
 
   const onFieldSelect = (input) => {
-    console.log("Changing field");
     setQueries((prevQueries) => {
       const updatedQueries = [...prevQueries];
       const queryToUpdate = { ...updatedQueries[index] };
@@ -20,7 +19,6 @@ const Query = ({ index, data }) => {
   };
 
   const onConditionSelect = (input) => {
-    console.log("Changing field");
     setQueries((prevQueries) => {
       const updatedQueries = [...prevQueries];
       const queryToUpdate = { ...updatedQueries[index] };
@@ -34,7 +32,6 @@ const Query = ({ index, data }) => {
   };
 
   const onValueSelect = (input) => {
-    console.log("Changing field");
     setQueries((prevQueries) => {
       const updatedQueries = [...prevQueries];
       const queryToUpdate = { ...updatedQueries[index] };
@@ -79,11 +76,6 @@ const Query = ({ index, data }) => {
         data={data}
         attri={data.value}
       />
-      {data.field}
-      <br />
-      {data.condition}
-      <br />
-      {data.value}
       <hr className="my-2 border-b border-figma-black-grey500" />
     </div>
   );
