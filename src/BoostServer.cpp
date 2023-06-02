@@ -232,7 +232,7 @@ private:
             std::string post_content = beast::buffers_to_string(request_.body().data());
             auto json = nlohmann::json::parse(post_content);
             
-            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where ..." << endl;
+            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where: " << json << endl;
         }
     }  
 
