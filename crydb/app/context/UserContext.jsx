@@ -15,6 +15,7 @@ export const UserContextProvider = ({ children }) => {
   const [tableData, setTableData] = useState([]);
   const [dataColumns, setDataColumns] = useState([]);
   const [consoleLogs, setConsoleLogs] = useState([]);
+  const [queries, setQueries] = useState([]);
 
   return (
     <UserContext.Provider
@@ -39,6 +40,8 @@ export const UserContextProvider = ({ children }) => {
         setDataColumns,
         consoleLogs,
         setConsoleLogs,
+        queries,
+        setQueries,
       }}
     >
       {children}

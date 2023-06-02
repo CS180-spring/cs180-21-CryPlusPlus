@@ -1,23 +1,25 @@
 import Query from "@components/Query";
-import { useState } from "react";
 import { useUserContext } from "@app/context/UserContext";
 import { addToLog, updateTable } from "@utils/helpers";
 
 const Queries = () => {
-  const { setTableData, setConsoleLogs } = useUserContext();
+  const { setTableData, setConsoleLogs, queries, setQueries } =
+    useUserContext();
 
-  const [queries, setQueries] = useState([]);
   const addQuery = () => {
-    const prevQueries = [...queries, <Query />];
+    console.log("queries:", queries);
+    const prevQueries = [...queries, { field: "", condition: "", value: "" }];
     setQueries(prevQueries);
     console.log("adding query");
   };
+
   const deleteQuery = (i) => {
     console.log(`Deleting ${i}`);
     const prevQueries = [...queries];
     prevQueries.splice(i, 1);
     setQueries(prevQueries);
   };
+
   const handleQueries = async () => {
     let queryJSON = {
       field: "Name",
@@ -47,7 +49,7 @@ const Queries = () => {
       <div className="text-xl font-bold">Queries</div>
       {queries.map((data, i) => {
         return (
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center" key={i}>
             <button
               key={i}
               className="m-2 border-2 px-4 py-2 font-inter font-light hover:bg-figma-black-grey400"
@@ -55,7 +57,7 @@ const Queries = () => {
             >
               x
             </button>
-            {data}
+            <Query index={i} data={data} />
           </div>
         );
       })}
