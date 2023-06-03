@@ -32,7 +32,7 @@ const Queries = () => {
       const data = JSON.parse(await response.text());
 
       console.log("Response from the server:", data);
-      updateTable(JSON.parse(data.data), setTableData);
+      updateTable(data.data, setTableData);
       addToLog(data, setConsoleLogs);
     } catch (error) {
       console.error("Error fetching from the server:", error);
