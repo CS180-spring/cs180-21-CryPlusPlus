@@ -1,9 +1,11 @@
 import DropdownMenu from "./DropdownMenu";
 import { useUserContext } from "@app/context/UserContext";
 import { useState } from "react";
+import { addToLog, updateTable } from "@utils/helpers";
 
 const SortBy = () => {
-  const { dataColumns } = useUserContext();
+  const { dataColumns, setTableData, setConsoleLogs, setDataColumns } =
+    useUserContext();
   const [field, setField] = useState("");
   const [order, setOrder] = useState("");
 
@@ -22,9 +24,11 @@ const SortBy = () => {
         body: JSON.stringify(jsonSort),
       });
       const data = JSON.parse(await response.text());
+      const table = data.data;
 
       console.log("Response from the server:", data);
-      updateTable(JSON.parse(data.data), setTableData);
+      updateTable(table.data, setTableData);
+      setDataColumns(table.columns);
       addToLog(data, setConsoleLogs);
     } catch (error) {
       console.error("Error fetching from the server:", error);
