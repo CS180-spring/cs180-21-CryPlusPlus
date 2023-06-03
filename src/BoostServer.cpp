@@ -252,7 +252,7 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/createCollection") {
             response_.set(http::field::content_type, "text/html");
@@ -261,7 +261,7 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/changeCollection") {
             response_.set(http::field::content_type, "text/html");
@@ -270,7 +270,7 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/deleteCollection") {
             response_.set(http::field::content_type, "text/html");
@@ -279,7 +279,7 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/query") {
             response_.set(http::field::content_type, "text/plain");
@@ -328,7 +328,7 @@ private:
                 {"data", tableData},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/sortBy") {
             response_.set(http::field::content_type, "text/html");
@@ -351,14 +351,14 @@ private:
                 {"data", data}
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/time") {
             std::cout << "in time" << std::endl;
             response_.set(http::field::content_type, "text/html");
             json resp = {{"time", my_program_state::now()}};
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else {
             response_.result(http::status::not_found);
