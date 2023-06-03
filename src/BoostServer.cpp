@@ -284,38 +284,33 @@ private:
         else if(request_.target() == "/query") {
             response_.set(http::field::content_type, "text/plain");
 
-
-            json tableData, document;
-            document = {
-                {"name", "Charlie"},
-                {"age", 30},
-                {"location", "New York"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Delta"},
-                {"age", 25},
-                {"location", "San Francisco"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Beta"},
-                {"age", 35},
-                {"location", "Dallas"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Bob"},
-                {"age", 27},
-                {"location", "Riverside"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Alpha"},
-                {"age", 31},
-                {"location", "Seattle"},
-            };
-            tableData.push_back(document);
+            json tableData = {
+                {
+                    {"name", "Charlie"},
+                    {"age", 30},
+                    {"location", "New York"},
+                }
+                {
+                    {"name", "Delta"},
+                    {"age", 25},
+                    {"location", "San Francisco"},
+                }
+                {
+                    {"name", "Bob"},
+                    {"age", 27},
+                    {"location", "Riverside"},
+                }
+                {
+                    {"name", "Alpha"},
+                    {"age", 31},
+                    {"location", "Seattle"},
+                }
+                {
+                    {"name", "Beta"},
+                    {"age", 35},
+                    {"location", "Dallas"},
+                }
+            }
 
             // std::string currCollection = CurrentCollection::getInstance().getCollection();
             // auto collectionReference = Database::getInstance().getCollection(currCollection);
@@ -330,7 +325,7 @@ private:
             json resp = {
                 {"message", "Query on [Collection] where [field] [condition] [value]"}, 
                 {"time", my_program_state::now()},
-                {"data", std::string(tableData.dump())},
+                {"data", tableData},
             };
             beast::ostream(response_.body())
                 << std::string(resp.dump());
