@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RxCaretDown, RxCaretUp, RxCube } from "react-icons/rx";
 
-const DropdownMenu = ({ options, onOptionSelect }) => {
+const DropdownMenu = ({ options, onOptionSelect, data, queries, attri }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Select");
 
@@ -13,6 +13,10 @@ const DropdownMenu = ({ options, onOptionSelect }) => {
     if (onOptionSelect) onOptionSelect(option);
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (data) setSelectedOption(`${attri == "" ? "Select" : attri}`);
+  }, [queries]);
 
   return (
     <div className="flex w-full flex-col font-inter font-light text-black">

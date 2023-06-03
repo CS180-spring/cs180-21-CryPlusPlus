@@ -50,7 +50,7 @@ const CreateCollection = () => {
       >
         <div className="flex w-1/2 flex-col items-center gap-4 border-4 border-figma-purple bg-white px-4 py-16">
           <div className="">Create Collection</div>
-          <TextInput value={value} setValue={setValue} />
+          <TextInput onOptionSelect={setValue} />
           <button
             className="border-2 border-figma-purple p-2 hover:bg-figma-black-grey300"
             onClick={handleUpload}
