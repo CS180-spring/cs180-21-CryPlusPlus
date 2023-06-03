@@ -7,7 +7,6 @@ import Queries from "@components/Queries";
 import DisplayCollection from "@components/DisplayCollection";
 import CreateCollection from "@components/CreateCollection";
 import DeleteCollection from "@components/DeleteCollection";
-import DeleteDocument from "@components/DeleteDocument";
 import DisplayToggleSwitch from "@components/DisplayToggleSwitch";
 import { useUserContext } from "@app/context/UserContext";
 
@@ -37,7 +36,6 @@ const Main = () => {
         <CreateCollection />
         <AddDocuments />
         <DeleteCollection />
-        <DeleteDocument />
       </div>
     </div>
   );

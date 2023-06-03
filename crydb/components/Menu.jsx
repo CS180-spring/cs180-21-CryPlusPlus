@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { HiHome } from "react-icons/Hi";
 import { AiFillFileText } from "react-icons/Ai";
-import { MdDeleteForever } from "react-icons/Md";
 import { BiExport, BiSave } from "react-icons/Bi";
 import { BsFillCollectionFill } from "react-icons/Bs";
 import { ImCross } from "react-icons/Im";
@@ -35,13 +34,11 @@ const Menu = () => {
   const {
     setCreateCollection,
     setAddDocument,
-    setDeleteDocument,
     setDeleteCollection,
     setConsoleLogs,
     tableData,
     selectedCollection,
     userCollections,
-    userDocuments,
   } = useUserContext();
   return (
     <div className="m-0 w-full p-0">
@@ -76,15 +73,6 @@ const Menu = () => {
       >
         <ImCross />
         Delete Collection
-      </button>
-      <button
-        className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300"
-        onClick={() => {
-          if (userDocuments.length > 0) setDeleteDocument(true);
-        }}
-      >
-        <MdDeleteForever />
-        Delete Document
       </button>
       <button className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300">
         <BiSave />
