@@ -22,10 +22,9 @@ const AddDocuments = () => {
     const fileExtension = file.name.split(".").pop().toLowerCase();
     return allowedExtensions.includes(fileExtension);
     });
-    
-    console.log(files);
     setFile(filteredFiles);
-    //setFile(event.target.files);
+    // console.log(files);
+    // setFile(event.target.files);
   };
 
   const handleUpload = async () => {
