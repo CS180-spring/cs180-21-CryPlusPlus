@@ -8,7 +8,7 @@
 #include "../lib/json.hpp"
 #include <vector>
 // using namespace std;
-using json = nlohmann::ordered_json;
+using json = nlohmann::json;
 
 class ReadData
 {

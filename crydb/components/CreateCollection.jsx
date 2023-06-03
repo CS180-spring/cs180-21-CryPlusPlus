@@ -39,27 +39,27 @@ const CreateCollection = () => {
     }
   };
 
-  if (!createCollection) return null;
-
   return (
-    <div
-      id="container"
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm"
-      onClick={(e) =>
-        e.target.id === "container" ? setCreateCollection(false) : null
-      }
-    >
-      <div className="flex w-1/2 flex-col items-center gap-4 border-4 border-figma-purple bg-white px-4 py-16">
-        <div className="">Create Collection</div>
-        <TextInput value={value} setValue={setValue} />
-        <button
-          className="border-2 border-figma-purple p-2 hover:bg-figma-black-grey300"
-          onClick={handleUpload}
-        >
-          Create
-        </button>
+    createCollection && (
+      <div
+        id="container"
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm"
+        onClick={(e) =>
+          e.target.id === "container" ? setCreateCollection(false) : null
+        }
+      >
+        <div className="flex w-1/2 flex-col items-center gap-4 border-4 border-figma-purple bg-white px-4 py-16">
+          <div className="">Create Collection</div>
+          <TextInput onOptionSelect={setValue} />
+          <button
+            className="border-2 border-figma-purple p-2 hover:bg-figma-black-grey300"
+            onClick={handleUpload}
+          >
+            Create
+          </button>
+        </div>
       </div>
-    </div>
+    )
   );
 };
 

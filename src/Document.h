@@ -6,8 +6,7 @@
 #include <string>
 #include <vector>
 
-using json = nlohmann::ordered_json;
-
+using json = nlohmann::json;
 
 class Document
 {
@@ -58,13 +57,33 @@ class Document
     }
 
 
-    //constructor takes in fields vector and json vector to fill in the document
+
     void add_field(const std::string& key, const json& value)
     {
-        Data[key] = value;
+        std::istringstream key_stream(key);
+        std::string segment;
+        std::vector<std::string> path;
+
+        while(std::getline(key_stream, segment, '/')) {
+            path.push_back(segment);
+        }
+
+        json* node = &Data;
+        for (size_t i = 0; i < path.size(); i++) {
+            if (i == path.size() - 1) {
+                (*node)[path[i]] = value;
+            } else {
+                if ((*node).find(path[i]) == (*node).end()) {
+                    (*node)[path[i]] = json::object();
+                }
+                node = &(*node)[path[i]];
+            }
+        }
+
         outside_Fields.push_back(key);
         Size++;
     }
+
 
     void delete_field(const std::string& key)
     {

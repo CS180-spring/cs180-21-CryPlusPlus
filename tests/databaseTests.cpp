@@ -1,32 +1,46 @@
 #include <gtest/gtest.h>
-#include "../src/Database.h" // Assuming that your Database class is in the src directory.
+#include "Database.h"
+#include "Collection.h"
 
-using namespace testing;
-class DatabaseTest : public Test {
-protected:
-    Database db;
+TEST(DatabaseTest, SingletonInstance) {
+    Database& db1 = Database::getInstance();
+    Database& db2 = Database::getInstance();
 
-    void SetUp() override {
-        db.createCollection("users");
-    }
-};
-
-TEST_F(DatabaseTest, CollectionCreatedSuccessfully) {
-    EXPECT_TRUE(db.hasCollection("users"));
+    // They should point to the same object
+    EXPECT_EQ(&db1, &db2);
 }
 
-TEST_F(DatabaseTest, RenameCollection) {
-    db.renameCollection("users", "customers");
-    EXPECT_FALSE(db.hasCollection("users"));
-    EXPECT_TRUE(db.hasCollection("customers"));
+TEST(DatabaseTest, CreateAndDeleteCollection) {
+    Database& db = Database::getInstance();
+
+    // No collections at the beginning
+    EXPECT_FALSE(db.hasCollection("collection1"));
+
+    // Create a collection
+    db.createCollection("collection1");
+    EXPECT_TRUE(db.hasCollection("collection1"));
+
+    // Delete the collection
+    db.deleteCollection("collection1");
+    EXPECT_FALSE(db.hasCollection("collection1"));
 }
 
-TEST_F(DatabaseTest, GetCollection) {
-    Database::Collection& collection = db.getCollection("users");
-    EXPECT_EQ(collection.size(), 0);
+TEST(DatabaseTest, GetAndRenameCollection) {
+    Database& db = Database::getInstance();
+
+    // Create a collection
+    db.createCollection("collection1");
+
+    // Get the collection
+    Collection& collection = db.getCollection("collection1");
+    EXPECT_EQ(collection.getName(), "collection1");
+
+    // Rename the collection
+    db.renameCollection("collection1", "collection2");
+    EXPECT_FALSE(db.hasCollection("collection1"));
+    EXPECT_TRUE(db.hasCollection("collection2"));
+
+    db.deleteCollection("collection2");
 }
 
-TEST_F(DatabaseTest, DeleteCollection) {
-    db.deleteCollection("users");
-    EXPECT_FALSE(db.hasCollection("users"));
-}
+

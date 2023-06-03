@@ -23,7 +23,7 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 using namespace std;
 
-using json = nlohmann::ordered_json;
+using json = nlohmann::json;
 
 std::string deletedCollection = "";
 std::string previousCollection = "";
@@ -156,40 +156,46 @@ private:
 
     void process_post_request() {
         if(request_.target() == "/uploadFile") {
-            Database& db = Database::getInstance();
+        Database& db = Database::getInstance();
 
-            std::string post_content = beast::buffers_to_string(request_.body().data());
+        std::string post_content = beast::buffers_to_string(request_.body().data());
 
-            // Parse the request body as JSON
-            auto json = nlohmann::json::parse(post_content);
+        // Parse the request body as JSON
+        auto json = nlohmann::json::parse(post_content);
 
-            // Extract the filename and data from the JSON object
-            std::string filename = json["filename"];
-            std::string base64Data = json["data"];
+        // Extract the filename and data from the JSON object
+        std::string filename = json["filename"];
+        std::string base64Data = json["data"];
 
-            // The base64 string has a prefix that we need to remove
-            std::string prefix = "data:application/json;base64,";
-            if (base64Data.substr(0, prefix.size()) == prefix) {
-                base64Data = base64Data.substr(prefix.size());
-            }
+        // The base64 string has a prefix that we need to remove
+        std::string prefix = "data:application/json;base64,";
+        if (base64Data.substr(0, prefix.size()) == prefix) {
+            base64Data = base64Data.substr(prefix.size());
+        }
 
-            // Decode the base64 string into binary data
-            using namespace boost::archive::iterators;
-            typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
-            std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
+        // Decode the base64 string into binary data
+        using namespace boost::archive::iterators;
+        typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
+        std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
 
-            // Parse the decoded data into a JSON object
-            auto fileJson = nlohmann::json::parse(fileData);
-            for (auto x : fileJson)
-            {
+        // Parse the decoded data into a JSON object
+        auto fileJson = nlohmann::json::parse(fileData);
+
+        // Check if the parsed JSON is an array or a single object
+        if (fileJson.is_array()) {
+            // This is an array of documents
+            for (auto x : fileJson) {
                 Document newDoc(x, filename);
                 db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
             }
-            
-
-            // Now `fileJson` contains the JSON data from the uploaded file
-            db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+        } else if (fileJson.is_object()) {
+            // This is a single document
+            Document newDoc(fileJson, filename);
+            db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
         }
+
+        db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+    }
         else if(request_.target() == "/createCollection") {
             // Retrieve the content of the POST request
             std::string post_content = beast::buffers_to_string(request_.body().data());
@@ -226,7 +232,13 @@ private:
             std::string post_content = beast::buffers_to_string(request_.body().data());
             auto json = nlohmann::json::parse(post_content);
             
-            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where ..." << endl;
+            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where: " << json << endl;
+        }
+        else if(request_.target() == "/sortBy") {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            
+            cout << "Sorting by " << json["field"] << " from '" << CurrentCollection::getInstance().getCollection() << "' in " << json["order"] << endl;
         }
     }  
 
@@ -240,7 +252,7 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/createCollection") {
             response_.set(http::field::content_type, "text/html");
@@ -249,7 +261,7 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/changeCollection") {
             response_.set(http::field::content_type, "text/html");
@@ -258,7 +270,7 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/deleteCollection") {
             response_.set(http::field::content_type, "text/html");
@@ -267,43 +279,38 @@ private:
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else if(request_.target() == "/query") {
             response_.set(http::field::content_type, "text/plain");
 
-
-            json tableData, document;
-            document = {
-                {"name", "Charlie"},
-                {"age", 30},
-                {"location", "New York"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Delta"},
-                {"age", 25},
-                {"location", "San Francisco"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Beta"},
-                {"age", 35},
-                {"location", "Dallas"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Bob"},
-                {"age", 27},
-                {"location", "Riverside"},
-            };
-            tableData.push_back(document);
-            document = {
-                {"name", "Alpha"},
-                {"age", 31},
-                {"location", "Seattle"},
-            };
-            tableData.push_back(document);
+            json tableData = {
+                {
+                    {"name", "Charlie"},
+                    {"age", 30},
+                    {"location", "New York"},
+                }
+                {
+                    {"name", "Delta"},
+                    {"age", 25},
+                    {"location", "San Francisco"},
+                }
+                {
+                    {"name", "Bob"},
+                    {"age", 27},
+                    {"location", "Riverside"},
+                }
+                {
+                    {"name", "Alpha"},
+                    {"age", 31},
+                    {"location", "Seattle"},
+                }
+                {
+                    {"name", "Beta"},
+                    {"age", 35},
+                    {"location", "Dallas"},
+                }
+            }
 
             // std::string currCollection = CurrentCollection::getInstance().getCollection();
             // auto collectionReference = Database::getInstance().getCollection(currCollection);
@@ -318,17 +325,40 @@ private:
             json resp = {
                 {"message", "Query on [Collection] where [field] [condition] [value]"}, 
                 {"time", my_program_state::now()},
-                {"data", std::string(tableData.dump())},
+                {"data", tableData},
             };
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
+        }
+        else if(request_.target() == "/sortBy") {
+            response_.set(http::field::content_type, "text/html");
+
+            json columns = {"title", "author", "date"};
+            json table = {{
+                {"name", "Delta"},
+                {"age", 25},
+                {"location", "San Francisco"},
+            }};
+
+            json data {
+                {"columns", columns},
+                {"data", table}
+            };
+
+            json resp = {
+                {"message", "Sorted '" + CurrentCollection::getInstance().getCollection() + "'"}, 
+                {"time", my_program_state::now()},
+                {"data", data}
+            };
+            beast::ostream(response_.body())
+                << resp;
         }
         else if(request_.target() == "/time") {
             std::cout << "in time" << std::endl;
             response_.set(http::field::content_type, "text/html");
             json resp = {{"time", my_program_state::now()}};
             beast::ostream(response_.body())
-                << std::string(resp.dump());
+                << resp;
         }
         else {
             response_.result(http::status::not_found);
