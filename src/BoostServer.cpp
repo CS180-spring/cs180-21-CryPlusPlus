@@ -234,6 +234,12 @@ private:
             
             cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where: " << json << endl;
         }
+        else if(request_.target() == "/sortBy") {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            
+            cout << "Sorting by " << json["field"] << " from '" << CurrentCollection::getInstance().getCollection() << "' in " << json["order"] << endl;
+        }
     }  
 
 
@@ -325,6 +331,29 @@ private:
                 {"message", "Query on [Collection] where [field] [condition] [value]"}, 
                 {"time", my_program_state::now()},
                 {"data", std::string(tableData.dump())},
+            };
+            beast::ostream(response_.body())
+                << std::string(resp.dump());
+        }
+        else if(request_.target() == "/sortBy") {
+            response_.set(http::field::content_type, "text/html");
+
+            json columns = {"title", "author", "date"};
+            json table = {{
+                {"name", "Delta"},
+                {"age", 25},
+                {"location", "San Francisco"},
+            }};
+
+            json data {
+                {"columns", columns},
+                {"data", table}
+            };
+
+            json resp = {
+                {"message", "Sorted '" + CurrentCollection::getInstance().getCollection() + "'"}, 
+                {"time", my_program_state::now()},
+                {"data", data}
             };
             beast::ostream(response_.body())
                 << std::string(resp.dump());
