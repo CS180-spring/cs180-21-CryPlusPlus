@@ -54,7 +54,6 @@ const AddDocuments = () => {
           console.error("Error fetching from localhost:", error);
         }
       };
-      setUserDocuments([...userDocuments, file.name]);
     }
 
     setAddDocument(false);

@@ -8,7 +8,7 @@
 #include "../lib/json.hpp"
 #include <unordered_map>
 
-using json = nlohmann::ordered_json;
+using json = nlohmann::json;
 
 class CsvToJson {
     public:

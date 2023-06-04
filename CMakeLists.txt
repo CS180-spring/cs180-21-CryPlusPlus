@@ -9,9 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Create the executable target
-add_executable(main
-"src/main.cpp"
-)
+
 
 # Add the include directories
 include_directories("src")

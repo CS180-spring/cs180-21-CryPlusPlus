@@ -106,8 +106,11 @@ public:
     }
 
 private:
+    //upload file respone data
     std::string filename;
     int document_count;
+    nlohmann::json_abi_v3_11_2::basic_json<> fileJson;
+
 
     // The socket for the currently connected client.
     tcp::socket socket_;
@@ -195,7 +198,7 @@ private:
             typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
             std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
             // Parse the decoded data into a JSON object
-            auto fileJson = nlohmann::json::parse(fileData);
+            fileJson = nlohmann::json::parse(fileData);
             bool collection_exists = true;
             // Check if the parsed JSON is an array or a single object
             if (fileJson.is_array()) {
@@ -327,6 +330,7 @@ private:
             nlohmann::json resp = {
                 {"message", "Uploaded file " + filename + " with " + std::to_string(document_count) + " documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
                 {"time", my_program_state::now()},
+                {"Document", fileJson}
             };
             beast::ostream(response_.body())
                 << resp;
@@ -361,48 +365,11 @@ private:
         else if(request_.target() == "/query") {
             response_.set(http::field::content_type, "text/plain");
 
-            json tableData = {
-                {
-                    {"name", "Charlie"},
-                    {"age", 30},
-                    {"location", "New York"},
-                },
-                {
-                    {"name", "Delta"},
-                    {"age", 25},
-                    {"location", "San Francisco"},
-                },
-                {
-                    {"name", "Bob"},
-                    {"age", 27},
-                    {"location", "Riverside"},
-                },
-                {
-                    {"name", "Alpha"},
-                    {"age", 31},
-                    {"location", "Seattle"},
-                },
-                {
-                    {"name", "Beta"},
-                    {"age", 35},
-                    {"location", "Dallas"},
-                }
-            };
-
-            // std::string currCollection = CurrentCollection::getInstance().getCollection();
-            // auto collectionReference = Database::getInstance().getCollection(currCollection);
-            
-            // Query<std::string, Document> query(collectionReference);
-            // auto results = query.getDocuments();
-
-            // json jsonResults;
-            // for (auto document : results)
-            //     jsonResults.push_back(document.getData());
 
             json resp = {
                 {"message", "Query on [Collection] where [field] [condition] [value]"}, 
                 {"time", my_program_state::now()},
-                {"data", tableData},
+                // {"data", tableData},
             };
             beast::ostream(response_.body())
                 << resp;
