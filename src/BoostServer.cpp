@@ -81,6 +81,8 @@ public:
         response_.set(http::field::access_control_allow_origin, "http://localhost:3000");
         response_.set(http::field::access_control_allow_methods, "GET, POST, PUT, DELETE, OPTIONS");
         response_.set(http::field::access_control_allow_headers, "Content-Type");
+        document_count = 0;
+        filename = "";
         // Now you can perform operations on the db
     }
     
@@ -92,6 +94,9 @@ public:
     }
 
 private:
+    std::string filename;
+    int document_count;
+
     // The socket for the currently connected client.
     tcp::socket socket_;
 
@@ -164,7 +169,7 @@ private:
             auto json = nlohmann::json::parse(post_content);
 
             // Extract the filename and data from the JSON object
-            std::string filename = json["filename"];
+            filename = json["filename"];
             std::string base64Data = json["data"];
 
             // The base64 string has a prefix that we need to remove
@@ -184,6 +189,7 @@ private:
             if (fileJson.is_array()) {
                 // This is an array of documents
                 for (auto x : fileJson) {
+                    document_count++;
                     Document newDoc(x, filename);
                     try {
                         db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
@@ -194,6 +200,7 @@ private:
                 }
             } else if (fileJson.is_object()) {
                 // This is a single document
+                document_count = 1;
                 Document newDoc(fileJson, filename);
                 try {
                     db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
@@ -298,9 +305,9 @@ private:
     // Construct a response message based on the program state.
     void create_response() {
         if(request_.target() == "/uploadFile") {
-            response_.set(http::field::content_type, "text/html");
-            json resp = {
-                {"message", "Uploaded file [FILE_NAME] with [DOCUMENT_NUMBER] documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
+            response_.set(http::field::content_type, "application/json"); 
+            nlohmann::json resp = {
+                {"message", "Uploaded file " + filename + " with " + std::to_string(document_count) + " documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
