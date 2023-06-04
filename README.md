@@ -2,7 +2,7 @@
 
 # CryDB
 
-<Ethan Ortega><Eddie Vargas><Daniel Castaneda><Bowen Tang><Zinal Patel>
+Contributors: Daniel Castaneda, Ethan Ortega, Zinal Patel, Bowen Tang, Eddie Vargas
 
 # Project Description
 
@@ -58,19 +58,21 @@ Sprint 7-8:
 * &nbsp;&nbsp;&nbsp;&nbsp; Finalize UI design
 * &nbsp;&nbsp;&nbsp;&nbsp; System testing and refactoring
 
-# Behind the Scenes
+## Behind the Scenes
 
 ### Back-End
 
 #### C++ / JSON / BOOST / BEAST
+
 * &nbsp;&nbsp;&nbsp;&nbsp; Back end framework done in C++, handling JSON objects & with aid of Boost & Beast C++ libraries
 
 #### CMake / Make / Google Testing
+
 * &nbsp;&nbsp;&nbsp;&nbsp; Generate build files, run them, and unit test with Google testing
 
 ## Front-End
-* &nbsp;&nbsp;
-* &nbsp;&nbsp;
+
+* &nbsp;&nbsp; React/Next.js: Javascript libraries for building interfaces and connections
 
 # UML Diagram
 
@@ -86,4 +88,4 @@ Sprint 7-8:
 
 # Burn Down Chart
 
-![Burn Down Chart](./Burndown chart.png)
+![Burn Down Chart](./Burndown.png)
