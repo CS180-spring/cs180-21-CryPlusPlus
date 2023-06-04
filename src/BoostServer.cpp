@@ -137,6 +137,7 @@ private:
     std::string filename;
     int document_count;
     nlohmann::json_abi_v3_11_2::basic_json<> fileJson;
+    nlohmann::json_abi_v3_11_2::basic_json<> queries;
 
 
     // The socket for the currently connected client.
@@ -328,9 +329,7 @@ private:
         }
         else if(request_.target() == "/query") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
-            auto json = nlohmann::json::parse(post_content);
-            
-            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where: " << json << endl;
+            queries = nlohmann::json::parse(post_content);
         }
         else if(request_.target() == "/sortBy") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
@@ -345,10 +344,29 @@ private:
     void create_response() {
         if(request_.target() == "/uploadFile") {
             response_.set(http::field::content_type, "application/json"); 
+            Database& db = Database::getInstance();
+
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            vector<Document> docs = db.getCollection(collectionName).getVector();
+
+            json tableData;
+            json fields;
+            for (Document doc : docs)
+                tableData.push_back(doc.getData());
+
+            for (auto& doc : tableData)
+                getFields(doc, fields);
+
+            json data {
+                {"columns", fields},
+                {"data", tableData}
+            };
+            std::cout<< "Response " << fileJson << endl;
+
             nlohmann::json resp = {
                 {"message", "Uploaded file " + filename + " with " + std::to_string(document_count) + " documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
                 {"time", my_program_state::now()},
-                {"Document", fileJson}
+                {"data", data}
             };
             beast::ostream(response_.body())
                 << resp;
@@ -384,11 +402,6 @@ private:
             response_.set(http::field::content_type, "application/json");
             Database& db = Database::getInstance();
             std::string collectionName = CurrentCollection::getInstance().getCollection();
-
-            // Retrieve and parse the request body
-            std::string post_content = beast::buffers_to_string(request_.body().data());
-            auto queries = nlohmann::json::parse(post_content);
-
             Query query(db.getCollection(collectionName));
 
             // Check if the input is a single query or multiple queries
@@ -421,7 +434,6 @@ private:
                     std::string field = queries["field"];
                     std::string value = queries["value"];
 
-                    // Convert the condition string to a ComparisonType
                     ComparisonType compType;
                     try {
                         compType = stringToComparisonType(condition);
@@ -441,10 +453,19 @@ private:
             for (Document doc : results)
                 queriesJSON.push_back(doc.getData());
 
+            json fields;
+
+            for (auto& doc : queriesJSON)
+                getFields(doc, fields);
+
+            json data {
+                {"columns", fields},
+                {"data", queriesJSON}
+            };
             nlohmann::json resp = {
                 {"message", "Query on " + collectionName + " with " + std::to_string(queries.size()) + " conditions"},
                 {"time", my_program_state::now()},
-                {"Queried Documents", queriesJSON}
+                {"data", data}
             };
             beast::ostream(response_.body())
                 << resp;
