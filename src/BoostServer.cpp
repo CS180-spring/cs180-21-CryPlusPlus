@@ -166,6 +166,18 @@ private:
         // Extract the filename and data from the JSON object
         std::string filename = json["filename"];
         std::string base64Data = json["data"];
+	
+	//Function underneath is to retrieve fields from Json Object
+	auto fileJson = nlohmann::json::parse(fileData);
+
+        // Check if the parsed JSON is an object
+        if (fileJson.is_object()) {
+            std::vector<std::string> fields;
+       	    for (auto it = fileJson.begin(); it != fileJson.end(); ++it) {
+                fields.push_back(it.key());
+            }
+            // fields now has  all the fields of the JSON object
+        }	
 
         // The base64 string has a prefix that we need to remove
         std::string prefix = "data:application/json;base64,";
