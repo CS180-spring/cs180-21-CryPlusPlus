@@ -12,50 +12,81 @@ const AddDocuments = () => {
         setFile(event.target.files);
     }
 
-    const handleUpload = async() => {
-        if (!files || files.length === 0) {
-            setAddDocument(false);
+   const handleUpload = async () => {
+  if (!files || files.length === 0) {
+    setAddDocument(false);
+    return;
+  }
+
+  const file = files[0];
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onloadend = async () => {
+    const base64 = reader.result;
+
+    if (file.type === "application/json") {
+      try {
+        const json = JSON.parse(base64);
+        const jsonString = JSON.stringify(json);
+        console.log(jsonString);
+
+        try {
+          const response = await fetch("http://localhost/uploadFile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: jsonString,
+          });
+
+          const data = JSON.parse(await response.text());
+          console.log("Response from localhost:", data);
+          addToLog(data, setConsoleLogs);
+        } catch (error) {
+          console.error("Error fetching from localhost:", error);
         }
-        
-        // Convert the first file to a base64 string
-        const file = files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = async () => {
-            const base64 = reader.result;
-            
-            // Create a JSON object
-            const json = {
-                filename: file.name,
-                data: base64
-            };
-            
-            // Convert the JSON object to a string
-            const jsonString = JSON.stringify(json);
-            console.log(jsonString);
-            
-            // Send the JSON string to the backend
-            try {
-                const response = await fetch('http://localhost/uploadFile', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: jsonString
-                });
-                
-                // Log the response from the server
-                const data = JSON.parse(await response.text());
-                console.log('Response from localhost:', data);
-                addToLog(data, setConsoleLogs);
-            } catch (error) {
-                console.error('Error fetching from localhost:', error);
-            }
-        }
-        setUserDocuments([...userDocuments, file.name]);
-        setAddDocument(false);
+      } catch (error) {
+        console.error("Invalid JSON 1");
+        return;
+      }
+    } else if (file.type === "text/csv") {
+      try {
+        // Check if valid CSV
+        // TODO: Implement CSV validation logic
+      } catch (error) {
+        console.error("Invalid CSV");
+        return;
+      }
     }
-    
+      else {
+      try {
+        const json = JSON.parse(base64);
+        const jsonString = JSON.stringify(json);
+        console.log(jsonString);
+
+        try {
+          const response = await fetch("http://localhost/uploadFile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: jsonString,
+          });
+	  const data = JSON.parse(await response.text());
+          console.log("Response from localhost:", data);
+          addToLog(data, setConsoleLogs);
+        } catch (error) {
+          console.error("Error fetching from localhost:", error);
+        }
+      } catch (error) {
+        console.error("Non json or csv error");
+        return;
+      }
+    }
+
+    setAddDocument(false); 
+  };
+}; 
     if (!addDocument) return null;
 
     return (
