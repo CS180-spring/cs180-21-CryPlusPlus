@@ -76,16 +76,16 @@ Sprint 7-8:
 
 # UML Diagram
 
-![UML Diagram](./UML.png)
+[![UML Diagram](./UML.png)](https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/UML.png)
 
 # Interface FSM
 
-![FSM Diagram](./FSM.png)
+[![FSM Diagram](./FSM.png)](https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/FSM.png)
 
 # DFD (Data Flow Diagram)
 
-![DFD Diagram](./DFD.png)
+[![DFD Diagram](./DFD.png)](https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/DFD.png)
 
 # Burn Down Chart
 
-![Burn Down Chart](./Burndown.png)
+[![Burn Down Chart](./Burndown.png)](https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/Burndown.png)
