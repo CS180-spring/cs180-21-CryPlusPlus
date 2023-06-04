@@ -44,6 +44,18 @@ nlohmann::json_abi_v3_11_2::basic_json<> decodeFile(std::string base64Data)
     return nlohmann::json::parse(fileData);
 }
 
+ComparisonType stringToComparisonType(const std::string& condition) {
+    if(condition == "Equal") return EQUAL;
+    if(condition == "Not Equal") return NOT_EQUAL;
+    if(condition == "Greater Than") return GREATER_THAN;
+    if(condition == "Less Than") return LESS_THAN;
+    if(condition == "Greater Than Or Equal") return GREATER_THAN_OR_EQUAL;
+    if(condition == "Less Than Or Equal") return LESS_THAN_OR_EQUAL;
+
+    throw std::invalid_argument("Invalid condition: " + condition);
+}
+
+
 void getFields(const json& jsonObj, json& list, const std::string& parentKey = "") {
     for (auto& el : jsonObj.items()) {
         std::string key = parentKey == "" ? el.key() : parentKey + "/" + el.key();
@@ -382,14 +394,13 @@ private:
             std::string field = json["field"];
             std::string value = json["value"];
 
-            // Now you can use these values to construct your query
             Query query(db.getCollection(collectionName));
-            // query.where(...); // use condition, field, value to complete the query
+            std::vector<Document> results = query.where({field, GREATER_THAN, value}).getDocuments();
 
             nlohmann::json resp = {
                 {"message", "Query on " + collectionName + " where " + field + " " + condition + " " + value}, 
                 {"time", my_program_state::now()},
-                // {"data", tableData}, // uncomment this if you have tableData ready
+
             };
             beast::ostream(response_.body())
                 << resp;
