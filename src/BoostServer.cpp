@@ -437,10 +437,14 @@ private:
 
             std::vector<Document> results = query.getDocuments();
 
+            json queriesJSON;    
+            for (Document doc : results)
+                queriesJSON.push_back(doc.getData());
+
             nlohmann::json resp = {
                 {"message", "Query on " + collectionName + " with " + std::to_string(queries.size()) + " conditions"},
                 {"time", my_program_state::now()},
-            
+                {"Queried Documents", queriesJSON}
             };
             beast::ostream(response_.body())
                 << resp;
