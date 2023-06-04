@@ -13,10 +13,10 @@ import { useUserContext } from "@app/context/UserContext";
 const Main = () => {
   const { selectedCollection } = useUserContext();
   return (
-    <div>
+    <div className="w-full">
       <div className="h-40 w-full bg-figma-purple" />
       <div className="flex h-screen flex-row">
-        <div className="flex h-full w-96 flex-col gap-4 p-8">
+        <div className="flex h-full w-full min-w-[250px] max-w-[400px] flex-col gap-4 p-8">
           <Menu />
           <hr className="border-b border-black" />
           {selectedCollection != "" && (
