@@ -205,6 +205,55 @@ private:
             if(collection_exists)
                 db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
         }
+        else if (request_.target() == "/action") 
+        {
+
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto actions = nlohmann::json::parse(post_content);
+
+            // Extract values from JSON
+            std::string uuid = actions["uuid"].get<std::string>();
+            std::string action = actions["action"].get<std::string>();
+            std::string field = actions["field"].get<std::string>();
+            nlohmann::json new_value = actions["newValue"];
+
+            Database& db = Database::getInstance();
+
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            
+            try {
+                Collection& collection = db.getCollection(collectionName);
+
+                Document& document = collection[uuid];
+
+                // Perform the action
+                if (action == "edit") {
+                    if (document.has_field(field)) {
+                        document.update_field(field, new_value);
+                    } else {
+                        std::cout << "Field does not exist in the document." << std::endl;
+                    }
+                } else if (action == "add") {
+                    if (!document.has_field(field)) {
+                        document.add_field(field, new_value);
+                    } else {
+                        std::cout << "Field already exists in the document." << std::endl;
+                    }
+                } else if (action == "remove") {
+                    if (document.has_field(field)) {
+                        document.delete_field(field);
+                    } else {
+                        std::cout << "Field does not exist in the document." << std::endl;
+                    }
+                } else {
+                    std::cout << "Unknown action: " << action << std::endl;
+                }
+
+                // collection.iterate();
+            } catch (const std::runtime_error& e) {
+                std::cout << "Caught a runtime error: " << e.what() << std::endl;
+            }
+        }
         else if(request_.target() == "/createCollection") {
             // Retrieve the content of the POST request
             std::string post_content = beast::buffers_to_string(request_.body().data());

@@ -5,18 +5,13 @@ on:
     branches:
       - main
       - master
-      - Ethan-DocumentClass
-      - Ethan-ReadFiles
-      - Ethan-Collections
-      - Ethan-Query
+      - Error-Handling
   pull_request:
     branches:
       - main
       - master
-      - Ethan-DocumentClass
-      - Ethan-ReadFiles
-      - Ethan-Collections
-      - Ethan-Query
+      - Error-Handling
+
 
 jobs:
   build:
