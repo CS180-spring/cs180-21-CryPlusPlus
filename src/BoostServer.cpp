@@ -29,6 +29,33 @@ std::string deletedCollection = "";
 std::string previousCollection = "";
 std::string createdCollection = "";
 
+nlohmann::json_abi_v3_11_2::basic_json<> decodeFile(std::string base64Data)
+{
+    // The base64 string has a prefix that we need to remove
+    std::string prefix = "data:application/json;base64,";
+    if (base64Data.substr(0, prefix.size()) == prefix) {
+        base64Data = base64Data.substr(prefix.size());
+    }
+
+    // Decode the base64 string into binary data
+    using namespace boost::archive::iterators;
+    typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
+    std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
+    return nlohmann::json::parse(fileData);
+}
+
+ComparisonType stringToComparisonType(const std::string& condition) {
+    if(condition == "Equal") return EQUAL;
+    if(condition == "Not Equal") return NOT_EQUAL;
+    if(condition == "Greater Than") return GREATER_THAN;
+    if(condition == "Less Than") return LESS_THAN;
+    if(condition == "Greater Than Or Equal") return GREATER_THAN_OR_EQUAL;
+    if(condition == "Less Than Or Equal") return LESS_THAN_OR_EQUAL;
+
+    throw std::invalid_argument("Invalid condition: " + condition);
+}
+
+
 void getFields(const json& jsonObj, json& list, const std::string& parentKey = "") {
     for (auto& el : jsonObj.items()) {
         std::string key = parentKey == "" ? el.key() : parentKey + "/" + el.key();
@@ -106,8 +133,12 @@ public:
     }
 
 private:
+    //upload file respone data
     std::string filename;
     int document_count;
+    nlohmann::json_abi_v3_11_2::basic_json<> fileJson;
+    nlohmann::json_abi_v3_11_2::basic_json<> queries;
+
 
     // The socket for the currently connected client.
     tcp::socket socket_;
@@ -184,18 +215,9 @@ private:
             filename = json["filename"];
             std::string base64Data = json["data"];
 
-            // The base64 string has a prefix that we need to remove
-            std::string prefix = "data:application/json;base64,";
-            if (base64Data.substr(0, prefix.size()) == prefix) {
-                base64Data = base64Data.substr(prefix.size());
-            }
-
-            // Decode the base64 string into binary data
-            using namespace boost::archive::iterators;
-            typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
-            std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
             // Parse the decoded data into a JSON object
-            auto fileJson = nlohmann::json::parse(fileData);
+            fileJson = decodeFile(base64Data);
+
             bool collection_exists = true;
             // Check if the parsed JSON is an array or a single object
             if (fileJson.is_array()) {
@@ -307,9 +329,7 @@ private:
         }
         else if(request_.target() == "/query") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
-            auto json = nlohmann::json::parse(post_content);
-            
-            cout << "Querying " << CurrentCollection::getInstance().getCollection() << " where: " << json << endl;
+            queries = nlohmann::json::parse(post_content);
         }
         else if(request_.target() == "/sortBy") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
@@ -324,9 +344,29 @@ private:
     void create_response() {
         if(request_.target() == "/uploadFile") {
             response_.set(http::field::content_type, "application/json"); 
+            Database& db = Database::getInstance();
+
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            vector<Document> docs = db.getCollection(collectionName).getVector();
+
+            json tableData;
+            json fields;
+            for (Document doc : docs)
+                tableData.push_back(doc.getData());
+
+            for (auto& doc : tableData)
+                getFields(doc, fields);
+
+            json data {
+                {"columns", fields},
+                {"data", tableData}
+            };
+            std::cout<< "Response " << fileJson << endl;
+
             nlohmann::json resp = {
                 {"message", "Uploaded file " + filename + " with " + std::to_string(document_count) + " documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
                 {"time", my_program_state::now()},
+                {"data", data}
             };
             beast::ostream(response_.body())
                 << resp;
@@ -359,50 +399,73 @@ private:
                 << resp;
         }
         else if(request_.target() == "/query") {
-            response_.set(http::field::content_type, "text/plain");
+            response_.set(http::field::content_type, "application/json");
+            Database& db = Database::getInstance();
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            Query query(db.getCollection(collectionName));
 
-            json tableData = {
-                {
-                    {"name", "Charlie"},
-                    {"age", 30},
-                    {"location", "New York"},
-                },
-                {
-                    {"name", "Delta"},
-                    {"age", 25},
-                    {"location", "San Francisco"},
-                },
-                {
-                    {"name", "Bob"},
-                    {"age", 27},
-                    {"location", "Riverside"},
-                },
-                {
-                    {"name", "Alpha"},
-                    {"age", 31},
-                    {"location", "Seattle"},
-                },
-                {
-                    {"name", "Beta"},
-                    {"age", 35},
-                    {"location", "Dallas"},
+            // Check if the input is a single query or multiple queries
+            if(queries.is_array()) {
+                // Multiple queries
+                for(auto& json : queries) {
+                    // Ensure all parts of the query are present
+                    if(json.contains("condition") && json.contains("field") && json.contains("value")) {
+                        std::string condition = json["condition"];
+                        std::string field = json["field"];
+                        std::string value = json["value"];
+
+                        // Convert the condition string to a ComparisonType
+                        ComparisonType compType;
+                        try {
+                            compType = stringToComparisonType(condition);
+                        } catch(const std::invalid_argument& e) {
+                            std::cout << "Invalid condition: " << e.what() << std::endl;
+                            continue;
+                        }
+
+                        // Chain the query conditions
+                        query.where({field, compType, value});
+                    }
                 }
+            } else if(queries.is_object()) {
+                // Single query
+                if(queries.contains("condition") && queries.contains("field") && queries.contains("value")) {
+                    std::string condition = queries["condition"];
+                    std::string field = queries["field"];
+                    std::string value = queries["value"];
+
+                    ComparisonType compType;
+                    try {
+                        compType = stringToComparisonType(condition);
+                    } catch(const std::invalid_argument& e) {
+                        std::cout << "Invalid condition: " << e.what() << std::endl;
+                        return;
+                    }
+
+                    // Apply the query condition
+                    query.where({field, compType, value});
+                }
+            }
+
+            std::vector<Document> results = query.getDocuments();
+
+            json queriesJSON;    
+            for (Document doc : results)
+                queriesJSON.push_back(doc.getData());
+
+            json fields;
+
+            for (auto& doc : queriesJSON)
+                getFields(doc, fields);
+
+            json data {
+                {"columns", fields},
+                {"data", queriesJSON}
             };
-
-            // std::string currCollection = CurrentCollection::getInstance().getCollection();
-            // auto collectionReference = Database::getInstance().getCollection(currCollection);
-            
-            // Query<std::string, Document> query(collectionReference);
-            // auto results = query.getDocuments();
-
-            // json jsonResults;
-            // for (auto document : results)
-            //     jsonResults.push_back(document.getData());
-
-            json resp = {
-                {"message", "Query on [Collection] where [field] [condition] [value]"}, 
+            nlohmann::json resp = {
+                {"message", "Query on " + collectionName + " with " + std::to_string(queries.size()) + " conditions"},
                 {"time", my_program_state::now()},
-                {"data", tableData},
+                {"data", data}
             };
             beast::ostream(response_.body())
                 << resp;
