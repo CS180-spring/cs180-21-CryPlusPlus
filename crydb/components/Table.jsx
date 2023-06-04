@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import DocumentModal from "./DocumentModal";
 import { useUserContext } from "@app/context/UserContext";
+import { ImCross } from "react-icons/Im";
 
 const Table = () => {
   const { selectedCollection, tableData } = useUserContext();
@@ -21,14 +22,18 @@ const Table = () => {
         {tableData.map((element, i) => {
           let document = JSON.stringify(element);
           return (
-            <div
-              className="cursor-pointer text-2xl hover:bg-figma-lightpink"
-              key={i}
-              onClick={() => {
-                handleClick(document);
-              }}
-            >
-              {document}
+            <div className="flex w-full flex-row items-center gap-5" key={i}>
+              <button className="rounded-full bg-red-500 p-2">
+                <ImCross className="text-xs" />
+              </button>
+              <div
+                className="cursor-pointer text-2xl hover:bg-figma-lightpink"
+                onClick={() => {
+                  handleClick(document);
+                }}
+              >
+                {document}
+              </div>
             </div>
           );
         })}

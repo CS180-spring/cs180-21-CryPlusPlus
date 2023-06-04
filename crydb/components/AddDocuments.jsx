@@ -3,14 +3,8 @@ import { useUserContext } from "@app/context/UserContext";
 import { addToLog } from "@utils/helpers";
 
 const AddDocuments = () => {
-  const {
-    addDocument,
-    setAddDocument,
-    selectedCollection,
-    userDocuments,
-    setUserDocuments,
-    setConsoleLogs,
-  } = useUserContext();
+  const { addDocument, setAddDocument, selectedCollection, setConsoleLogs } =
+    useUserContext();
 
   const [files, setFile] = useState();
 
@@ -59,7 +53,6 @@ const AddDocuments = () => {
         console.error("Error fetching from localhost:", error);
       }
     };
-    setUserDocuments([...userDocuments, file.name]);
     setAddDocument(false);
   };
 
