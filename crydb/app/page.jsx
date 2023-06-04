@@ -76,8 +76,8 @@ const Home = () => {
       </div>
       <h2>LATEST UPDATE</h2>
       <div id="ups_sec" className="updates_section">
-        <h1 id="update_version">Update 1.0.0</h1>
-        <p id="update_info">Initial Release</p>
+        <h1 id="update_version">Update 7.2.0 - 6/4/23</h1>
+        <p id="update_info">Cry++ Can now perform CRUD operations, shows documents and collections in organized table format. Can Query & Sort and can export table</p>
       </div>
       {/* <h2>PRICING</h2>
       <div id="prices" className='pricing_section'>
