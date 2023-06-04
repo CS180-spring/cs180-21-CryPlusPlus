@@ -167,9 +167,6 @@ private:
         std::string filename = json["filename"];
         std::string base64Data = json["data"];
 	
-	//Function underneath is to retrieve fields from Json Object
-	auto fileJson = nlohmann::json::parse(fileData);
-
         // Check if the parsed JSON is an object
         if (fileJson.is_object()) {
             std::vector<std::string> fields;
