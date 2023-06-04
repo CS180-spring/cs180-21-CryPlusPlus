@@ -114,8 +114,9 @@ p {
   height: 8em;
   text-align: center;
   border-radius: 0.5em;
-  padding: 0.5em;
   background-color: rgba(255, 255, 255, 0.581);
+  overflow-wrap: break-word;
+
 }
 
 .feature_right {
