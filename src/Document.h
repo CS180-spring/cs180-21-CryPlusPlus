@@ -112,12 +112,38 @@ class Document
 
     void update_field(const std::string& key, const json& new_value)
     {
-    if (Data.find(key) != Data.end()) {
-        Data[key] = new_value;
-    } else {
-        throw std::invalid_argument("Key not found in the document.");
-    }
-    }
+        auto keys = split(key, '/');
+        json* nestedData = &Data;
+
+        for (int i = 0; i < keys.size(); i++)
+        {
+            const auto& k = keys[i];
+
+            if (i < keys.size() - 1 && (nestedData->find(k) == nestedData->end() || !nestedData->at(k).is_object()))
+            {
+                throw std::invalid_argument("Key not found in the document or is not an object.");
+            }
+
+            // If this is the last key
+            if (i == keys.size() - 1)
+            {
+                // If the key doesn't exist, throw an error
+                if (nestedData->find(k) == nestedData->end())
+                {
+                    throw std::invalid_argument("Key not found in the document.");
+                }
+
+                // Otherwise, update the value
+                (*nestedData)[k] = new_value;
+            }
+            else
+            {
+                // If it's not the last key, move to the next nested json object
+                nestedData = &(*nestedData)[k];
+            }
+        }
+}
+
 
     bool has_field(const std::string& key) const
     {
