@@ -137,13 +137,23 @@ class Document
 
     json get_field_value(const std::string& key) const
     {
-        auto it = Data.find(key);
-        if (it != Data.end()) {
-            return it.value();
-        } else {
-            throw std::invalid_argument("Key not found in the document.");
+        auto keys = split(key, '/');
+        json nestedData = Data;
+
+        for (const auto& k : keys)
+        {
+            if (nestedData.find(k) != nestedData.end())
+            {
+                nestedData = nestedData[k];
+            }
+            else
+            {
+                throw std::invalid_argument("Key not found in the document.");
+            }
         }
+        return nestedData;
     }
+
     
     //would it be possible to return a search like this
     //return item.contains("key") && item["key"] == "Whatever searched";    
