@@ -330,6 +330,7 @@ private:
         else if(request_.target() == "/query") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
             queries = nlohmann::json::parse(post_content);
+            cout << queries << endl;
         }
         else if(request_.target() == "/sortBy") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
@@ -412,7 +413,7 @@ private:
                     if(json.contains("condition") && json.contains("field") && json.contains("value")) {
                         std::string condition = json["condition"];
                         std::string field = json["field"];
-                        std::string value = json["value"];
+                        nlohmann::json value = nlohmann::json::parse(json["value"].get<std::string>());
 
                         // Convert the condition string to a ComparisonType
                         ComparisonType compType;
@@ -432,7 +433,7 @@ private:
                 if(queries.contains("condition") && queries.contains("field") && queries.contains("value")) {
                     std::string condition = queries["condition"];
                     std::string field = queries["field"];
-                    std::string value = queries["value"];
+                     nlohmann::json value = nlohmann::json::parse(queries["value"].get<std::string>());
 
                     ComparisonType compType;
                     try {
@@ -462,6 +463,8 @@ private:
                 {"columns", fields},
                 {"data", queriesJSON}
             };
+
+            cout << queriesJSON.dump(4) << endl;
             nlohmann::json resp = {
                 {"message", "Query on " + collectionName + " with " + std::to_string(queries.size()) + " conditions"},
                 {"time", my_program_state::now()},
