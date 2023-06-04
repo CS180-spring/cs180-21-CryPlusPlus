@@ -42,34 +42,30 @@ const DeleteCollection = () => {
     }
   };
 
-  if (!deleteCollection) return null;
-  if (!userCollections.length) {
-    setDeleteCollection(false);
-    return null;
-  }
-
   return (
-    <div
-      id="container"
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm"
-      onClick={(e) =>
-        e.target.id === "container" ? setDeleteCollection(false) : null
-      }
-    >
-      <div className="flex w-1/2 flex-col items-center gap-4 border-4 border-figma-purple bg-white px-4 py-16">
-        <div className="">Delete Collection</div>
-        <DropdownMenu
-          options={userCollections}
-          onOptionSelect={(option) => setSelectedOption(option)}
-        />
-        <button
-          className="border-2 border-figma-purple p-2 hover:bg-figma-black-grey300"
-          onClick={handleUpload}
-        >
-          Delete
-        </button>
+    deleteCollection && (
+      <div
+        id="container"
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm"
+        onClick={(e) =>
+          e.target.id === "container" ? setDeleteCollection(false) : null
+        }
+      >
+        <div className="flex w-1/2 flex-col items-center gap-4 border-4 border-figma-purple bg-white px-4 py-16">
+          <div className="">Delete Collection</div>
+          <DropdownMenu
+            options={userCollections}
+            onOptionSelect={(option) => setSelectedOption(option)}
+          />
+          <button
+            className="border-2 border-figma-purple p-2 hover:bg-figma-black-grey300"
+            onClick={handleUpload}
+          >
+            Delete
+          </button>
+        </div>
       </div>
-    </div>
+    )
   );
 };
 
