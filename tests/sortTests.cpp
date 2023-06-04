@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../src/Sort.h"
 #include "../src/Document.h"
-#include "../src/Collections.h"
+#include "../src/Collection.h"
 // #include "../src/Document.h"
 #include <vector>
 #include <string>
@@ -28,55 +28,67 @@ class SortTest : public Test {
 };
 
 
-TEST(SortTest, AscendingByName) {
-    string sort_field = "ASCENDING"; 
-    string sort_type = "name"; 
-    document_sort(testcollection, sort_field, sort_type); 
+TEST_F(SortTest, AscendingByName) {
+    string sort_type = "ASCENDING"; 
+    string sort_field = "name"; 
+
+    Sort test1(sort_field, sort_type); 
+    test1.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front(), "doc3");
     EXPECT_EQ(testcollection.back(), "doc1");
 }
 
-TEST(SortTest, DescendingByName) {
-    string sort_field = "DESCENDING"; 
-    string sort_type = "name"; 
-    document_sort(testcollection, sort_field, sort_type); 
+TEST_F(SortTest, DescendingByName) {
+    string sort_type = "DESCENDING"; 
+    string sort_field = "name"; 
+    
+    Sort test2(sort_field, sort_type); 
+    test2.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front(), "doc1");
     EXPECT_EQ(testcollection.back(), "doc3");
 }
 
-TEST(SortTest, AscendingByAge) {
-    string sort_field = "ASCENDING"; 
-    string sort_type = "age"; 
-    document_sort(testcollection, sort_field, sort_type); 
+TEST_F(SortTest, AscendingByAge) {
+    string sort_type = "ASCENDING"; 
+    string sort_field = "age"; 
+    
+    Sort test3(sort_field, sort_type); 
+    test3.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front(), "doc2");
     EXPECT_EQ(testcollection.back(), "doc1");
 }
 
-TEST(SortTest, DescendingByAge) {
-    string sort_field = "DESCENDING"; 
-    string sort_type = "age"; 
-    document_sort(testcollection, sort_field, sort_type); 
+TEST_F(SortTest, DescendingByAge) {
+    string sort_type = "DESCENDING"; 
+    string sort_field = "age"; 
+
+    Sort test4(sort_field, sort_type); 
+    test4.document_sort(testcollection);
 
     EXPECT_EQ(testcollection.front(), "doc1");
     EXPECT_EQ(testcollection.back(), "doc2");
 }
 
-TEST(SortTest, AscendingByLocation) {
-    string sort_field = "ASCENDING"; 
-    string sort_type = "location"; 
-    document_sort(testcollection, sort_field, sort_type); 
+TEST_F(SortTest, AscendingByLocation) {
+    string sort_type = "ASCENDING"; 
+    string sort_field = "location"; 
+
+    Sort test5(sort_field, sort_type); 
+    test5.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front(), "doc1");
     EXPECT_EQ(testcollection.back(), "doc2");
 }
 
-TEST(SortTest, DescendingByLocation) {
-    string sort_field = "DESCENDING"; 
-    string sort_type = "location"; 
-    document_sort(testcollection, sort_field, sort_type); 
+TEST_F(SortTest, DescendingByLocation) {
+    string sort_type = "DESCENDING"; 
+    string sort_field = "location"; 
+
+    Sort test6(sort_field, sort_type); 
+    test6.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front(), "doc3");
     EXPECT_EQ(testcollection.back(), "doc1");

@@ -2,12 +2,38 @@
 #include <unordered_map>
 #include "../lib/json.hpp"
 #include "../src/ReadData.h"
+#include "../src/Document.h"
+#include "../src/Collection.h"
+#include "../src/JsonComparator.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "../src/Document.h"
-#include "../src/Collections.h"
+using json = nlohmann::json; 
+
+class Sort{
+
+public:
+    Sort(const std::string& sort_field, std::string sort_type): sort_field_(sort_field), sort_type_(sort_type) {}
+    
+    void document_sort(std::vector<Document>& collection){
+        
+        if (sort_type_ == "ASCENDING"){ 
+            std:sort(collection.begin(), collection.end(), JsonComparator(sort_field_)); 
+        }
+        if (sort_type_ == "DESCENDING"){
+            std::sort(collection.end(), collection.begin(), JsonComparator(sort_field_));
+        }
+    }
+
+    private:
+        std::string sort_field_;
+        std::string sort_type_;
+
+};
+
+
 
 // sorting by a specific field that the front end is sending to the sort class
 // within each collection, you can iterate through the document
@@ -18,7 +44,6 @@
 // each file has multiple documents 
 // sortBy(collection, "name", DESCENDING_ORDER) = sortBy(Collection &collection, string field, SORT_BY sortby)
 
-using json = nlohmann::ordered_json; 
 
 //template <typename KeyType, typename ValueType>  // questionable 
 
@@ -58,39 +83,4 @@ public:
     }
 };
 **/
-
-struct Comparator{ 
-  
-    std::string sort_field;
-
-    bool operator()(const Document& one, const Document& two) const {
-        json value1, value2;
-
-        if (one.has_field(sort_field)){
-            value1 = one.get_field_value(sort_field);
-        }
-        else {
-            value1 = "";
-        }
-
-        if (two.has_field(sort_field)){
-            value2 = two.get_field_value(sort_field);
-        }
-        else {
-            value2 = "";
-        }
-
-        return value1 < value2;
-    }
-
-};
-
-void document_sort(std::vector<Document>& collection, const std::string& sort_field, std::string sort_type){
-    if (sort_type == "ASCENDING"){ 
-        std:sort(collection.begin(), collection.end(), Comparator{sort_field}); 
-    }
-    if (sort_type == "DESCENDING"){
-        std::sort(collection.end(), collection.begin(), Comparator{sort_field});
-    }
-}
 
