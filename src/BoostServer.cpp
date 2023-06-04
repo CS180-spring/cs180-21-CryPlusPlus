@@ -454,21 +454,21 @@ private:
             for (Document doc : results)
                 queriesJSON.push_back(doc.getData());
 
-            json fields;
+            // json fields;
 
-            for (auto& doc : queriesJSON)
-                getFields(doc, fields);
+            // for (auto& doc : queriesJSON)
+            //     getFields(doc, fields);
 
-            json data {
-                {"columns", fields},
-                {"data", queriesJSON}
-            };
+            // json data {
+            //     {"columns", fields},
+            //     {"data", queriesJSON}
+            // };
 
             cout << queriesJSON.dump(4) << endl;
             nlohmann::json resp = {
                 {"message", "Query on " + collectionName + " with " + std::to_string(queries.size()) + " conditions"},
                 {"time", my_program_state::now()},
-                {"data", data}
+                {"data", queriesJSON}
             };
             beast::ostream(response_.body())
                 << resp;
