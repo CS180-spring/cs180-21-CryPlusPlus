@@ -79,7 +79,7 @@ const AddDocuments = () => {
           console.error("Error fetching from localhost:", error);
         }
       } catch (error) {
-        console.error("Non json or csv error");
+        console.error("Non Json/Csv filetype not Json format");
         return;
       }
     }
