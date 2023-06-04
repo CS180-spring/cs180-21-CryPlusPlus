@@ -29,6 +29,21 @@ std::string deletedCollection = "";
 std::string previousCollection = "";
 std::string createdCollection = "";
 
+nlohmann::json_abi_v3_11_2::basic_json<> decodeFile(std::string base64Data)
+{
+    // The base64 string has a prefix that we need to remove
+    std::string prefix = "data:application/json;base64,";
+    if (base64Data.substr(0, prefix.size()) == prefix) {
+        base64Data = base64Data.substr(prefix.size());
+    }
+
+    // Decode the base64 string into binary data
+    using namespace boost::archive::iterators;
+    typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
+    std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
+    return nlohmann::json::parse(fileData);
+}
+
 void getFields(const json& jsonObj, json& list, const std::string& parentKey = "") {
     for (auto& el : jsonObj.items()) {
         std::string key = parentKey == "" ? el.key() : parentKey + "/" + el.key();
@@ -187,18 +202,9 @@ private:
             filename = json["filename"];
             std::string base64Data = json["data"];
 
-            // The base64 string has a prefix that we need to remove
-            std::string prefix = "data:application/json;base64,";
-            if (base64Data.substr(0, prefix.size()) == prefix) {
-                base64Data = base64Data.substr(prefix.size());
-            }
-
-            // Decode the base64 string into binary data
-            using namespace boost::archive::iterators;
-            typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
-            std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
             // Parse the decoded data into a JSON object
-            fileJson = nlohmann::json::parse(fileData);
+            fileJson = decodeFile(base64Data);
+            
             bool collection_exists = true;
             // Check if the parsed JSON is an array or a single object
             if (fileJson.is_array()) {
@@ -364,7 +370,10 @@ private:
         }
         else if(request_.target() == "/query") {
             response_.set(http::field::content_type, "text/plain");
-
+            Database& db = Database::getInstance();
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            Query query(db.getCollection(collectionName));
+            query.where()
 
             json resp = {
                 {"message", "Query on [Collection] where [field] [condition] [value]"}, 
