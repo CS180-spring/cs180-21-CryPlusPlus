@@ -387,20 +387,60 @@ private:
 
             // Retrieve and parse the request body
             std::string post_content = beast::buffers_to_string(request_.body().data());
-            auto json = nlohmann::json::parse(post_content);
-
-            // Extract the condition, field, and value from the JSON object
-            std::string condition = json["condition"];
-            std::string field = json["field"];
-            std::string value = json["value"];
+            auto queries = nlohmann::json::parse(post_content);
 
             Query query(db.getCollection(collectionName));
-            std::vector<Document> results = query.where({field, GREATER_THAN, value}).getDocuments();
+
+            // Check if the input is a single query or multiple queries
+            if(queries.is_array()) {
+                // Multiple queries
+                for(auto& json : queries) {
+                    // Ensure all parts of the query are present
+                    if(json.contains("condition") && json.contains("field") && json.contains("value")) {
+                        std::string condition = json["condition"];
+                        std::string field = json["field"];
+                        std::string value = json["value"];
+
+                        // Convert the condition string to a ComparisonType
+                        ComparisonType compType;
+                        try {
+                            compType = stringToComparisonType(condition);
+                        } catch(const std::invalid_argument& e) {
+                            std::cout << "Invalid condition: " << e.what() << std::endl;
+                            continue;
+                        }
+
+                        // Chain the query conditions
+                        query.where({field, compType, value});
+                    }
+                }
+            } else if(queries.is_object()) {
+                // Single query
+                if(queries.contains("condition") && queries.contains("field") && queries.contains("value")) {
+                    std::string condition = queries["condition"];
+                    std::string field = queries["field"];
+                    std::string value = queries["value"];
+
+                    // Convert the condition string to a ComparisonType
+                    ComparisonType compType;
+                    try {
+                        compType = stringToComparisonType(condition);
+                    } catch(const std::invalid_argument& e) {
+                        std::cout << "Invalid condition: " << e.what() << std::endl;
+                        return;
+                    }
+
+                    // Apply the query condition
+                    query.where({field, compType, value});
+                }
+            }
+
+            std::vector<Document> results = query.getDocuments();
 
             nlohmann::json resp = {
-                {"message", "Query on " + collectionName + " where " + field + " " + condition + " " + value}, 
+                {"message", "Query on " + collectionName + " with " + std::to_string(queries.size()) + " conditions"},
                 {"time", my_program_state::now()},
-
+            
             };
             beast::ostream(response_.body())
                 << resp;
