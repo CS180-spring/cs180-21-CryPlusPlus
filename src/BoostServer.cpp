@@ -204,7 +204,7 @@ private:
 
             // Parse the decoded data into a JSON object
             fileJson = decodeFile(base64Data);
-            
+
             bool collection_exists = true;
             // Check if the parsed JSON is an array or a single object
             if (fileJson.is_array()) {
@@ -369,16 +369,27 @@ private:
                 << resp;
         }
         else if(request_.target() == "/query") {
-            response_.set(http::field::content_type, "text/plain");
+            response_.set(http::field::content_type, "application/json");
             Database& db = Database::getInstance();
             std::string collectionName = CurrentCollection::getInstance().getCollection();
-            Query query(db.getCollection(collectionName));
-            query.where()
 
-            json resp = {
-                {"message", "Query on [Collection] where [field] [condition] [value]"}, 
+            // Retrieve and parse the request body
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+
+            // Extract the condition, field, and value from the JSON object
+            std::string condition = json["condition"];
+            std::string field = json["field"];
+            std::string value = json["value"];
+
+            // Now you can use these values to construct your query
+            Query query(db.getCollection(collectionName));
+            // query.where(...); // use condition, field, value to complete the query
+
+            nlohmann::json resp = {
+                {"message", "Query on " + collectionName + " where " + field + " " + condition + " " + value}, 
                 {"time", my_program_state::now()},
-                // {"data", tableData},
+                // {"data", tableData}, // uncomment this if you have tableData ready
             };
             beast::ostream(response_.body())
                 << resp;
