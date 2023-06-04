@@ -12,8 +12,7 @@ const AddDocuments = () => {
         setFile(event.target.files);
     }
     
-
-    const handleUpload = async () => {
+const handleUpload = async () => {
   if (!files || files.length === 0) {
     setAddDocument(false);
     return;
@@ -25,37 +24,94 @@ const AddDocuments = () => {
   reader.onloadend = async () => {
     const fileContent = reader.result;
 
-    let jsonData;
-    try {
-      jsonData = JSON.parse(fileContent);
-    } catch (error) {
-      console.error("Invalid JSON file");
+    if (file.type === "application/json") {
+      let jsonData;
+      try {
+        jsonData = JSON.parse(fileContent);
+      } catch (error) {
+        console.error("Invalid JSON file");
+        return;
+      }
+
+      const jsonString = JSON.stringify(jsonData);
+      console.log(jsonString);
+
+      try {
+        const response = await fetch("http://localhost/uploadFile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonString,
+        });
+
+        const data = JSON.parse(await response.text());
+        console.log("Response from localhost:", data);
+        addToLog(data, setConsoleLogs);
+      } catch (error) {
+        console.error("Error fetching from localhost:", error);
+      }
+    } else if (file.type === "text/csv") {
+      // Use csv-parser library for CSV validation
+      const csvParser = require("csv-parser");
+
+      // Create a promise to handle the validation process
+      const validateCSV = () => {
+        return new Promise((resolve, reject) => {
+          const results = [];
+
+          // Parse the CSV file
+          fileContent
+            .pipe(csvParser())
+            .on("data", (data) => results.push(data))
+            .on("end", () => {
+              // Validate the parsed data here
+              // For example, check if required fields exist, validate field values, etc.
+              // If validation fails, reject the promise with an error message
+              // If validation succeeds, resolve the promise
+              // This is just a sample validation logic, you need to customize it according to your requirements
+              if (results.length === 0) {
+                reject("Empty CSV file");
+              } else {
+                resolve();
+              }
+            })
+            .on("error", (error) => {
+              reject("CSV parsing error");
+            });
+        });
+      };
+
+      try {
+        await validateCSV();
+
+        try {
+          const response = await fetch("http://localhost/uploadFile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/csv",
+            },
+            body: fileContent,
+          });
+
+          const data = JSON.parse(await response.text());
+          console.log("Response from localhost:", data);
+          addToLog(data, setConsoleLogs);
+        } catch (error) {
+          console.error("Error fetching from localhost:", error);
+        }
+      } catch (error) {
+        console.error("Invalid CSV file:", error);
+        return;
+      }
+    } else {
+      console.error("Invalid file type");
       return;
-    }
-
-    const jsonString = JSON.stringify(jsonData);
-    console.log(jsonString);
-
-    try {
-      const response = await fetch("http://localhost/uploadFile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonString,
-      });
-
-      const data = JSON.parse(await response.text());
-      console.log("Response from localhost:", data);
-      addToLog(data, setConsoleLogs);
-    } catch (error) {
-      console.error("Error fetching from localhost:", error);
     }
   };
 
   setAddDocument(false);
 };
-
 
     if (!addDocument) return null;
 
