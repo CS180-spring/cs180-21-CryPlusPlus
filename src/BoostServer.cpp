@@ -93,6 +93,8 @@ public:
         response_.set(http::field::access_control_allow_origin, "http://localhost:3000");
         response_.set(http::field::access_control_allow_methods, "GET, POST, PUT, DELETE, OPTIONS");
         response_.set(http::field::access_control_allow_headers, "Content-Type");
+        document_count = 0;
+        filename = "";
         // Now you can perform operations on the db
     }
     
@@ -104,6 +106,9 @@ public:
     }
 
 private:
+    std::string filename;
+    int document_count;
+
     // The socket for the currently connected client.
     tcp::socket socket_;
 
@@ -168,46 +173,106 @@ private:
 
     void process_post_request() {
         if(request_.target() == "/uploadFile") {
-        Database& db = Database::getInstance();
+            Database& db = Database::getInstance();
 
-        std::string post_content = beast::buffers_to_string(request_.body().data());
+            std::string post_content = beast::buffers_to_string(request_.body().data());
 
-        // Parse the request body as JSON
-        auto json = nlohmann::json::parse(post_content);
+            // Parse the request body as JSON
+            auto json = nlohmann::json::parse(post_content);
 
-        // Extract the filename and data from the JSON object
-        std::string filename = json["filename"];
-        std::string base64Data = json["data"];
+            // Extract the filename and data from the JSON object
+            filename = json["filename"];
+            std::string base64Data = json["data"];
 
-        // The base64 string has a prefix that we need to remove
-        std::string prefix = "data:application/json;base64,";
-        if (base64Data.substr(0, prefix.size()) == prefix) {
-            base64Data = base64Data.substr(prefix.size());
-        }
-
-        // Decode the base64 string into binary data
-        using namespace boost::archive::iterators;
-        typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
-        std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
-
-        // Parse the decoded data into a JSON object
-        auto fileJson = nlohmann::json::parse(fileData);
-
-        // Check if the parsed JSON is an array or a single object
-        if (fileJson.is_array()) {
-            // This is an array of documents
-            for (auto x : fileJson) {
-                Document newDoc(x, filename);
-                db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+            // The base64 string has a prefix that we need to remove
+            std::string prefix = "data:application/json;base64,";
+            if (base64Data.substr(0, prefix.size()) == prefix) {
+                base64Data = base64Data.substr(prefix.size());
             }
-        } else if (fileJson.is_object()) {
-            // This is a single document
-            Document newDoc(fileJson, filename);
-            db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
-        }
 
-        db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
-    }
+            // Decode the base64 string into binary data
+            using namespace boost::archive::iterators;
+            typedef transform_width<binary_from_base64<std::string::const_iterator>, 8, 6> base64_decode;
+            std::string fileData(base64_decode(base64Data.begin()), base64_decode(base64Data.end()));
+            // Parse the decoded data into a JSON object
+            auto fileJson = nlohmann::json::parse(fileData);
+            bool collection_exists = true;
+            // Check if the parsed JSON is an array or a single object
+            if (fileJson.is_array()) {
+                // This is an array of documents
+                for (auto x : fileJson) {
+                    document_count++;
+                    Document newDoc(x, filename);
+                    try {
+                        db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+                    } catch (const std::runtime_error& e) {
+                        std::cout << "Caught a runtime error: " << e.what() << std::endl;
+                        collection_exists = false;
+                    }
+                }
+            } else if (fileJson.is_object()) {
+                // This is a single document
+                document_count = 1;
+                Document newDoc(fileJson, filename);
+                try {
+                    db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+                } catch (const std::runtime_error& e) {
+                    std::cout << "Caught a runtime error: " << e.what() << std::endl;
+                    collection_exists = false;
+                }
+            }
+            if(collection_exists)
+                db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+        }
+        else if (request_.target() == "/action") 
+        {
+
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto actions = nlohmann::json::parse(post_content);
+
+            // Extract values from JSON
+            std::string uuid = actions["uuid"].get<std::string>();
+            std::string action = actions["action"].get<std::string>();
+            std::string field = actions["field"].get<std::string>();
+            nlohmann::json new_value = actions["newValue"];
+
+            Database& db = Database::getInstance();
+
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            
+            try {
+                Collection& collection = db.getCollection(collectionName);
+
+                Document& document = collection[uuid];
+
+                // Perform the action
+                if (action == "edit") {
+                    if (document.has_field(field)) {
+                        document.update_field(field, new_value);
+                    } else {
+                        std::cout << "Field does not exist in the document." << std::endl;
+                    }
+                } else if (action == "add") {
+                    if (!document.has_field(field)) {
+                        document.add_field(field, new_value);
+                    } else {
+                        std::cout << "Field already exists in the document." << std::endl;
+                    }
+                } else if (action == "remove") {
+                    if (document.has_field(field)) {
+                        document.delete_field(field);
+                    } else {
+                        std::cout << "Field does not exist in the document." << std::endl;
+                    }
+                } else {
+                    std::cout << "Unknown action: " << action << std::endl;
+                }
+
+                // collection.iterate();
+            } catch (const std::runtime_error& e) {
+                std::cout << "Caught a runtime error: " << e.what() << std::endl;
+            }
+        }
         else if(request_.target() == "/createCollection") {
             // Retrieve the content of the POST request
             std::string post_content = beast::buffers_to_string(request_.body().data());
@@ -258,9 +323,9 @@ private:
     // Construct a response message based on the program state.
     void create_response() {
         if(request_.target() == "/uploadFile") {
-            response_.set(http::field::content_type, "text/html");
-            json resp = {
-                {"message", "Uploaded file [FILE_NAME] with [DOCUMENT_NUMBER] documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
+            response_.set(http::field::content_type, "application/json"); 
+            nlohmann::json resp = {
+                {"message", "Uploaded file " + filename + " with " + std::to_string(document_count) + " documents to collection '" + CurrentCollection::getInstance().getCollection() + "'"},
                 {"time", my_program_state::now()},
             };
             beast::ostream(response_.body())
