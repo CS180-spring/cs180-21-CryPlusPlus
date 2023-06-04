@@ -371,6 +371,25 @@ private:
             beast::ostream(response_.body())
                 << resp;
         }
+	else if(request_.target() == "/uploadFile") {
+	    response_.set(http::field::content_type, "text/html");
+
+            json columns = /* getFields here */;
+            json table = /* CurrentCollection::getInstance().getCollection() data here */;
+
+            json data {
+                {"columns", columns},
+                {"data", table}
+            };
+
+            json resp = {
+                {"message", "Uploaded file " + /* fileName here */ + " to '" + CurrentCollection::getInstance().getCollection() + "'"}, 
+                {"time", my_program_state::now()},
+                {"data", data}
+            };
+            beast::ostream(response_.body())
+                << resp;
+	}
         else if(request_.target() == "/time") {
             std::cout << "in time" << std::endl;
             response_.set(http::field::content_type, "text/html");
