@@ -8,10 +8,8 @@ export const UserContextProvider = ({ children }) => {
   const [addDocument, setAddDocument] = useState(false);
   const [createCollection, setCreateCollection] = useState(false);
   const [deleteCollection, setDeleteCollection] = useState(false);
-  const [deleteDocument, setDeleteDocument] = useState(false);
   const [selectedCollection, setCollection] = useState("");
   const [userCollections, setUserCollections] = useState([]);
-  const [userDocuments, setUserDocuments] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [dataColumns, setDataColumns] = useState([]);
   const [consoleLogs, setConsoleLogs] = useState([]);
@@ -26,14 +24,10 @@ export const UserContextProvider = ({ children }) => {
         setCreateCollection,
         deleteCollection,
         setDeleteCollection,
-        deleteDocument,
-        setDeleteDocument,
         selectedCollection,
         setCollection,
         userCollections,
         setUserCollections,
-        userDocuments,
-        setUserDocuments,
         tableData,
         setTableData,
         dataColumns,

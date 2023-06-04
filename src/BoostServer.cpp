@@ -29,6 +29,18 @@ std::string deletedCollection = "";
 std::string previousCollection = "";
 std::string createdCollection = "";
 
+void getFields(const json& jsonObj, json& list, const std::string& parentKey = "") {
+    for (auto& el : jsonObj.items()) {
+        std::string key = parentKey == "" ? el.key() : parentKey + "/" + el.key();
+        if (el.value().is_structured())
+            getFields(el.value(), list, key);
+        else {
+            cout << "Pushing " << key << endl;
+            list.push_back(key);
+        }
+    }
+}
+
 class CurrentCollection {
 public:
     static CurrentCollection& getInstance() {
@@ -289,28 +301,28 @@ private:
                     {"name", "Charlie"},
                     {"age", 30},
                     {"location", "New York"},
-                }
+                },
                 {
                     {"name", "Delta"},
                     {"age", 25},
                     {"location", "San Francisco"},
-                }
+                },
                 {
                     {"name", "Bob"},
                     {"age", 27},
                     {"location", "Riverside"},
-                }
+                },
                 {
                     {"name", "Alpha"},
                     {"age", 31},
                     {"location", "Seattle"},
-                }
+                },
                 {
                     {"name", "Beta"},
                     {"age", 35},
                     {"location", "Dallas"},
                 }
-            }
+            };
 
             // std::string currCollection = CurrentCollection::getInstance().getCollection();
             // auto collectionReference = Database::getInstance().getCollection(currCollection);
@@ -333,15 +345,21 @@ private:
         else if(request_.target() == "/sortBy") {
             response_.set(http::field::content_type, "text/html");
 
-            json columns = {"title", "author", "date"};
             json table = {{
-                {"name", "Delta"},
-                {"age", 25},
-                {"location", "San Francisco"},
+                {"name", "Daniel"},
+                {"age", "20"},
+                {"location", {
+                    {"state", "California"},
+                    {"city", "Riverside"}
+                }},
             }};
+            json fields;
+
+            for (auto& doc : table)
+                getFields(doc, fields);
 
             json data {
-                {"columns", columns},
+                {"columns", fields},
                 {"data", table}
             };
 
