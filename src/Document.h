@@ -8,7 +8,7 @@
 
 using json = nlohmann::json;
 
-std::vector<std::string> split(const std::string& s, char delimiter) {
+inline std::vector<std::string> split_keys(const std::string& s, char delimiter) {
     std::vector<std::string> tokens;
     std::string token;
     std::istringstream tokenStream(s);
@@ -112,7 +112,7 @@ class Document
 
     void update_field(const std::string& key, const json& new_value)
     {
-        auto keys = split(key, '/');
+        auto keys = split_keys(key, '/');
         json* nestedData = &Data;
 
         for (int i = 0; i < keys.size(); i++)
@@ -147,7 +147,7 @@ class Document
 
     bool has_field(const std::string& key) const
     {
-        std::vector<std::string> keys = split(key, '/');
+        std::vector<std::string> keys = split_keys(key, '/');
         json temp = Data;
         
         for (auto &k : keys) {
@@ -163,7 +163,7 @@ class Document
 
     json get_field_value(const std::string& key) const
     {
-        auto keys = split(key, '/');
+        auto keys = split_keys(key, '/');
         json nestedData = Data;
 
         for (const auto& k : keys)
