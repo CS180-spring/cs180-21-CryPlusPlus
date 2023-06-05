@@ -10,6 +10,22 @@
 
 using json = nlohmann::json;
 
+struct Comparator {
+    std::string field;
+    bool ascending;
+
+    Comparator(const std::string& field, bool ascending) : field(field), ascending(ascending) {}
+
+    bool operator()(const Document& a, const Document& b) const {
+        if (!a.has_field(field) || !b.has_field(field))
+            throw std::invalid_argument("Documents don't contain the specified field for sorting.");
+
+        if (ascending)
+            return a.get_field_value(field) < b.get_field_value(field);
+        else
+            return b.get_field_value(field) < a.get_field_value(field);
+    }
+};
 
 class Collection {
 public:
@@ -77,6 +93,12 @@ public:
         {
             docs.push_back(kv.second);
         }
+        return docs;
+    }
+
+    std::vector<Document> sort(const std::string& field, bool ascending = true) {
+        std::vector<Document> docs = getVector();
+        std::sort(docs.begin(), docs.end(), Comparator(field, ascending));
         return docs;
     }
 

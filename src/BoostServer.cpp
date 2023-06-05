@@ -156,6 +156,9 @@ private:
     nlohmann::json_abi_v3_11_2::basic_json<> fileJson;
     nlohmann::json_abi_v3_11_2::basic_json<> queries;
 
+    string sortby;
+    string order;
+
 
     // The socket for the currently connected client.
     tcp::socket socket_;
@@ -352,6 +355,9 @@ private:
         else if(request_.target() == "/sortBy") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
             auto json = nlohmann::json::parse(post_content);
+
+            sortby = json["field"];
+            order = json["order"];
             
             cout << "Sorting by " << json["field"] << " from '" << CurrentCollection::getInstance().getCollection() << "' in " << json["order"] << endl;
         }
@@ -500,27 +506,32 @@ private:
                 << resp;
         }
         else if(request_.target() == "/sortBy") {
-            response_.set(http::field::content_type, "text/html");
+            response_.set(http::field::content_type, "application/json");
+            Database& db = Database::getInstance();
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            Collection collection = db.getCollection(collectionName);
+            
+            bool orderB;
+            if (order == "ascending order")
+                orderB = true;
+            else
+                orderB = false;
 
-            json table = {{
-                {"name", "Daniel"},
-                {"age", "20"},
-                {"location", {
-                    {"state", "California"},
-                    {"city", "Riverside"}
-                }},
-            }};
-            json fields;
 
-            json data {
-                {"columns", getFields(table)},
-                {"data", table}
-            };
+            vector<Document> sorted = collection.sort(sortby, orderB);
+
+            json tableData;
+            for (auto doc: sorted)
+            {
+                cout << "Sorted: " << doc.getData() << endl;
+                tableData.push_back(doc.getData());
+            }
+
 
             json resp = {
                 {"message", "Sorted '" + CurrentCollection::getInstance().getCollection() + "'"}, 
                 {"time", my_program_state::now()},
-                {"data", data}
+                {"data", tableData}
             };
             beast::ostream(response_.body())
                 << resp;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { addToLog, updateTable } from "@utils/helpers";
 
 const SortBy = () => {
-  const { dataColumns, setTableData, setConsoleLogs, setDataColumns } =
+  const { dataColumns, setTableData, setConsoleLogs} =
     useUserContext();
   const [field, setField] = useState("");
   const [order, setOrder] = useState("");
@@ -27,8 +27,7 @@ const SortBy = () => {
       const table = data.data;
 
       console.log("Response from the server:", data);
-      updateTable(table.data, setTableData);
-      setDataColumns(table.columns);
+      updateTable(table, setTableData);
       addToLog(data, setConsoleLogs);
     } catch (error) {
       console.error("Error fetching from the server:", error);
