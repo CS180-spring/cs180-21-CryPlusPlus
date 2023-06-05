@@ -39,10 +39,10 @@ const AddDocuments = () => {
         };
 	
 	// Check the file type
-   	 if (file.type !== "application/json") {
-      	     console.error("Invalid file type");
-     	     isInvalidFile = true; // Set the flag if the file type is invalid
-     	      break;
+    	if (file.type !== "application/json") {
+      		console.error("Invalid file type");
+      		isInvalidFile = true; // Set the flag if the file type is invalid
+      		break;
     	}
 	
         // Convert the JSON object to a string
