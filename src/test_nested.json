@@ -1,0 +1,31 @@
+[
+    {
+        "Name": "Alice",
+        "Age": 30,
+        "Location": "Los Angeles",
+        "Projects": [
+            {
+                "Name": "Project A",
+                "Start": "2021-01-01",
+                "End": "2021-12-31"
+            },
+            {
+                "Name": "Project B",
+                "Start": "2022-01-01",
+                "End": "2022-12-31"
+            }
+        ]
+    },
+    {
+        "Name": "Bob",
+        "Age": 25,
+        "Location": "New York",
+        "Projects": [
+            {
+                "Name": "Project C",
+                "Start": "2021-06-01",
+                "End": "2021-12-31"
+            }
+        ]
+    }
+]

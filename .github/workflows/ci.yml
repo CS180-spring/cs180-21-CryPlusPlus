@@ -1,0 +1,43 @@
+name: C++ CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - Error-Handling
+      - Document-Fixes
+  pull_request:
+    branches:
+      - main
+      - master
+      - Error-Handling
+      - Document-Fixes
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libboost-all-dev cmake
+
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build
+
+    - name: Build
+      run: |
+        cmake --build build --config Release
+
+    - name: Test
+      run: |
+        cd build
+        ctest --build --output-on-failure
