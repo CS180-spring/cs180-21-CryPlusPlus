@@ -119,6 +119,11 @@ p {
 
 }
 
+.feature_image {
+  width: 100%;
+  height: 100%;
+}
+
 .feature_right {
   height: 12em;
 }

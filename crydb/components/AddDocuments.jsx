@@ -2,10 +2,15 @@ import { useState } from "react";
 import { useUserContext } from "@app/context/UserContext";
 import { addToLog, updateTable } from "@utils/helpers";
 
-
 const AddDocuments = () => {
-  const { addDocument, setAddDocument, selectedCollection, setConsoleLogs, setTableData, setDataColumns} =
-    useUserContext();
+  const {
+    addDocument,
+    setAddDocument,
+    selectedCollection,
+    setConsoleLogs,
+    setTableData,
+    setDataColumns,
+  } = useUserContext();
 
   const [files, setFile] = useState();
 
@@ -18,7 +23,7 @@ const AddDocuments = () => {
     if (!files || files.length === 0) {
       setAddDocument(false);
     }
-  
+
     // Convert the files to base64 strings and send them to the backend
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -26,17 +31,17 @@ const AddDocuments = () => {
       reader.readAsDataURL(file);
       reader.onloadend = async () => {
         const base64 = reader.result;
-  
+
         // Create a JSON object
         const json = {
           filename: file.name,
           data: base64,
         };
-  
+
         // Convert the JSON object to a string
         const jsonString = JSON.stringify(json);
         console.log(jsonString);
-  
+
         // Send the JSON string to the backend
         try {
           const response = await fetch("http://localhost/uploadFile", {
@@ -46,7 +51,7 @@ const AddDocuments = () => {
             },
             body: jsonString,
           });
-  
+
           // Log the response from the server
           const data = JSON.parse(await response.text());
           const table = data.data;
@@ -62,9 +67,6 @@ const AddDocuments = () => {
 
     setAddDocument(false);
   };
-  
-  
-  
 
   return (
     addDocument && (
