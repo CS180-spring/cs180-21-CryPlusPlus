@@ -181,14 +181,15 @@ class Document
                 throw std::invalid_argument("Key not found in the document.");
             }
 
-        auto it = Data.find(key);
-        if (it != Data.end()) {
-            return it.value();
-        } else {
-            throw std::invalid_argument("Key not found in the document.");
+            auto it = Data.find(key);
+            if (it != Data.end()) {
+                return it.value();
+            } else {
+                throw std::invalid_argument("Key not found in the document.");
 
+            }
         }
-    }
+        return {};
     }
 
     
