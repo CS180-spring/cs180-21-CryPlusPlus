@@ -22,8 +22,11 @@ public:
         if (sort_type_ == "ASCENDING"){ 
             std::sort(collection.begin(), collection.end(), JsonComparator(sort_field_)); 
         }
-        else {
+        else if (sort_type_ == "DESCENDING"){
             std::sort(collection.rbegin(), collection.rend(), JsonComparator(sort_field_)); 
+        }
+        else {
+            std::cout << "Invalid sort type selected" << std::endl; 
         }
     }
 
