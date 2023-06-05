@@ -1,10 +1,16 @@
 import DropdownMenuState from "./DropdownMenuState";
 import { useUserContext } from "@app/context/UserContext";
-import { addToLog } from "@utils/helpers";
+import { addToLog, updateTable } from "@utils/helpers";
 
 const DisplayCollection = () => {
-  const { userCollections, selectedCollection, setCollection, setConsoleLogs } =
-    useUserContext();
+  const {
+    userCollections,
+    selectedCollection,
+    setCollection,
+    setConsoleLogs,
+    setDataColumns,
+    setTableData,
+  } = useUserContext();
 
   const handleOptionSelect = async (option) => {
     // Set the current collection
