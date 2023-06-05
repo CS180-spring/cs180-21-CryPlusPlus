@@ -467,18 +467,15 @@ private:
             std::vector<Document> results = query.getDocuments();
 
             json queriesJSON;    
+            if(results.empty())
+            {
+                queriesJSON = json::array();
+            }else
+            {
             for (Document doc : results)
                 queriesJSON.push_back(doc.getData());
+            }
 
-            // json fields;
-
-            // for (auto& doc : queriesJSON)
-            //     getFields(doc, fields);
-
-            // json data {
-            //     {"columns", fields},
-            //     {"data", queriesJSON}
-            // };
 
             cout << queriesJSON.dump(4) << endl;
             nlohmann::json resp = {
