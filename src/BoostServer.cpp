@@ -63,7 +63,8 @@ void getFields(const json& jsonObj, unordered_set<string>& list, const std::stri
         if (el.value().is_structured())
             getFields(el.value(), list, key);
         else {
-            list.insert(key);
+            if (key != "__UUID__")
+                list.insert(key);
         }
     }
 }
