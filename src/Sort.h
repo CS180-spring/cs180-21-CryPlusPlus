@@ -20,10 +20,10 @@ public:
     void document_sort(std::vector<Document>& collection){
         
         if (sort_type_ == "ASCENDING"){ 
-            std:sort(collection.begin(), collection.end(), JsonComparator(sort_field_)); 
+            std::sort(collection.begin(), collection.end(), JsonComparator(sort_field_)); 
         }
-        if (sort_type_ == "DESCENDING"){
-            std::sort(collection.end(), collection.begin(), JsonComparator(sort_field_));
+        else {
+            std::sort(collection.rbegin(), collection.rend(), JsonComparator(sort_field_)); 
         }
     }
 

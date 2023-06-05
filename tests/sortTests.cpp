@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-using json = nlohmann::ordered_json;
+using json = nlohmann::json;
 
 using namespace std;
 
@@ -17,9 +17,9 @@ class SortTest : public Test {
         vector <Document> testcollection; 
 
         void SetUp() override {
-            Document doc1({{"name", "John"}, {"age", 30}, {"location", "New York"}});
-            Document doc2({{"name", "Chloe"}, {"age", 25}, {"location", "San Francisco"}});
-            Document doc3({{"name", "Bob"}, {"age", 27}, {"location", "Seattle"}});
+            Document doc1({{"name", "John"}, {"age", 30}, {"location", "New York"}}, "doc1");
+            Document doc2({{"name", "Chloe"}, {"age", 25}, {"location", "San Francisco"}}, "doc2");
+            Document doc3({{"name", "Bob"}, {"age", 27}, {"location", "Seattle"}}, "doc3");
 
             testcollection.push_back(doc1);
             testcollection.push_back(doc2);
@@ -35,8 +35,8 @@ TEST_F(SortTest, AscendingByName) {
     Sort test1(sort_field, sort_type); 
     test1.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front(), "doc3");
-    EXPECT_EQ(testcollection.back(), "doc1");
+    EXPECT_EQ(testcollection.front().file, "doc3");
+    EXPECT_EQ(testcollection.back().file, "doc1");
 }
 
 TEST_F(SortTest, DescendingByName) {
@@ -46,8 +46,8 @@ TEST_F(SortTest, DescendingByName) {
     Sort test2(sort_field, sort_type); 
     test2.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front(), "doc1");
-    EXPECT_EQ(testcollection.back(), "doc3");
+    EXPECT_EQ(testcollection.front().file, "doc1");
+    EXPECT_EQ(testcollection.back().file, "doc3");
 }
 
 TEST_F(SortTest, AscendingByAge) {
@@ -57,8 +57,8 @@ TEST_F(SortTest, AscendingByAge) {
     Sort test3(sort_field, sort_type); 
     test3.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front(), "doc2");
-    EXPECT_EQ(testcollection.back(), "doc1");
+    EXPECT_EQ(testcollection.front().file, "doc2");
+    EXPECT_EQ(testcollection.back().file, "doc1");
 }
 
 TEST_F(SortTest, DescendingByAge) {
@@ -68,8 +68,8 @@ TEST_F(SortTest, DescendingByAge) {
     Sort test4(sort_field, sort_type); 
     test4.document_sort(testcollection);
 
-    EXPECT_EQ(testcollection.front(), "doc1");
-    EXPECT_EQ(testcollection.back(), "doc2");
+    EXPECT_EQ(testcollection.front().file, "doc1");
+    EXPECT_EQ(testcollection.back().file, "doc2");
 }
 
 TEST_F(SortTest, AscendingByLocation) {
@@ -79,8 +79,8 @@ TEST_F(SortTest, AscendingByLocation) {
     Sort test5(sort_field, sort_type); 
     test5.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front(), "doc1");
-    EXPECT_EQ(testcollection.back(), "doc2");
+    EXPECT_EQ(testcollection.front().file, "doc1");
+    EXPECT_EQ(testcollection.back().file, "doc3");
 }
 
 TEST_F(SortTest, DescendingByLocation) {
@@ -90,8 +90,8 @@ TEST_F(SortTest, DescendingByLocation) {
     Sort test6(sort_field, sort_type); 
     test6.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front(), "doc3");
-    EXPECT_EQ(testcollection.back(), "doc1");
+    EXPECT_EQ(testcollection.front().file, "doc3");
+    EXPECT_EQ(testcollection.back().file, "doc1");
 }
 
 
