@@ -367,11 +367,9 @@ private:
             std::string collectionName = CurrentCollection::getInstance().getCollection();
             vector<Document> docs = db.getCollection(collectionName).getVector();
 
-            json tableData;
+            json tableData = json::array();
             for (Document doc : docs)
                 tableData.push_back(doc.getData());
-
-           
 
             json data {
                 {"columns", getFields(tableData)},
@@ -398,9 +396,24 @@ private:
         }
         else if(request_.target() == "/changeCollection") {
             response_.set(http::field::content_type, "text/html");
+            Database& db = Database::getInstance();
+
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            vector<Document> docs = db.getCollection(collectionName).getVector();
+
+            json tableData = json::array();
+            for (Document doc : docs)
+                tableData.push_back(doc.getData());
+
+            json data {
+                {"columns", getFields(tableData)},
+                {"data", tableData}
+            };
+
             json resp = {
                 {"message", "Changed collection from '" + previousCollection + "' to '" + CurrentCollection::getInstance().getCollection() + "'"}, 
                 {"time", my_program_state::now()},
+                {"data", data},
             };
             beast::ostream(response_.body())
                 << resp;
@@ -509,13 +522,6 @@ private:
                 {"time", my_program_state::now()},
                 {"data", data}
             };
-            beast::ostream(response_.body())
-                << resp;
-        }
-        else if(request_.target() == "/time") {
-            std::cout << "in time" << std::endl;
-            response_.set(http::field::content_type, "text/html");
-            json resp = {{"time", my_program_state::now()}};
             beast::ostream(response_.body())
                 << resp;
         }
