@@ -14,7 +14,7 @@ const Table = () => {
     setDocumentData(e);
   };
   return (
-    <div className="flex h-full flex-col gap-5 p-8">
+    <div className="flex h-full flex-col gap-5 p-8 overflow-y-auto">
       <div className="flex justify-center text-3xl font-bold">
         {selectedCollection}
       </div>
@@ -22,7 +22,7 @@ const Table = () => {
         {tableData.map((element, i) => {
           let document = JSON.stringify(element);
           return (
-            <div className="flex w-full flex-row items-center gap-5" key={i}>
+            <div className="flex w-full flex-row items-center gap-5 " key={i}>
               <button className="rounded-full bg-red-500 p-2">
                 <ImCross className="text-xs" />
               </button>

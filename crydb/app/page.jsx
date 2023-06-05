@@ -50,28 +50,28 @@ const Home = () => {
               Ability to: Create, Read, Update, and Delete files from database
             </p>
           </div>
-          <div className="feature_right">IMAGE OF FEATURE</div>
+          <div className="feature_right"><img className="feature_image" alt="feature" src="https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/feature_crud.JPG"></img></div>
         </div>
         <div className="feature">
           <div className="feature_left">
             <h1>EXPORT</h1>
             <p>Ability to export files to numerous formats</p>
           </div>
-          <div className="feature_right">IMAGE OF FEATURE</div>
+          <div className="feature_right"><img className="feature_image" alt="feature" src="https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/"></img></div>
         </div>
         <div className="feature">
           <div className="feature_left">
             <h1>QUERY</h1>
             <p>Retrieval of data in an organized and efficient manner</p>
           </div>
-          <div className="feature_right">IMAGE OF FEATURE</div>
+          <div className="feature_right"><img className="feature_image" alt="feature" src="https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/feature_querying.JPG"></img></div>
         </div>
         <div className="feature">
           <div className="feature_left">
             <h1>SORT</h1>
             <p>Organize and manage data by a number of variables</p>
           </div>
-          <div className="feature_right">IMAGE OF FEATURE</div>
+          <div className="feature_right"><img className="feature_image" alt="feature" src="https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/feature_sorting.JPG"></img></div>
         </div>
       </div>
       <h2>LATEST UPDATE</h2>
