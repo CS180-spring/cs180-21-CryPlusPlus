@@ -17,6 +17,7 @@
 #include "Document.cpp"
 #include "Query.h"
 #include "../lib/json.hpp"
+#include "../src/CsvToJson.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -239,7 +240,9 @@ private:
             // Extract the filename and data from the JSON object
             filename = json["filename"];
             std::string base64Data = json["data"];
-
+	    
+	    	
+	
             // Parse the decoded data into a JSON object
             fileJson = decodeFile(base64Data);
 
