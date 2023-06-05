@@ -512,13 +512,6 @@ private:
             beast::ostream(response_.body())
                 << resp;
         }
-        else if(request_.target() == "/time") {
-            std::cout << "in time" << std::endl;
-            response_.set(http::field::content_type, "text/html");
-            json resp = {{"time", my_program_state::now()}};
-            beast::ostream(response_.body())
-                << resp;
-        }
         else {
             response_.result(http::status::not_found);
             response_.set(http::field::content_type, "text/plain");
