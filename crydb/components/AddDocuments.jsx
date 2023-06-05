@@ -37,7 +37,14 @@ const AddDocuments = () => {
           filename: file.name,
           data: base64,
         };
-
+	
+	// Check the file type
+   	 if (file.type !== "application/json") {
+      	     console.error("Invalid file type");
+     	     isInvalidFile = true; // Set the flag if the file type is invalid
+     	      break;
+    	}
+	
         // Convert the JSON object to a string
         const jsonString = JSON.stringify(json);
         console.log(jsonString);
