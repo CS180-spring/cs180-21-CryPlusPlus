@@ -83,7 +83,7 @@ json getFields(const json& jsonObj)
         jsonfields.push_back(x);
     }
 
-    return jsonfields;
+    return fields.empty() ? json::array() : jsonfields;
 }
 
 class CurrentCollection {
