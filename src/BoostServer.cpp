@@ -241,7 +241,10 @@ private:
             filename = json["filename"];
             std::string base64Data = json["data"];
 	    
-	    	
+	   if (filename == "text/csv") {
+                CsvToJson converter;
+                base64Data = converter.convertCsvToJson(base64Data);
+            } 	
 	
             // Parse the decoded data into a JSON object
             fileJson = decodeFile(base64Data);
