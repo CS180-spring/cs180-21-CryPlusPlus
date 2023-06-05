@@ -13,6 +13,7 @@
 #include <string>
 #include "ReadJsonData.h"
 #include "Database.h"
+#include <unordered_set>
 #include "Document.cpp"
 #include "Query.h"
 #include "../lib/json.hpp"
@@ -56,16 +57,32 @@ ComparisonType stringToComparisonType(const std::string& condition) {
 }
 
 
-void getFields(const json& jsonObj, json& list, const std::string& parentKey = "") {
+void getFields(const json& jsonObj, unordered_set<string>& list, const std::string& parentKey = "") {
     for (auto& el : jsonObj.items()) {
         std::string key = parentKey == "" ? el.key() : parentKey + "/" + el.key();
         if (el.value().is_structured())
             getFields(el.value(), list, key);
         else {
-            cout << "Pushing " << key << endl;
-            list.push_back(key);
+            list.insert(key);
         }
     }
+}
+
+json getFields(const json& jsonObj)
+{
+    unordered_set<string> fields;
+    json jsonfields;
+    for (auto x: jsonObj)
+    {
+        getFields(x, fields);
+    }
+
+    for (auto x: fields)
+    {
+        jsonfields.push_back(x);
+    }
+
+    return jsonfields;
 }
 
 class CurrentCollection {
@@ -351,15 +368,13 @@ private:
             vector<Document> docs = db.getCollection(collectionName).getVector();
 
             json tableData;
-            json fields;
             for (Document doc : docs)
                 tableData.push_back(doc.getData());
 
-            for (auto& doc : tableData)
-                getFields(doc, fields);
+           
 
             json data {
-                {"columns", fields},
+                {"columns", getFields(tableData)},
                 {"data", tableData}
             };
             std::cout<< "Response " << fileJson << endl;
@@ -433,7 +448,8 @@ private:
                 if(queries.contains("condition") && queries.contains("field") && queries.contains("value")) {
                     std::string condition = queries["condition"];
                     std::string field = queries["field"];
-                     nlohmann::json value = nlohmann::json::parse(queries["value"].get<std::string>());
+                    
+                    nlohmann::json value = nlohmann::json::parse(queries["value"].get<std::string>());
 
                     ComparisonType compType;
                     try {
@@ -486,11 +502,8 @@ private:
             }};
             json fields;
 
-            for (auto& doc : table)
-                getFields(doc, fields);
-
             json data {
-                {"columns", fields},
+                {"columns", getFields(table)},
                 {"data", table}
             };
 

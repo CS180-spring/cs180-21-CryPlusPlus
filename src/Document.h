@@ -144,7 +144,8 @@ class Document
                 nestedData = &(*nestedData)[k];
             }
         }
-}
+    }
+
 
 
     bool has_field(const std::string& key) const
@@ -160,19 +161,8 @@ class Document
             }
         }
         return true;
-
-    if (Data.find(key) != Data.end()) {
-        Data[key] = new_value;
-    } else {
-        throw std::invalid_argument("Key not found in the document.");
-    }
     }
 
-    bool has_field(const std::string& key) const
-    {
-        return Data.find(key) != Data.end();
-
-    }
 
     json get_field_value(const std::string& key) const
     {
@@ -199,10 +189,8 @@ class Document
 
         }
     }
-    
-    //would it be possible to return a search like this
-    //return item.contains("key") && item["key"] == "Whatever searched";    
-    //would we store that into a string or array and in the end output that string/array?
+    }
+
     
     json getData() const
     {   
@@ -226,4 +214,3 @@ class Document
         Size = 0;
     }
 };
-
