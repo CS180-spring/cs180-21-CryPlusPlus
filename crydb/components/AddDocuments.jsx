@@ -31,7 +31,6 @@ const handleUpload = async () => {
     reader.readAsDataURL(file);
     const base64 = await new Promise((resolve) => {
       reader.onloadend = () => resolve(reader.result);
-      }
     });
 
     // Create a JSON object
@@ -59,6 +58,7 @@ const handleUpload = async () => {
       if (!parsedJson || typeof parsedJson !== "object") {
         throw new Error("Invalid JSON file");
         return;
+	}
       // Send the JSON string to the backend
       try {
         const response = await fetch("http://localhost/uploadFile", {
