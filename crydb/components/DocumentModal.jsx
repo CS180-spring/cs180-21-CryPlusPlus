@@ -4,15 +4,6 @@ import { useState } from "react";
 
 const DocumentModal = ({ visible, setVisible, jsonString }) => {
   if (!visible) return null;
-  const onDelete = () => {
-    console.log("deleting");
-  };
-  const onEdit = () => {
-    console.log("editted");
-  };
-  const onAdd = () => {
-    console.log("adding");
-  };
 
   const [displayObjectSize, setDisplayObjectSize] = useState(false);
   const [displayDataTypes, setDisplayDataTypes] = useState(false);
@@ -22,6 +13,42 @@ const DocumentModal = ({ visible, setVisible, jsonString }) => {
   const UUID = data.__UUID__;
   console.log(UUID);
   delete data["__UUID__"];
+
+  const onDelete = (e) => {
+    let fieldPath = null;
+    e.namespace.forEach((field) => (fieldPath += field + "/"));
+    const requestData = {
+      uuid: UUID,
+      action: "remove",
+      field: fieldPath + e.name,
+      newValue: null,
+    };
+    console.log("deleting", requestData);
+  };
+  const onEdit = (e) => {
+    let fieldPath = "";
+    e.namespace.forEach((field) => (fieldPath += field + "/"));
+    console.log(e);
+    const requestData = {
+      uuid: UUID,
+      action: "edit",
+      field: fieldPath + e.name,
+      newValue: e.new_value,
+    };
+    console.log("editted", requestData);
+  };
+  const onAdd = (e) => {
+    let fieldPath = "";
+    e.namespace.forEach((field) => (fieldPath += field + "/"));
+    console.log(e);
+    const requestData = {
+      uuid: UUID,
+      action: "add",
+      field: fieldPath + e.name,
+      newValue: e.new_value,
+    };
+    console.log("adding", requestData);
+  };
 
   return (
     <div
