@@ -59,6 +59,10 @@ ComparisonType stringToComparisonType(const std::string& condition) {
 
 void getFields(const json& jsonObj, unordered_set<string>& list, const std::string& parentKey = "") {
     for (auto& el : jsonObj.items()) {
+        if (isdigit(el.key()[0])) {
+            list.insert(parentKey);
+            continue;
+        }
         std::string key = parentKey == "" ? el.key() : parentKey + "/" + el.key();
         if (el.value().is_structured())
             getFields(el.value(), list, key);
@@ -264,8 +268,8 @@ private:
                     collection_exists = false;
                 }
             }
-            if(collection_exists)
-                db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+            // if(collection_exists)
+                // db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
         }
         else if (request_.target() == "/action") 
         {
@@ -359,7 +363,7 @@ private:
         else if(request_.target() == "/query") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
             queries = nlohmann::json::parse(post_content);
-            cout << queries << endl;
+            // cout << queries << endl;
         }
         else if(request_.target() == "/sortBy") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
@@ -529,7 +533,7 @@ private:
             }
 
 
-            cout << queriesJSON.dump(4) << endl;
+            // cout << queriesJSON.dump(4) << endl;
             nlohmann::json resp = {
                 {"message", "Query on " + collectionName + " with " + std::to_string(queries.size()) + " conditions"},
                 {"time", my_program_state::now()},
@@ -553,10 +557,10 @@ private:
 
             vector<Document> sorted = collection.sort(sortby, orderB);
 
-            json tableData;
+            json tableData = json::array();
             for (auto doc: sorted)
             {
-                cout << "Sorted: " << doc.getData() << endl;
+                // cout << "Sorted: " << doc.getData() << endl;
                 tableData.push_back(doc.getData());
             }
 

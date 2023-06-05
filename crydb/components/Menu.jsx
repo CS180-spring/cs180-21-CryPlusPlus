@@ -3,6 +3,7 @@ import { HiHome } from "react-icons/Hi";
 import { AiFillFileText } from "react-icons/Ai";
 import { BiExport, BiSave } from "react-icons/Bi";
 import { BsFillCollectionFill } from "react-icons/Bs";
+import { VscDebugRestart } from "react-icons/vsc";
 import { ImCross } from "react-icons/Im";
 import { useUserContext } from "@app/context/UserContext";
 import { addToLog } from "@utils/helpers";
@@ -75,8 +76,8 @@ const Menu = () => {
         Delete Collection
       </button>
       <button className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300">
-        <BiSave />
-        Save Changes
+        <VscDebugRestart />
+        Restart Table
       </button>
       <button
         className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300"
