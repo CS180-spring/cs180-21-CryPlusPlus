@@ -348,6 +348,14 @@ private:
             cout << "Deleted Collection: " << deleted << endl;
             deletedCollection = deleted;
         }
+        else if(request_.target() == "/deleteDocument") {
+            std::string post_content = beast::buffers_to_string(request_.body().data());
+            auto json = nlohmann::json::parse(post_content);
+            string uuid = json["uuid"].get<std::string>();
+            Database& db = Database::getInstance();
+            db.getCollection(CurrentCollection::getInstance().getCollection()).erase(uuid);
+            cout << "Deleted Document: " << uuid << endl;
+        }
         else if(request_.target() == "/query") {
             std::string post_content = beast::buffers_to_string(request_.body().data());
             queries = nlohmann::json::parse(post_content);
@@ -430,6 +438,30 @@ private:
             json resp = {
                 {"message", "Deleted collection '" + deletedCollection + "'"}, 
                 {"time", my_program_state::now()},
+            };
+            beast::ostream(response_.body())
+                << resp;
+        }
+        else if(request_.target() == "/deleteDocument") {
+            response_.set(http::field::content_type, "text/html");
+            Database& db = Database::getInstance();
+
+            std::string collectionName = CurrentCollection::getInstance().getCollection();
+            vector<Document> docs = db.getCollection(collectionName).getVector();
+
+            json tableData = json::array();
+            for (Document doc : docs)
+                tableData.push_back(doc.getData());
+
+            json data {
+                {"columns", getFields(tableData)},
+                {"data", tableData}
+            };
+
+            json resp = {
+                {"message", "Deleted collection '" + deletedCollection + "'"}, 
+                {"time", my_program_state::now()},
+                {"data", data},
             };
             beast::ostream(response_.body())
                 << resp;
