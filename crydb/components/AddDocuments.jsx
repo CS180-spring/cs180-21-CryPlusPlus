@@ -43,7 +43,7 @@ const handleUpload = async () => {
       data: base64,
     };
 
-    // Check the file type
+    // Check the file type and return invalid file type
     if (file.type !== "application/json") {
       console.error("Invalid file type");
       isInvalidFile = true; // Set the flag if the file type is invalid
@@ -104,9 +104,6 @@ const handleUpload = async () => {
   }
 };
 
-
-    setAddDocument(false);
-  };
 
   return (
     addDocument && (
