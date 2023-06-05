@@ -88,4 +88,4 @@ Sprint 7-8:
 
 # Burn Down Chart
 
-[![Burn Down Chart](./Burndown.png)](https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/Burndown.png)
+[![Burn Down Chart](./Burndown.png)](https://github.com/CS180-spring/cs180-21-CryPlusPlus/tree/main/repoImages/Burdown.png)
