@@ -19,54 +19,77 @@ const AddDocuments = () => {
     setFile(event.target.files);
   };
 
-  const handleUpload = async () => {
-    if (!files || files.length === 0) {
-      setAddDocument(false);
-    }
 
-    // Convert the files to base64 strings and send them to the backend
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        const base64 = reader.result;
-
-        // Create a JSON object
-        const json = {
-          filename: file.name,
-          data: base64,
-        };
-
-        // Convert the JSON object to a string
-        const jsonString = JSON.stringify(json);
-        console.log(jsonString);
-
-        // Send the JSON string to the backend
-        try {
-          const response = await fetch("http://localhost/uploadFile", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: jsonString,
-          });
-
-          // Log the response from the server
-          const data = JSON.parse(await response.text());
-          const table = data.data;
-          console.log("Response from localhost:", data);
-          updateTable(table.data, setTableData);
-          setDataColumns(table.columns);
-          addToLog(data, setConsoleLogs);
-        } catch (error) {
-          console.error("Error fetching from localhost:", error);
-        }
-      };
-    }
-
+const handleUpload = async () => {
+  if (!files || files.length === 0) {
     setAddDocument(false);
-  };
+    return;
+  }
+
+  let hasInvalidJsonFile = false; // Flag to indicate if there is an invalid JSON file
+
+  // Convert the files to base64 strings and send them to the backend
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    const base64 = await new Promise((resolve) => {
+      reader.onloadend = () => resolve(reader.result);
+    });
+
+    // Check the file type
+    if (file.type !== "application/json") {
+      console.error("Invalid file type");
+      continue; // Continue to the next iteration
+    }
+
+    // Create a JSON object
+    const json = {
+      filename: file.name,
+      data: base64,
+    };
+
+    // Convert the JSON object to a string
+    const jsonString = JSON.stringify(json);
+    console.log(jsonString);
+
+    try {
+      // Attempt to parse the JSON string
+      JSON.parse(jsonString);
+
+      // Send the JSON string to the backend
+      const response = await fetch("http://localhost/uploadFile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonString,
+      });
+
+      // Log the response from the server
+      const data = JSON.parse(await response.text());
+      const table = data.data;
+      console.log("Response from localhost:", data);
+      updateTable(table.data, setTableData);
+      setDataColumns(table.columns);
+      addToLog(data, setConsoleLogs);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      hasInvalidJsonFile = true; // Set the flag if there is an error
+    }
+  }
+
+  if (hasInvalidJsonFile) {
+    // Handle the case when there is an invalid JSON file
+    // For example, show an error message to the user
+    console.log("Invalid JSON file");
+    setAddDocument(false); // Set addDocument to false
+    return;
+  }
+
+  // If no invalid JSON file or error occurred, set addDocument to false
+  setAddDocument(false);
+};
 
   return (
     addDocument && (
