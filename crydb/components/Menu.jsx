@@ -75,10 +75,10 @@ const Menu = () => {
         <ImCross />
         Delete Collection
       </button>
-      <button className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300">
+      {/* <button className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300">
         <VscDebugRestart />
         Restart Table
-      </button>
+      </button> */}
       <button
         className="flex w-full flex-row items-center gap-2 py-2 font-inter hover:bg-figma-black-grey300"
         onClick={() =>
