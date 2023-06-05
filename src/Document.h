@@ -8,6 +8,19 @@
 
 using json = nlohmann::json;
 
+inline std::vector<std::string> split_keys(const std::string& s, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+
+
+
 class Document
 {
     private:
@@ -100,6 +113,54 @@ class Document
 
     void update_field(const std::string& key, const json& new_value)
     {
+
+        auto keys = split_keys(key, '/');
+        json* nestedData = &Data;
+
+        for (int i = 0; i < keys.size(); i++)
+        {
+            const auto& k = keys[i];
+
+            if (i < keys.size() - 1 && (nestedData->find(k) == nestedData->end() || !nestedData->at(k).is_object()))
+            {
+                throw std::invalid_argument("Key not found in the document or is not an object.");
+            }
+
+            // If this is the last key
+            if (i == keys.size() - 1)
+            {
+                // If the key doesn't exist, throw an error
+                if (nestedData->find(k) == nestedData->end())
+                {
+                    throw std::invalid_argument("Key not found in the document.");
+                }
+
+                // Otherwise, update the value
+                (*nestedData)[k] = new_value;
+            }
+            else
+            {
+                // If it's not the last key, move to the next nested json object
+                nestedData = &(*nestedData)[k];
+            }
+        }
+}
+
+
+    bool has_field(const std::string& key) const
+    {
+        std::vector<std::string> keys = split_keys(key, '/');
+        json temp = Data;
+        
+        for (auto &k : keys) {
+            if (temp.find(k) != temp.end()) {
+                temp = temp[k];
+            } else {
+                return false;
+            }
+        }
+        return true;
+
     if (Data.find(key) != Data.end()) {
         Data[key] = new_value;
     } else {
@@ -110,15 +171,32 @@ class Document
     bool has_field(const std::string& key) const
     {
         return Data.find(key) != Data.end();
+
     }
 
     json get_field_value(const std::string& key) const
     {
+
+        auto keys = split_keys(key, '/');
+        json nestedData = Data;
+
+        for (const auto& k : keys)
+        {
+            if (nestedData.find(k) != nestedData.end())
+            {
+                nestedData = nestedData[k];
+            }
+            else
+            {
+                throw std::invalid_argument("Key not found in the document.");
+            }
+
         auto it = Data.find(key);
         if (it != Data.end()) {
             return it.value();
         } else {
             throw std::invalid_argument("Key not found in the document.");
+
         }
     }
     
