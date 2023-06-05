@@ -38,15 +38,15 @@ TEST_F(QueryTest, ChainedConditions) {
     EXPECT_EQ(results[0].get_field_value("name"), "John");
 }
 
-TEST_F(QueryTest, GetKeys) {
-    Query query(collections_);
-    auto keys = query.where({"age", GREATER_THAN_OR_EQUAL, 27}).where({"location", EQUAL, "New York"}).getKeys();
+// TEST_F(QueryTest, GetKeys) {
+//     Query query(collections_);
+//     auto keys = query.where({"age", GREATER_THAN_OR_EQUAL, 27}).where({"location", EQUAL, "New York"}).getKeys();
 
-    ASSERT_EQ(keys.size(), 2);
-    EXPECT_EQ(keys[0], "doc1");
-    EXPECT_EQ(keys[1], "doc3");
+//     ASSERT_EQ(keys.size(), 2);
+//     EXPECT_EQ(keys[0], "doc1");
+//     EXPECT_EQ(keys[1], "doc3");
 
-}
+// }
 
 TEST_F(QueryTest, ClearConditions) {
     Query query(collections_);

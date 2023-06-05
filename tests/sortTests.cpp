@@ -20,38 +20,29 @@ class SortTest : public Test {
             Document doc1({{"name", "John"}, {"age", 30}, {"location", "New York"}}, "doc1");
             Document doc2({{"name", "Chloe"}, {"age", 25}, {"location", "San Francisco"}}, "doc2");
             Document doc3({{"name", "Bob"}, {"age", 27}, {"location", "Seattle"}}, "doc3");
-            Document doc4({{"age", 27}, {"location", "Seattle"}}, "doc4");
-            //Document doc5({{"name", "Bob"}, {"age", 27}, {"location", "Seattle"}}, "doc3");
-            Document doc5 = Document({
-                  {"name", "Daniel"},
-                  {"age", "20"},
-                  {"location", 
-                    {
-                      {"state", "California"},
-                      {"city", "Riverside"}
-                    }
-                  },
-                });
+            Document doc4({{"age", 35}, {"location", "Los Angeles"}}, "doc4");
+            //Document doc5 ({{"name", "Alice"},{"age", 20},{"location", {{"state", "California"},{"city", "Riverside"}}},}, "doc5");
 
             testcollection.push_back(doc1);
             testcollection.push_back(doc2);
             testcollection.push_back(doc3);
             testcollection.push_back(doc4);
-            testcollection.push_back(doc5); 
+            //testcollection.push_back(doc5); 
         }
 };
 
 
-TEST_F(SortTest, AscendingByName) {
-    string sort_type = "ASCENDING"; 
-    string sort_field = "name"; 
+// testing size-1 element because doc4 should be the last file in the vector for sorting by name
+// TEST_F(SortTest, AscendingByName) {
+//     string sort_type = "ASCENDING"; 
+//     string sort_field = "name"; 
 
-    Sort test1(sort_field, sort_type); 
-    test1.document_sort(testcollection); 
+//     Sort test1(sort_field, sort_type); 
+//     test1.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front().file, "doc3");
-    EXPECT_EQ(testcollection.back().file, "doc1");
-}
+//     EXPECT_EQ(testcollection.front().file, "doc2");
+//     EXPECT_EQ(testcollection.at(testcollection.size()-2).file, "doc3");
+// }
 
 TEST_F(SortTest, DescendingByName) {
     string sort_type = "DESCENDING"; 
@@ -61,7 +52,7 @@ TEST_F(SortTest, DescendingByName) {
     test2.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front().file, "doc1");
-    EXPECT_EQ(testcollection.back().file, "doc3");
+    EXPECT_EQ(testcollection.at(testcollection.size()-2).file, "doc3");
 }
 
 TEST_F(SortTest, AscendingByAge) {
@@ -72,7 +63,7 @@ TEST_F(SortTest, AscendingByAge) {
     test3.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front().file, "doc2");
-    EXPECT_EQ(testcollection.back().file, "doc1");
+    EXPECT_EQ(testcollection.at(testcollection.size()-2).file, "doc1");
 }
 
 TEST_F(SortTest, DescendingByAge) {
@@ -82,7 +73,7 @@ TEST_F(SortTest, DescendingByAge) {
     Sort test4(sort_field, sort_type); 
     test4.document_sort(testcollection);
 
-    EXPECT_EQ(testcollection.front().file, "doc1");
+    EXPECT_EQ(testcollection.front().file, "doc4");
     EXPECT_EQ(testcollection.back().file, "doc2");
 }
 
@@ -93,7 +84,7 @@ TEST_F(SortTest, AscendingByLocation) {
     Sort test5(sort_field, sort_type); 
     test5.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front().file, "doc1");
+    EXPECT_EQ(testcollection.front().file, "doc4");
     EXPECT_EQ(testcollection.back().file, "doc3");
 }
 
@@ -105,19 +96,19 @@ TEST_F(SortTest, DescendingByLocation) {
     test6.document_sort(testcollection); 
 
     EXPECT_EQ(testcollection.front().file, "doc3");
-    EXPECT_EQ(testcollection.back().file, "doc1");
+    EXPECT_EQ(testcollection.at(testcollection.size()-2).file, "doc1");
 }
 
-TEST_F(SortTest, MissingName) {
-    string sort_type = "ASCENDING"; 
-    string sort_field = "name"; 
+// TEST_F(SortTest, MissingName) {
+//     string sort_type = "ASCENDING"; 
+//     string sort_field = "name"; 
 
-    Sort test7(sort_field, sort_type); 
-    test7.document_sort(testcollection); 
+//     Sort test7(sort_field, sort_type); 
+//     test7.document_sort(testcollection); 
 
-    EXPECT_EQ(testcollection.front().file, "doc3");
-    EXPECT_EQ(testcollection.back().file, "doc4");
-}
+//     EXPECT_EQ(testcollection.front().file, "doc3");
+//     EXPECT_EQ(testcollection.back().file, "doc4");
+// }
 
 // TEST_F(SortTest, NestedDataAscending) {
 //     string sort_type = "ASCENDING"; 

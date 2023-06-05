@@ -29,9 +29,11 @@ class JsonComparator{
         //                 return true; 
         //             }
         //         } else if (two.has_field(sort_field_)){ //only value2 has the sort field specified, value1 still considered "greater" and added to back
-        //             return false;
+        //             return true;
         //         }
-        //         return false; //neither value have the sort field, keep the original order
+        //         else {
+        //             return false; //neither value have the sort field, keep the original order
+        //         }
         // }
 
 
@@ -43,7 +45,7 @@ class JsonComparator{
                 }
                 else {
                     value1 = "";
-                    //return false;
+                    return false;
                 }
 
                 if (two.has_field(sort_field_)){
@@ -51,7 +53,7 @@ class JsonComparator{
                 }
                 else {
                     value2 = "";
-                    //return false;
+                    return false;
                 }
 
                 return value1 < value2;
