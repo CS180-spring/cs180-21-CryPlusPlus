@@ -20,6 +20,7 @@ inline std::vector<std::string> split_keys(const std::string& s, char delimiter)
 
 
 
+
 class Document
 {
     private:
@@ -112,6 +113,7 @@ class Document
 
     void update_field(const std::string& key, const json& new_value)
     {
+
         auto keys = split_keys(key, '/');
         json* nestedData = &Data;
 
@@ -158,11 +160,23 @@ class Document
             }
         }
         return true;
+
+    if (Data.find(key) != Data.end()) {
+        Data[key] = new_value;
+    } else {
+        throw std::invalid_argument("Key not found in the document.");
+    }
     }
 
+    bool has_field(const std::string& key) const
+    {
+        return Data.find(key) != Data.end();
+
+    }
 
     json get_field_value(const std::string& key) const
     {
+
         auto keys = split_keys(key, '/');
         json nestedData = Data;
 
@@ -176,10 +190,15 @@ class Document
             {
                 throw std::invalid_argument("Key not found in the document.");
             }
-        }
-        return nestedData;
-    }
 
+        auto it = Data.find(key);
+        if (it != Data.end()) {
+            return it.value();
+        } else {
+            throw std::invalid_argument("Key not found in the document.");
+
+        }
+    }
     
     //would it be possible to return a search like this
     //return item.contains("key") && item["key"] == "Whatever searched";    
