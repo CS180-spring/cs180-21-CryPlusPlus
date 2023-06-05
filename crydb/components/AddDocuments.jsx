@@ -19,58 +19,8 @@ const AddDocuments = () => {
     setFile(event.target.files);
   };
 
-  const handleUpload = async () => {
-    if (!files || files.length === 0) {
-      setAddDocument(false);
-    }
 
-    // Convert the files to base64 strings and send them to the backend
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        const base64 = reader.result;
 
-        // Create a JSON object
-        const json = {
-          filename: file.name,
-          data: base64,
-        };
-	
-	// Check the file type
-    	if (file.type !== "application/json") {
-      		console.error("Invalid file type");
-      		isInvalidFile = true; // Set the flag if the file type is invalid
-      		break;
-    	}
-	
-        // Convert the JSON object to a string
-        const jsonString = JSON.stringify(json);
-        console.log(jsonString);
-
-        // Send the JSON string to the backend
-        try {
-          const response = await fetch("http://localhost/uploadFile", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: jsonString,
-          });
-
-          // Log the response from the server
-          const data = JSON.parse(await response.text());
-          const table = data.data;
-          console.log("Response from localhost:", data);
-          updateTable(table.data, setTableData);
-          setDataColumns(table.columns);
-          addToLog(data, setConsoleLogs);
-        } catch (error) {
-          console.error("Error fetching from localhost:", error);
-        }
-      };
-    }
 
     setAddDocument(false);
   };
