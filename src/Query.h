@@ -101,7 +101,7 @@ bool checkCondition(const Document &doc, const Condition &condition) {
     std::istringstream key_stream(condition.field);
     std::string segment;
     std::vector<std::string> key_segments;
-    while (std::getline(key_stream, segment, '.')) {
+    while (std::getline(key_stream, segment, '/')) {
         key_segments.push_back(segment);
     }
 

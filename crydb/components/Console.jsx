@@ -6,7 +6,7 @@ const Console = () => {
   const { consoleLogs } = useUserContext();
 
   return (
-    <div className="flex h-full flex-col gap-5 p-8">
+    <div className="flex h-full flex-col gap-5 overflow-y-auto p-8">
       <div className="flex flex-col gap-2 text-2xl">
         {consoleLogs.map((response, i) => {
           return (

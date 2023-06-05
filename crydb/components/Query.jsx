@@ -61,8 +61,8 @@ const Query = ({ index, data }) => {
           "Not Equal",
           "Greater Than",
           "Less Than",
-          "Greater than or Equal to",
-          "Less Than or Equal To",
+          "Greater Than Or Equal",
+          "Less Than Or Equal",
         ]}
         onOptionSelect={onConditionSelect}
         data={data}

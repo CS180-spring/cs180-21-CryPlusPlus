@@ -1,9 +1,16 @@
-import DropdownMenu from "./DropdownMenu";
+import DropdownMenuState from "./DropdownMenuState";
 import { useUserContext } from "@app/context/UserContext";
-import { addToLog } from "@utils/helpers";
+import { addToLog, updateTable } from "@utils/helpers";
 
 const DisplayCollection = () => {
-  const { userCollections, setCollection, setConsoleLogs } = useUserContext();
+  const {
+    userCollections,
+    selectedCollection,
+    setCollection,
+    setConsoleLogs,
+    setDataColumns,
+    setTableData,
+  } = useUserContext();
 
   const handleOptionSelect = async (option) => {
     // Set the current collection
@@ -19,16 +26,21 @@ const DisplayCollection = () => {
     });
 
     const data = JSON.parse(await response.text());
+    const table = data.data;
     console.log("Response from localhost:", data);
+    updateTable(table.data, setTableData);
+    setDataColumns(table.columns);
     addToLog(data, setConsoleLogs);
   };
 
   return (
     <div className="flex pb-10">
       <div className="pr-16 text-2xl font-bold">Collection:</div>
-      <DropdownMenu
+      <DropdownMenuState
         options={userCollections}
         onOptionSelect={handleOptionSelect}
+        selectedOption={selectedCollection}
+        setSelectedOption={setCollection}
       />
     </div>
   );
