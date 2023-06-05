@@ -20,76 +20,116 @@ const AddDocuments = () => {
   };
 
 
-const handleUpload = async () => {
-  if (!files || files.length === 0) {
-    setAddDocument(false);
-    return;
-  }
-
-  let hasInvalidJsonFile = false; // Flag to indicate if there is an invalid JSON file
-
-  // Convert the files to base64 strings and send them to the backend
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    const base64 = await new Promise((resolve) => {
-      reader.onloadend = () => resolve(reader.result);
-    });
-
-    // Check the file type
-    if (file.type !== "application/json") {
-      console.error("Invalid file type");
-      continue; // Continue to the next iteration
+  const handleUpload = async () => {
+    if (!files || files.length === 0) {
+      setAddDocument(false);
+      return;
     }
 
-    // Create a JSON object
-    const json = {
-      filename: file.name,
-      data: base64,
-    };
+    let hasInvalidFile = false; // Flag to indicate if there is an invalid file
 
-    // Convert the JSON object to a string
-    const jsonString = JSON.stringify(json);
-    console.log(jsonString);
-
-    try {
-      // Attempt to parse the JSON string
-      JSON.parse(jsonString);
-
-      // Send the JSON string to the backend
-      const response = await fetch("http://localhost/uploadFile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonString,
+    // Convert the files to base64 strings and send them to the backend
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      const base64 = await new Promise((resolve) => {
+        reader.onloadend = () => resolve(reader.result);
       });
 
-      // Log the response from the server
-      const data = JSON.parse(await response.text());
-      const table = data.data;
-      console.log("Response from localhost:", data);
-      updateTable(table.data, setTableData);
-      setDataColumns(table.columns);
-      addToLog(data, setConsoleLogs);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      hasInvalidJsonFile = true; // Set the flag if there is an error
+      // Check the file type
+      if (file.type === "application/json") {
+        // Create a JSON object
+        const json = {
+          filename: file.name,
+          data: base64,
+        };
+
+        // Convert the JSON object to a string
+        const jsonString = JSON.stringify(json);
+        console.log(jsonString);
+
+        try {
+          // Attempt to parse the JSON string
+          JSON.parse(jsonString);
+
+          // Send the JSON string to the backend
+          const response = await fetch("http://localhost/uploadFile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: jsonString,
+          });
+
+          // Log the response from the server
+          const data = JSON.parse(await response.text());
+          const table = data.data;
+          console.log("Response from localhost:", data);
+          updateTable(table.data, setTableData);
+          setDataColumns(table.columns);
+          addToLog(data, setConsoleLogs);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          hasInvalidFile = true; // Set the flag if there is an error
+        }
+	//convert csv to base64 before sending to backend
+      } else if (file.type === "text/csv") {
+        const fileContent = await file.text();
+
+        const lines = fileContent.split("\n");
+
+        if (lines.length === 0) {
+          throw new Error("Empty CSV file");
+        }
+
+        const headers = lines[0].split(",");
+
+        if (headers.length === 0) {
+          throw new Error("CSV file must have at least one column");
+        }
+
+        for (let i = 1; i < lines.length; i++) {
+          const rowData = lines[i].split(",");
+
+          if (rowData.length !== headers.length) {
+            throw new Error(`Row ${i + 1} has incorrect number of columns`);
+          }
+        }
+
+        try {
+          const response = await fetch("http://localhost/uploadFile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/csv",
+            },
+            body: fileContent,
+          });
+
+          const data = JSON.parse(await response.text());
+          console.log("Response from localhost:", data);
+          addToLog(data, setConsoleLogs);
+        } catch (error) {
+          console.error("Error fetching from localhost:", error);
+        }
+      } else {
+        console.error("Invalid file type");
+        hasInvalidFile = true; // Set the flag for invalid file type
+      }
     }
-  }
 
-  if (hasInvalidJsonFile) {
-    // Handle the case when there is an invalid JSON file
-    // For example, show an error message to the user
-    console.log("Invalid JSON file");
-    setAddDocument(false); // Set addDocument to false
-    return;
-  }
+    if (hasInvalidFile) {
+      // Handle the case when there is an invalid file type
+      // For example, show an error message to the user
+      console.log("Invalid file type");
+      setAddDocument(false); // Set addDocument to false
+      return;
+    }
 
-  // If no invalid JSON file or error occurred, set addDocument to false
-  setAddDocument(false);
-};
+    // If no invalid file type or error occurred, set addDocument to false
+    setAddDocument(false);
+  };
+
 
   return (
     addDocument && (
