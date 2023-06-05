@@ -35,6 +35,7 @@ public:
 
     void insert(Document& value) {
         std::string key = UUID::generate_uuid();
+        value.add_field("__UUID__", key);
         btree_map_.insert(std::make_pair(key, value));
         value.key = key;
     }
