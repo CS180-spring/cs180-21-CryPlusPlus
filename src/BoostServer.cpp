@@ -17,6 +17,7 @@
 #include "Document.cpp"
 #include "Query.h"
 #include "../lib/json.hpp"
+#include "../src/CsvToJson.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -228,39 +229,34 @@ private:
     }
 
     void process_post_request() {
-        if(request_.target() == "/uploadFile") {
-            Database& db = Database::getInstance();
+     if (request_.target() == "/uploadFile") {
+    	Database& db = Database::getInstance();
 
-            std::string post_content = beast::buffers_to_string(request_.body().data());
+    	std::string post_content = beast::buffers_to_string(request_.body().data());
 
-            // Parse the request body as JSON
-            auto json = nlohmann::json::parse(post_content);
+       // Parse the request body as JSON
+       try {
+        auto json = nlohmann::json::parse(post_content);
 
-            // Extract the filename and data from the JSON object
-            filename = json["filename"];
-            std::string base64Data = json["data"];
+        // Extract the filename and data from the JSON object
+        filename = json["filename"];
+        std::string base64Data = json["data"];
 
-            // Parse the decoded data into a JSON object
-            fileJson = decodeFile(base64Data);
+	if (filename == "text/csv") {
+                CsvToJson converter;
+                base64Data = converter.convertCsvToJson(base64Data);
+            }
 
-            bool collection_exists = true;
-            // Check if the parsed JSON is an array or a single object
-            if (fileJson.is_array()) {
-                // This is an array of documents
-                for (auto x : fileJson) {
-                    document_count++;
-                    Document newDoc(x, filename);
-                    try {
-                        db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
-                    } catch (const std::runtime_error& e) {
-                        std::cout << "Caught a runtime error: " << e.what() << std::endl;
-                        collection_exists = false;
-                    }
-                }
-            } else if (fileJson.is_object()) {
-                // This is a single document
-                document_count = 1;
-                Document newDoc(fileJson, filename);
+        // Parse the decoded data into a JSON object
+        fileJson = decodeFile(base64Data);
+
+        bool collection_exists = true;
+        // Check if the parsed JSON is an array or a single object
+        if (fileJson.is_array()) {
+            // This is an array of documents
+            for (auto x : fileJson) {
+                document_count++;
+                Document newDoc(x, filename);
                 try {
                     db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
                 } catch (const std::runtime_error& e) {
@@ -268,10 +264,27 @@ private:
                     collection_exists = false;
                 }
             }
-            // if(collection_exists)
-                // db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+        } else if (fileJson.is_object()) {
+            // This is a single document
+            document_count = 1;
+            Document newDoc(fileJson, filename);
+            try {
+                db.getCollection(CurrentCollection::getInstance().getCollection()).insert(newDoc);
+            } catch (const std::runtime_error& e) {
+                std::cout << "Caught a runtime error: " << e.what() << std::endl;
+                collection_exists = false;
+            }
         }
-        else if (request_.target() == "/action") 
+        if (collection_exists) {
+            db.getCollection(CurrentCollection::getInstance().getCollection()).iterate();
+        }
+    } catch (const nlohmann::json::parse_error& e) {
+        // Handle the JSON parse error
+        std::cout << "Invalid JSON file: " << e.what() << std::endl;
+        // You can optionally log the error or take further action as needed
+    }
+}       
+	else if (request_.target() == "/action") 
         {
 
             std::string post_content = beast::buffers_to_string(request_.body().data());
