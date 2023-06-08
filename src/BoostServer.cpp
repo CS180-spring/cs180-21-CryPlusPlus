@@ -362,6 +362,8 @@ private:
     // Check whether we have spent enough time on this connection.
     void check_deadline() {
         auto self = shared_from_this();
+        
+        const std::chrono::seconds timeout(60);
 
         deadline_.async_wait(
             [self](beast::error_code ec)
